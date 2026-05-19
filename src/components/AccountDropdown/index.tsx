@@ -275,7 +275,7 @@ export const AccountDropdown = () => {
                     )}
                   >
                     <div className="absolute top-1/2 -translate-y-1/2 -right-1 w-12 h-12 opacity-15 group-hover/card:scale-110 group-hover/card:rotate-12 transition-all duration-700 pointer-events-none">
-                      <Image src={stat.iconBg} alt="icon" fill className="object-contain" />
+                      <Image src={stat.iconBg} alt="icon" fill sizes="48px" className="object-contain" />
                     </div>
 
                     <div className="relative z-10">
@@ -290,7 +290,7 @@ export const AccountDropdown = () => {
                           {stat.value}
                         </span>
                         <div className={cn("relative", stat.iconClass)}>
-                          <Image src={stat.iconValue} alt="icon" fill className="object-contain" />
+                          <Image src={stat.iconValue} alt="icon" fill sizes="24px" className="object-contain" />
                         </div>
                       </div>
                     </div>

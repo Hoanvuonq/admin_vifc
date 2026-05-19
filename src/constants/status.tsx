@@ -66,6 +66,34 @@ export const statusConfig: Record<string, StatusConfig> = {
     icon: <AlertCircle size={12} />,
     iconColor: "text-rose-500",
   },
+  PUBLISHED: {
+    label: "Đã xuất bản",
+    styles: "bg-emerald-50/50 text-emerald-600 border-emerald-200/60 shadow-none",
+    premiumStyles: "bg-linear-to-br from-emerald-500 to-teal-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(16,185,129,0.3)] backdrop-blur-sm",
+    icon: <CheckCircle2 size={12} />,
+    iconColor: "text-emerald-500",
+  },
+  DRAFT: {
+    label: "Bản nháp",
+    styles: "bg-blue-50 text-blue-600 border-blue-200/60 shadow-none",
+    premiumStyles: "bg-linear-to-br from-blue-500 to-blue-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(59,130,246,0.3)] backdrop-blur-sm",
+    icon: <Clock size={12} />,
+    iconColor: "text-blue-500",
+  },
+  PENDING_REVIEW: {
+    label: "Chờ duyệt",
+    styles: "bg-amber-50/50 text-amber-600 border-amber-200/60 shadow-none",
+    premiumStyles: "bg-linear-to-br from-amber-500 to-orange-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(245,158,11,0.3)] backdrop-blur-sm",
+    icon: <Clock size={12} />,
+    iconColor: "text-amber-500",
+  },
+  ARCHIVED: {
+    label: "Đã lưu trữ",
+    styles: "bg-zinc-100 text-zinc-600 border-zinc-200/60 shadow-none",
+    premiumStyles: "bg-linear-to-br from-zinc-500 to-zinc-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(115,115,115,0.3)] backdrop-blur-sm",
+    icon: <AlertCircle size={12} />,
+    iconColor: "text-zinc-500",
+  },
 };
 
 export const statusMap: Record<string, string> = {
@@ -80,6 +108,10 @@ export const statusMap: Record<string, string> = {
   FAILED: "FAILED",
   APPROVED: "APPROVED",
   REJECTED: "REJECTED",
+  PUBLISHED: "PUBLISHED",
+  DRAFT: "DRAFT",
+  PENDING_REVIEW: "PENDING_REVIEW",
+  ARCHIVED: "ARCHIVED",
 };
 
 export const STATUS_STYLES: Record<string, string> = {

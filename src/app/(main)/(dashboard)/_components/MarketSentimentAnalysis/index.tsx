@@ -84,6 +84,7 @@ export const MarketSentimentAnalysis = ({ data = MOCK_SENTIMENT, onRefresh, load
                             <Image
                                 src="/icons/icon-reviews.png"
                                 fill
+                                sizes="(max-width: 768px) 100vw, 300px"
                                 className="object-contain object-right"
                                 alt="Analytics Illustration"
                                 priority

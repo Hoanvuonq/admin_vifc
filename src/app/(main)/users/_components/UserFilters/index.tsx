@@ -1,6 +1,6 @@
 "use client";
 
-import { StatusTabs } from "@/app/(dashboad)/dashboard/_components";
+import { StatusTabs } from "@/app/(main)/(dashboard)/_components";
 import { SearchComponent, SelectComponent } from "@/components";
 import { Clock, UserCheck, Users, UserX } from "lucide-react";
 import React, { useMemo } from "react";

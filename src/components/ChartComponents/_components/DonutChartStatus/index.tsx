@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, Zap, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { Activity, CheckCircle2, Clock, XCircle, Zap } from "lucide-react";
 import { useMemo } from "react";
 import {
   Area,
@@ -12,24 +12,9 @@ import {
   Tooltip,
 } from "recharts";
 
-import { CardBox } from "@/app/(dashboad)/dashboard/_components";
+import { CardBox } from "@/app/(main)/(dashboard)/_components";
+import { DonutChartStatusProps } from "./type";
 
-export interface OrderStatusBreakdownResponse {
-  statusCounts?: Record<string, number>;
-  completedCount: number;
-  shippedCount: number;
-  paidCount: number;
-  pendingCount: number;
-  cancelledCount: number;
-  totalOrders: number;
-  successRate: number;
-}
-
-interface DonutChartStatusProps {
-  data?: OrderStatusBreakdownResponse;
-  onRefresh?: () => void;
-  loading?: boolean;
-}
 
 export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusProps) => {
 
@@ -56,7 +41,7 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
 
   const chartData = useMemo(() => {
     return [
-      { name: "Success", value: successCount, color: "#0eb524" },
+      { name: "Success", value: successCount, color: "#f97316" },
       { name: "Pending", value: pendingCount, color: "#fb923c" },
       { name: "Cancelled", value: cancelledCount, color: "#f43f5e" }
     ].filter(item => item.value > 0);
@@ -181,7 +166,6 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
       </div>
 
       <div className="grid grid-cols-3 gap-2 mt-8">
-        {/* Card 1: Success */}
         <div className="relative group/metric overflow-hidden p-3 pb-3.5 rounded-3xl bg-white border border-slate-100 transition-all duration-300 shadow-md hover:-translate-y-1 hover:shadow-lg hover:border-orange-200/80">
           <div className="flex justify-between items-start mb-2.5 relative z-20">
             <div className="p-1.5 rounded-xl bg-orange-50 text-orange-600 shadow-sm border border-orange-100/50 group-hover/metric:scale-105 transition-transform duration-300">
@@ -219,7 +203,6 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
           </div>
         </div>
 
-        {/* Card 2: Pending */}
         <div className="relative group/metric overflow-hidden p-3 pb-3.5 rounded-3xl bg-white border border-slate-100 transition-all duration-300 shadow-md hover:-translate-y-1 hover:shadow-lg hover:border-amber-200/80">
           <div className="flex justify-between items-start mb-2.5 relative z-20">
             <div className="p-1.5 rounded-xl bg-orange-50/20 text-orange-500 shadow-sm border border-orange-100/30 group-hover/metric:scale-105 transition-transform duration-300">
@@ -257,7 +240,6 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
           </div>
         </div>
 
-        {/* Card 3: Cancelled */}
         <div className="relative group/metric overflow-hidden p-3 pb-3.5 rounded-3xl bg-white border border-slate-100 transition-all duration-300 shadow-md hover:-translate-y-1 hover:shadow-lg hover:border-rose-200/80">
           <div className="flex justify-between items-start mb-2.5 relative z-20">
             <div className="p-1.5 rounded-xl bg-rose-50 text-rose-500 shadow-sm border border-rose-100/50 group-hover/metric:scale-105 transition-transform duration-300">

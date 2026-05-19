@@ -15,27 +15,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { RevenueLineChartProps } from "./type";
+import { formatPrice } from "@/utils/format";
 
-interface RevenueLineChartProps {
-  revenueData?: (string | number)[];
-  orderData?: number[];
-  secondaryData?: (string | number)[];
-  secondaryOrderData?: number[];
-  primaryLabel?: string;
-  secondaryLabel?: string;
-  period?: 'today' | '7d' | '30d' | 'all';
-  title?: string;
-  subTitle?: string;
-  loading?: boolean;
-}
-
-const formatPrice = (value: number) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(value);
-};
 
 export const RevenueLineChart = ({
   revenueData,
