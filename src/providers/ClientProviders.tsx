@@ -3,7 +3,7 @@
 import { AuthRouteGuard } from "@/auth";
 import { TopLoadingBar } from "@/components";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Provider } from "react-redux";
 
 export const ClientProviders = ({
@@ -26,7 +26,9 @@ export const ClientProviders = ({
     return (
         // <Provider>
         <QueryClientProvider client={queryClient}>
-            <TopLoadingBar />
+            <Suspense fallback={null}>
+                <TopLoadingBar />
+            </Suspense>
             <AuthRouteGuard>{children}</AuthRouteGuard>
         </QueryClientProvider>
         // </Provider >

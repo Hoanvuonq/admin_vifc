@@ -18,7 +18,7 @@ function SmartKPICardComponent({
   colorTheme = "blue",
 }: SmartKPICardProps) {
   const formattedValue =
-    format === "currency" ? (value) : formatNumber(value);
+    format === "currency" ? value : formatNumber(typeof value === "string" ? Number(value) : value);
 
   const themes = {
     blue: {
