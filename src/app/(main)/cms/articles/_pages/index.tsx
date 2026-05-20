@@ -136,6 +136,20 @@ export const ManagerCMSScreen = () => {
 
   const columns = useMemo(() => getColumns(handleEditNews, handleDeleteNews), [newsList]);
 
+  if (isDrawerOpen) {
+    return (
+      <CMSDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => {
+          setIsDrawerOpen(false);
+          setSelectedNewsToEdit(null);
+        }}
+        newsToEdit={selectedNewsToEdit}
+        onSave={handleSaveNews}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen space-y-6 animate-in fade-in duration-700 relative">
       {/* Toast Notification */}
@@ -214,16 +228,6 @@ export const ManagerCMSScreen = () => {
         onPageChange={(p) => setCurrentPage(p)}
       />
 
-      {/* Editor Drawer */}
-      <CMSDrawer
-        isOpen={isDrawerOpen}
-        onClose={() => {
-          setIsDrawerOpen(false);
-          setSelectedNewsToEdit(null);
-        }}
-        newsToEdit={selectedNewsToEdit}
-        onSave={handleSaveNews}
-      />
     </div>
   );
 };

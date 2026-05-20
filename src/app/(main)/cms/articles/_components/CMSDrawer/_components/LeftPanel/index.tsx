@@ -1,39 +1,22 @@
-import React, { useState } from "react";
 import {
-  FileText,
-  Plus,
-  Image as ImageIcon,
-  Quote,
-  X,
-  Check,
-  ArrowUp,
-  ArrowDown,
-  Trash2,
-  HelpCircle,
-  AlignLeft,
   AlignCenter,
-  AlignRight
+  AlignLeft,
+  AlignRight,
+  ArrowDown,
+  ArrowUp,
+  Check,
+  FileText,
+  HelpCircle,
+  Image as ImageIcon,
+  Plus,
+  Quote,
+  Trash2,
+  X
 } from "lucide-react";
-import { ContentBlock } from "./NewsPreview";
+import React, { useState } from "react";
+import { LeftPanelProps } from "./type";
+import { ContentBlock } from "../NewsPreview/type";
 
-type SectionType = "section-basic" | "section-media" | "section-content" | "section-seo" | "section-settings";
-
-interface LeftPanelProps {
-  sectionBasicCompleted: boolean;
-  sectionMediaCompleted: boolean;
-  sectionContentCompleted: boolean;
-  sectionSEOCompleted: boolean;
-  activeSection: string;
-  handleTabClick: (section: SectionType) => void;
-  handleAddBlock: (type: ContentBlock["type"]) => void;
-  blocks: ContentBlock[];
-  activeInput: string | null;
-  handleBlockSelect: (blockId: string) => void;
-  handleMoveBlock: (index: number, dir: "up" | "down") => void;
-  handleDeleteBlock: (blockId: string) => void;
-  handleBlockChange: (blockId: string, update: Partial<ContentBlock>) => void;
-  currentSuggestion: { title: string; text: string };
-}
 
 export const LeftPanel: React.FC<LeftPanelProps> = ({
   sectionBasicCompleted,
@@ -53,7 +36,6 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 }) => {
   const [expandedAlignBlockId, setExpandedAlignBlockId] = useState<string | null>(null);
 
-  // Auto-expand alignment settings when a block is selected/focused
   React.useEffect(() => {
     if (activeInput && blocks.some(b => b.id === activeInput)) {
       setExpandedAlignBlockId(activeInput);
@@ -61,11 +43,10 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
   }, [activeInput, blocks]);
 
   return (
-    <div className="hidden lg:flex w-[350px] shrink-0 bg-slate-50 border-r border-slate-200/80 p-4 flex-col gap-4 overflow-y-auto select-none custom-scrollbar">
+    <div className="hidden lg:flex w-87.5 shrink-0 bg-slate-50/50 p-4 flex-col gap-4 overflow-y-auto select-none custom-scrollbar">
       
-      {/* Section Quicklinks */}
-      <div className="bg-white p-3.5 rounded-2xl border border-slate-200/60 shadow-2xs space-y-1.5">
-        <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-wider px-1 block pb-1 border-b border-slate-50">
+      <div className="bg-white p-3.5 rounded-2xl shadow-3xs space-y-1.5">
+        <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-wider px-1 block pb-1.5">
           Định vị danh mục
         </span>
         <div className="space-y-1.5 pt-1">
@@ -100,8 +81,8 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
       </div>
 
       {/* Add Blocks Panel */}
-      <div className="bg-white p-3.5 rounded-2xl border border-slate-200/60 shadow-2xs space-y-2.5">
-        <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-wider px-1 block pb-1 border-b border-slate-50">
+      <div className="bg-white p-3.5 rounded-2xl shadow-3xs space-y-2.5">
+        <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-wider px-1 block pb-1.5">
           Thêm phần tử trang
         </span>
         <div className="grid grid-cols-3 gap-2 pt-0.5">
@@ -126,8 +107,8 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
       </div>
 
       {/* Block Stack Manager (No Height Restriction) */}
-      <div className="bg-white p-3.5 rounded-2xl border border-slate-200/60 shadow-2xs space-y-2.5">
-        <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-wider px-1 block pb-1 border-b border-slate-50">
+      <div className="bg-white p-3.5 rounded-2xl shadow-3xs space-y-2.5">
+        <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-wider px-1 block pb-1.5">
           Quản lý bố cục ({blocks.length})
         </span>
 
@@ -217,7 +198,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                   <div
                     className={`transition-all duration-300 overflow-hidden ${
                       isExpanded
-                        ? "max-h-[55px] opacity-100 mt-1 border-t border-slate-100 pt-2 flex items-center justify-between"
+                        ? "max-h-13.75 opacity-100 mt-1 border-t border-slate-100 pt-2 flex items-center justify-between"
                         : "max-h-0 opacity-0 pointer-events-none"
                     }`}
                     onClick={(e) => e.stopPropagation()}
@@ -296,7 +277,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
       </div>
 
       {/* Quick instructions suggestions box */}
-      <div className="bg-gradient-to-b from-orange-50/20 to-amber-50/10 p-3.5 rounded-2xl border border-orange-100/30">
+      <div className="bg-linear-to-b from-orange-50/20 to-amber-50/10 p-3.5 rounded-2xl border border-orange-100/30">
         <span className="text-[9.5px] font-extrabold text-orange-600 uppercase tracking-wide flex items-center gap-1">
           <HelpCircle size={12} className="text-orange-500 shrink-0" />
           {currentSuggestion.title}

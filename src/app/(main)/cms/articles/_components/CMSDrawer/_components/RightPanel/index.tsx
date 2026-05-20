@@ -1,5 +1,4 @@
-import React from "react";
-import { Checkbox, FormInput, SelectComponent, PremiumButton, MediaUploadField } from "@/components";
+import { Checkbox, FormInput, MediaUploadField, SelectComponent } from "@/components";
 import {
   AlignCenter,
   AlignLeft,
@@ -14,51 +13,10 @@ import {
   Settings,
   Trash2
 } from "lucide-react";
-import { ContentBlock } from "./NewsPreview";
-import { CATEGORY_OPTIONS } from "../../_constants/cms.constants";
-import { NewsItem } from "../../_pages/types";
+import React from "react";
+import { CATEGORY_OPTIONS } from "../../../../_constants/cms.constants";
+import { RightPanelProps } from "./type";
 
-interface RightPanelProps {
-  rightPanelRef: React.RefObject<HTMLDivElement | null>;
-  activeInput: string | null;
-  setActiveInput: (val: string | null) => void;
-  title: string;
-  handleTitleChange: (e: any) => void;
-  slug: string;
-
-  setSlug: (val: string) => void;
-  category: string;
-  setCategory: (val: string) => void;
-  tags: string[];
-  setTags: (val: string[]) => void;
-  tagOptions: { value: string; label: string }[];
-  thumbnail: string;
-  setThumbnail: (val: string) => void;
-  handleImageUpload: () => void;
-  summary: string;
-  setSummary: (val: string) => void;
-  blocks: ContentBlock[];
-  handleMoveBlock: (index: number, dir: "up" | "down") => void;
-  handleBlockChange: (blockId: string, update: Partial<ContentBlock>) => void;
-  handleDeleteBlock: (blockId: string) => void;
-  seoTitle: string;
-  setSeoTitle: (val: string) => void;
-  seoDescription: string;
-  setSeoDescription: (val: string) => void;
-  seoKeywords: string;
-  setSeoKeywords: (val: string) => void;
-  allowComments: boolean;
-  setAllowComments: (val: boolean) => void;
-  isFeatured: boolean;
-  setIsFeatured: (val: boolean) => void;
-  scheduledDate: string;
-  setScheduledDate: (val: string) => void;
-  newsToEdit: NewsItem | null;
-  sectionBasicCompleted: boolean;
-  sectionMediaCompleted: boolean;
-  sectionContentCompleted: boolean;
-  sectionSEOCompleted: boolean;
-}
 
 export const RightPanel: React.FC<RightPanelProps> = ({
   rightPanelRef,
@@ -104,7 +62,7 @@ export const RightPanel: React.FC<RightPanelProps> = ({
     <div
       ref={rightPanelRef}
       id="right-editor-panel"
-      className="w-[400px] xl:w-[450px] shrink-0 h-full overflow-y-auto p-4 bg-white space-y-4 border-l border-slate-200/80 custom-scrollbar scroll-smooth"
+      className="w-100 xl:w-112.5 shrink-0 h-full overflow-y-auto p-4 bg-white space-y-4 custom-scrollbar scroll-smooth"
     >
       {/* SECTION 1: CƠ BẢN */}
       <div
@@ -341,44 +299,142 @@ export const RightPanel: React.FC<RightPanelProps> = ({
                     value={block.content}
                     onChange={(e) => handleBlockChange(block.id, { content: e.target.value })}
                     placeholder="Nhập nội dung đoạn văn..."
-                    className="min-h-[160px] text-xs"
+                    className="min-h-40 text-xs"
                   />
                 )}
 
-                {block.type === "image" && (
-                  <div className="space-y-2">
-                    <div className="flex justify-center p-3 bg-slate-50/60 rounded-xl">
-                      <MediaUploadField
-                        value={block.content ? [{ uid: block.id, url: block.content, status: "done" }] : []}
-                        onChange={(files) => {
-                          if (files.length > 0) {
-                            handleBlockChange(block.id, { content: files[0].url || "" });
-                          } else {
-                            handleBlockChange(block.id, { content: "" });
-                          }
-                        }}
-                        maxCount={1}
-                        size="md"
-                        isBanner={true}
-                      />
+                {block.type === "image" && (() => {
+                  const layout = block.imageLayout || "full";
+                  const padding = block.imagePadding || "medium";
+                  const direction = block.imageDirection || "image-text";
+
+                  return (
+                    <div className="space-y-3">
+                      {/* Bố cục hình ảnh (Layout selector group) */}
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-extrabold uppercase text-gray-500 tracking-wider">Bố cục hiển thị</label>
+                        <div className="flex bg-slate-100 p-0.5 rounded-xl border border-slate-200/40">
+                          <button
+                            type="button"
+                            onClick={() => handleBlockChange(block.id, { imageLayout: "full" })}
+                            className={`flex-1 py-1 rounded-lg text-[9.5px] font-extrabold transition-all ${
+                              layout === "full" ? "bg-white text-orange-600 shadow-2xs" : "text-slate-500 hover:text-slate-800"
+                            }`}
+                          >
+                            Ảnh full / Có padding
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleBlockChange(block.id, { imageLayout: "side-by-side" })}
+                            className={`flex-1 py-1 rounded-lg text-[9.5px] font-extrabold transition-all ${
+                              layout === "side-by-side" ? "bg-white text-orange-600 shadow-2xs" : "text-slate-500 hover:text-slate-800"
+                            }`}
+                          >
+                            Ảnh & Chữ song song
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Controls specific to layout type */}
+                      {layout === "full" ? (
+                        /* Dạng 2: Full width & Padding selector group */
+                        <div className="space-y-1">
+                          <label className="text-[9px] font-extrabold uppercase text-gray-500 tracking-wider">Độ rộng ảnh (Padding co giãn)</label>
+                          <div className="flex bg-slate-100 p-0.5 rounded-xl border border-slate-200/40">
+                            {[
+                              { key: "none", label: "Tràn (100%)" },
+                              { key: "small", label: "Rộng (95%)" },
+                              { key: "medium", label: "Vừa (85%)" },
+                              { key: "large", label: "Nhỏ (70%)" }
+                            ].map((item) => (
+                              <button
+                                key={item.key}
+                                type="button"
+                                onClick={() => handleBlockChange(block.id, { imagePadding: item.key as any })}
+                                className={`flex-1 py-1 rounded-lg text-[8.5px] font-extrabold transition-all ${
+                                  padding === item.key ? "bg-white text-orange-600 shadow-2xs" : "text-slate-500 hover:text-slate-800"
+                                }`}
+                              >
+                                {item.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        /* Dạng 1: Side-by-side controls (direction, side text) */
+                        <div className="space-y-2">
+                          <div className="space-y-1">
+                            <label className="text-[9px] font-extrabold uppercase text-gray-500 tracking-wider">Chiều hiển thị</label>
+                            <div className="flex bg-slate-100 p-0.5 rounded-xl border border-slate-200/40">
+                              <button
+                                type="button"
+                                onClick={() => handleBlockChange(block.id, { imageDirection: "image-text" })}
+                                className={`flex-1 py-1 rounded-lg text-[9px] font-extrabold transition-all ${
+                                  direction === "image-text" ? "bg-white text-orange-600 shadow-2xs" : "text-slate-500 hover:text-slate-800"
+                                }`}
+                              >
+                                Ảnh trái - Chữ phải
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleBlockChange(block.id, { imageDirection: "text-image" })}
+                                className={`flex-1 py-1 rounded-lg text-[9px] font-extrabold transition-all ${
+                                  direction === "text-image" ? "bg-white text-orange-600 shadow-2xs" : "text-slate-500 hover:text-slate-800"
+                                }`}
+                              >
+                                Chữ trái - Ảnh phải
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <label className="text-[9px] font-extrabold uppercase text-gray-500 tracking-wider">Nội dung văn bản bên cạnh ảnh</label>
+                            <FormInput
+                              isTextArea
+                              value={block.imageSideText || ""}
+                              onChange={(e) => handleBlockChange(block.id, { imageSideText: e.target.value })}
+                              placeholder="Nhập nội dung văn bản đi kèm hình ảnh..."
+                              className="min-h-[100px] text-xs"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Image Upload / URL & Caption */}
+                      <div className="space-y-2 pt-1.5 border-t border-slate-100/60">
+                        <label className="text-[9px]  uppercase text-gray-500 tracking-wider font-semibold">Tệp hình ảnh</label>
+                        <div className="flex justify-center p-3 bg-slate-50/60 rounded-xl">
+                          <MediaUploadField
+                            value={block.content ? [{ uid: block.id, url: block.content, status: "done" }] : []}
+                            onChange={(files) => {
+                              if (files.length > 0) {
+                                handleBlockChange(block.id, { content: files[0].url || "" });
+                              } else {
+                                handleBlockChange(block.id, { content: "" });
+                              }
+                            }}
+                            maxCount={1}
+                            size="md"
+                            isBanner={true}
+                            className="w-full"
+                          />
+                        </div>
+                        <FormInput
+                          value={block.content}
+                          onChange={(e) => handleBlockChange(block.id, { content: e.target.value })}
+                          placeholder="Hoặc nhập URL hình ảnh bài viết..."
+                          className="h-10 text-xs"
+                        />
+                        <FormInput
+                          value={block.caption || ""}
+                          onChange={(e) => handleBlockChange(block.id, { caption: e.target.value })}
+                          placeholder="Mô tả / Chú thích hình ảnh..."
+                          className="h-10 text-xs"
+                        />
+                      </div>
                     </div>
-                    <div className="flex gap-2 items-center">
-                      <FormInput
-                        value={block.content}
-                        onChange={(e) => handleBlockChange(block.id, { content: e.target.value })}
-                        placeholder="Hoặc nhập URL hình ảnh bài viết..."
-                        className="h-10 text-xs"
-                        containerClassName="flex-1"
-                      />
-                    </div>
-                    <FormInput
-                      value={block.caption || ""}
-                      onChange={(e) => handleBlockChange(block.id, { caption: e.target.value })}
-                      placeholder="Mô tả / Chú thích hình ảnh..."
-                      className="h-10 text-xs"
-                    />
-                  </div>
-                )}
+                  );
+                })()}
 
                 {block.type === "quote" && (
                   <FormInput

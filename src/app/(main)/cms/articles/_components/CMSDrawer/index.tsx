@@ -1,13 +1,11 @@
 "use client";
 
-import { PortalModal, PremiumButton } from "@/components";
-import { FileText } from "lucide-react";
+import { PremiumButton } from "@/components";
+import { FileText, ArrowLeft } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
 import { NewsItem } from "../../_pages/types";
-import { LeftPanel } from "./LeftPanel";
-import { NewsPreview } from "./NewsPreview";
-import { RightPanel } from "./RightPanel";
+import { LeftPanel, NewsPreview, RightPanel } from "./_components";
 
 
 interface CMSDrawerProps {
@@ -24,6 +22,10 @@ interface ContentBlock {
   content: string;
   caption?: string;
   level?: "h2" | "h3";
+  imageLayout?: "full" | "side-by-side";
+  imageSideText?: string;
+  imageDirection?: "image-text" | "text-image";
+  imagePadding?: "none" | "small" | "medium" | "large";
 }
 
 type SectionType = "section-basic" | "section-media" | "section-content" | "section-seo" | "section-settings";
@@ -36,8 +38,14 @@ const compileBlocksToHTML = (blocks: ContentBlock[]): string => {
       case "heading":
         const tag = block.level || "h2";
         return `<${tag}${styleAttr}>${block.content}</${tag}>`;
-      case "image":
-        return `<div${styleAttr} class="image-block-wrapper"><img src="${block.content}" alt="${block.caption || ''}" class="rounded-2xl max-w-full my-4 inline-block" />${block.caption ? `<p class="text-xs text-gray-500 italic mt-1 text-center">${block.caption}</p>` : ''}</div>`;
+      case "image": {
+        const layout = block.imageLayout || "full";
+        const dir = block.imageDirection || "image-text";
+        const padding = block.imagePadding || "medium";
+        const sideText = block.imageSideText || "";
+        const escapedSideText = sideText.replace(/"/g, "&quot;");
+        return `<div${styleAttr} class="image-block-wrapper" data-image-layout="${layout}" data-image-direction="${dir}" data-image-padding="${padding}" data-image-side-text="${escapedSideText}"><img src="${block.content}" alt="${block.caption || ''}" class="rounded-2xl max-w-full my-4 inline-block" />${block.caption ? `<p class="text-xs text-gray-500 italic mt-1 text-center">${block.caption}</p>` : ''}</div>`;
+      }
       case "quote":
         return `<blockquote${styleAttr} class="border-l-4 border-orange-500 pl-4 py-2 my-4 italic text-gray-600 bg-slate-50">${block.content}</blockquote>`;
       case "divider":
@@ -49,7 +57,6 @@ const compileBlocksToHTML = (blocks: ContentBlock[]): string => {
   }).join("\n");
 };
 
-// Parses raw HTML string back into structured blocks
 const parseHTMLToBlocks = (html: string): ContentBlock[] => {
   if (!html) return [{ id: `block-${Date.now()}`, type: "text", align: "left", content: "" }];
 
@@ -92,7 +99,11 @@ const parseHTMLToBlocks = (html: string): ContentBlock[] => {
           type: "image",
           align: textAlign,
           content: img?.getAttribute("src") || "",
-          caption: captionEl?.innerHTML || ""
+          caption: captionEl?.innerHTML || "",
+          imageLayout: el.getAttribute("data-image-layout") as "full" | "side-by-side" || "full",
+          imageSideText: el.getAttribute("data-image-side-text") || "",
+          imageDirection: el.getAttribute("data-image-direction") as "image-text" | "text-image" || "image-text",
+          imagePadding: el.getAttribute("data-image-padding") as "none" | "small" | "medium" | "large" || "medium",
         });
       } else if (el.tagName === "IMG") {
         blocks.push({
@@ -494,60 +505,74 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
   };
 
   return (
-    <PortalModal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={newsToEdit ? "Chỉnh sửa bài viết" : "Tạo bài viết mới"}
-      description={newsToEdit ? "Cập nhật thông tin chi tiết và xuất bản bài viết của bạn" : "Tạo và thiết kế bài viết tin tức mới cho hệ thống"}
-      icon={FileText}
-      width="max-w-[98vw] w-full"
-      containerClassName="items-center justify-center p-4 sm:p-6"
-      className="h-[92vh] max-h-[92vh] rounded-[32px] border shadow-2xl overflow-hidden  bg-slate-100"
-      noPadding
-      footer={
-        <div className="flex justify-between items-center w-full px-2">
+    <div className="fixed inset-0 z-50 bg-slate-100 flex flex-col animate-in fade-in duration-300">
+      {/* Top sticky editor navigation header */}
+      <div className="bg-white px-6 py-4.5 flex items-center justify-between shrink-0 select-none shadow-3xs">
+        <div className="flex items-center gap-3.5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2.5 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors"
+            title="Quay lại danh sách"
+          >
+            <ArrowLeft size={16} />
+          </button>
           <div>
-            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Trạng thái bài viết:</span>
-            <span className={`ml-2 text-xs font-bold uppercase ${status === "PUBLISHED" ? "text-emerald-500" :
-              status === "PENDING_REVIEW" ? "text-amber-500" : "text-blue-500"
-              }`}>
-              {status === "PUBLISHED" ? "Đã xuất bản" :
-                status === "PENDING_REVIEW" ? "Chờ duyệt" : "Bản nháp"}
-            </span>
-          </div>
-
-          <div className="flex gap-2">
-            <PremiumButton
-              label="Hủy bỏ"
-              variant="gray"
-              size="md"
-              onClick={onClose}
-              className="rounded-xl font-bold px-4 py-2"
-            />
-            {status !== "PUBLISHED" && (
-              <PremiumButton
-                label="Lưu nháp"
-                variant="gray"
-                size="md"
-                onClick={() => handleSave("DRAFT")}
-                className="rounded-xl font-bold border border-gray-200 px-4 py-2 bg-white text-gray-700 hover:bg-slate-50"
-              />
-            )}
-            <PremiumButton
-              label={newsToEdit ? "Cập nhật" : "Đăng bài"}
-              variant="orange"
-              size="md"
-              onClick={() => handleSave(status === "DRAFT" ? "PENDING_REVIEW" : status)}
-              className="rounded-xl font-bold px-6 py-2"
-            />
+            <h1 className="text-sm font-extrabold text-slate-900 leading-tight">
+              {newsToEdit ? "Chỉnh sửa bài viết" : "Tạo bài viết mới"}
+            </h1>
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
+              Trạng thái bài viết:{" "}
+              <span
+                className={`ml-1 text-[9.5px] font-extrabold uppercase ${
+                  status === "PUBLISHED"
+                    ? "text-emerald-500"
+                    : status === "PENDING_REVIEW"
+                    ? "text-amber-500"
+                    : "text-blue-500"
+                }`}
+              >
+                {status === "PUBLISHED"
+                  ? "Đã xuất bản"
+                  : status === "PENDING_REVIEW"
+                  ? "Chờ duyệt"
+                  : "Bản nháp"}
+              </span>
+            </p>
           </div>
         </div>
-      }
-    >
-      <div className="flex w-full h-full overflow-hidden">
 
+        {/* Action buttons */}
+        <div className="flex items-center gap-2">
+          <PremiumButton
+            label="Hủy bỏ"
+            variant="gray"
+            size="md"
+            onClick={onClose}
+            className="rounded-xl font-bold px-4 py-2 text-xs"
+          />
+          {status !== "PUBLISHED" && (
+            <PremiumButton
+              label="Lưu nháp"
+              variant="gray"
+              size="md"
+              onClick={() => handleSave("DRAFT")}
+              className="rounded-xl font-bold border border-gray-200 px-4 py-2 bg-white text-gray-700 hover:bg-slate-50 text-xs"
+            />
+          )}
+          <PremiumButton
+            label={newsToEdit ? "Cập nhật" : "Đăng bài"}
+            variant="orange"
+            size="md"
+            onClick={() => handleSave(status === "DRAFT" ? "PENDING_REVIEW" : status)}
+            className="rounded-xl font-bold px-6 py-2 text-xs"
+          />
+        </div>
+      </div>
 
-        {/* COLUMN 1: LEFT BLOCK MANAGER PANEL (STATIC MODULAR COMPONENT) */}
+      {/* Editor Columns Container */}
+      <div className="flex-1 flex overflow-hidden h-[calc(100vh-68px)]">
+        {/* COLUMN 1: LEFT BLOCK MANAGER PANEL */}
         <LeftPanel
           sectionBasicCompleted={sectionBasicCompleted}
           sectionMediaCompleted={sectionMediaCompleted}
@@ -565,7 +590,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
           currentSuggestion={currentSuggestion}
         />
 
-        {/* COLUMN 2: CENTER LIVE PREVIEW OF ACTUAL NEWS PAGE (SCROLLABLE MOCKUP) */}
+        {/* COLUMN 2: CENTER LIVE PREVIEW */}
         <NewsPreview
           title={title}
           category={category}
@@ -585,7 +610,6 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
           handleDeleteBlock={handleDeleteBlock}
           handleBlockChange={handleBlockChange}
         />
-
 
         {/* COLUMN 3: RIGHT SCROLLABLE FORM INPUTS PANEL */}
         <RightPanel
@@ -628,9 +652,8 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
           sectionContentCompleted={sectionContentCompleted}
           sectionSEOCompleted={sectionSEOCompleted}
         />
-
       </div>
-    </PortalModal>
+    </div>
   );
 };
 
