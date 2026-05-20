@@ -9,7 +9,7 @@ export interface LeftPanelProps {
   sectionSEOCompleted: boolean;
   activeSection: string;
   handleTabClick: (section: SectionType) => void;
-  handleAddBlock: (type: ContentBlock["type"]) => void;
+  handleAddBlock: (type: ContentBlock["type"], defaults?: Partial<ContentBlock>) => void;
   blocks: ContentBlock[];
   activeInput: string | null;
   handleBlockSelect: (blockId: string) => void;

@@ -13,7 +13,6 @@ import {
   Trash2,
   Video as VideoIcon
 } from "lucide-react";
-import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { MediaLightbox } from "../MediaLightbox";
 import { CustomFile, MediaUploadFieldProps } from "./type";
@@ -102,7 +101,11 @@ export const MediaUploadField: React.FC<
               initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
               className={cn(
                 "flex flex-col gap-2",
-                isPost ? (size === "md" ? "w-40" : size === "lg" ? "w-full" : "w-28") : (size === "lg" ? "w-full" : "w-fit")
+                isBanner
+                  ? "w-full"
+                  : isPost
+                    ? (size === "md" ? "w-40" : size === "lg" ? "w-full" : "w-28")
+                    : (size === "lg" ? "w-full" : "w-fit")
               )}
             >
               <div className={cn("relative group overflow-hidden border border-slate-100 bg-white shadow-sm hover:shadow-orange-500/10 hover:shadow-2xl", SIZE_MAP[size as keyof typeof SIZE_MAP], classNameSizeUpload, COMMON_TRANSITION)}>
@@ -111,7 +114,7 @@ export const MediaUploadField: React.FC<
                     <div className="w-full h-full overflow-hidden">
                       {file.type?.includes("video") || file.url?.toLowerCase().endsWith(".mp4") || file.url?.toLowerCase().endsWith(".mov")
                         ? <video src={file.url} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-                        : <Image src={file.url} alt="preview" fill className={cn("object-cover group-hover:scale-105", COMMON_TRANSITION)} unoptimized />
+                        : <img src={file.url} alt="preview" className={cn("w-full h-full object-cover group-hover:scale-105", COMMON_TRANSITION)} />
                       }
                       <div className="absolute inset-0 bg-linear-to-t from-orange-950/40 via-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>

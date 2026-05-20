@@ -293,13 +293,14 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
     setContent(compileBlocksToHTML(newBlocks));
   };
 
-  const handleAddBlock = (type: ContentBlock["type"]) => {
+  const handleAddBlock = (type: ContentBlock["type"], defaults?: Partial<ContentBlock>) => {
     const newBlock: ContentBlock = {
       id: `block-${Date.now()}`,
       type,
       align: "left",
       content: "",
       ...(type === "heading" ? { level: "h2" } : {}),
+      ...defaults
     };
     const newBlocks = [...blocks, newBlock];
     setBlocks(newBlocks);
@@ -348,7 +349,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
   };
 
   const handleImageUpload = () => {
-    const url = prompt("Nhập URL ảnh đại diện của bài viết:", thumbnail);
+    const url = prompt("Enter the cover image URL of the article:", thumbnail);
     if (url) {
       setThumbnail(url);
     }
@@ -356,7 +357,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
 
   const handleSave = (finalStatus?: NewsItem["status"]) => {
     if (!title || !slug || !category) {
-      alert("Vui lòng điền đầy đủ các thông tin bắt buộc (*)");
+      alert("Please fill in all required fields (*)");
       return;
     }
 
@@ -396,16 +397,16 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
   const sectionSEOCompleted = seoTitle.trim().length >= 10 && seoDescription.trim().length >= 30 && seoKeywords.trim().length >= 3;
 
   const checklistItems = [
-    { id: "title", label: "Tiêu đề bài viết (>= 10 ký tự)", checked: title.trim().length >= 10 },
-    { id: "slug", label: "Đường dẫn bài viết (slug)", checked: slug.trim().length > 0 },
-    { id: "category", label: "Danh mục bài viết", checked: !!category },
-    { id: "tags", label: "Gán ít nhất 1 thẻ (Tag)", checked: tags.length >= 1 },
-    { id: "thumbnail", label: "Ảnh đại diện bài viết", checked: !!thumbnail && !thumbnail.includes("api.dicebear.com/7.x/shapes/svg") },
-    { id: "summary", label: "Tóm tắt bài viết (>= 30 ký tự)", checked: summary.trim().length >= 30 },
-    { id: "content", label: "Nội dung bài viết (>= 100 ký tự)", checked: content.replace(/<[^>]*>/g, "").trim().length >= 100 },
-    { id: "seoTitle", label: "Tối ưu hóa SEO Title", checked: seoTitle.trim().length >= 10 },
-    { id: "seoDescription", label: "Tối ưu hóa SEO Description", checked: seoDescription.trim().length >= 30 },
-    { id: "seoKeywords", label: "Tối ưu hóa SEO Keywords", checked: seoKeywords.trim().length >= 3 },
+    { id: "title", label: "Article Title (>= 10 characters)", checked: title.trim().length >= 10 },
+    { id: "slug", label: "Article URL Slug", checked: slug.trim().length > 0 },
+    { id: "category", label: "Article Category", checked: !!category },
+    { id: "tags", label: "Assign at least 1 Tag", checked: tags.length >= 1 },
+    { id: "thumbnail", label: "Article Cover Image", checked: !!thumbnail && !thumbnail.includes("api.dicebear.com/7.x/shapes/svg") },
+    { id: "summary", label: "Article Summary (>= 30 characters)", checked: summary.trim().length >= 30 },
+    { id: "content", label: "Article Content (>= 100 characters)", checked: content.replace(/<[^>]*>/g, "").trim().length >= 100 },
+    { id: "seoTitle", label: "SEO Title Optimization", checked: seoTitle.trim().length >= 10 },
+    { id: "seoDescription", label: "SEO Description Optimization", checked: seoDescription.trim().length >= 30 },
+    { id: "seoKeywords", label: "SEO Keywords Optimization", checked: seoKeywords.trim().length >= 3 },
   ];
 
   const completedCount = checklistItems.filter((item) => item.checked).length;
@@ -415,61 +416,61 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
     if (activeInput && activeInput.startsWith("block-")) {
       const block = blocks.find((b) => b.id === activeInput);
       return {
-        title: `Căn chỉnh phần tử: ${block?.type === "heading" ? "Tiêu đề" : block?.type === "image" ? "Hình ảnh" : block?.type === "quote" ? "Trích dẫn" : "Đoạn văn"}`,
-        text: "Sử dụng các công cụ di chuyển (Up/Down) để sắp đặt vị trí phần tử. Định dạng căn lề (Left/Center/Right) sẽ thay đổi trực tiếp hiển thị trên giao diện trang chi tiết tin tức ở giữa."
+        title: `Align Element: ${block?.type === "heading" ? "Heading" : block?.type === "image" ? "Image" : block?.type === "quote" ? "Quote" : "Paragraph"}`,
+        text: "Use the position controls (Up/Down) to reorder elements. Formatting alignments (Left/Center/Right) will update live on the central news article detail preview."
       };
     }
 
     switch (activeInput) {
       case "title":
         return {
-          title: "Tiêu đề bài viết",
-          text: "Mô tả ngắn gọn nội dung bài viết. Nên giữ độ dài trong khoảng 50 - 120 ký tự để hiển thị tốt nhất và thu hút người đọc."
+          title: "Article Title",
+          text: "Briefly describe the article. Maintain a length between 50 - 120 characters to optimize visual display and reader click rates."
         };
       case "slug":
         return {
-          title: "Đường dẫn bài viết",
-          text: "Địa chỉ tĩnh của bài viết. Được sinh tự động từ tiêu đề. Có thể chỉnh sửa thủ công để ngắn gọn hơn, chỉ dùng chữ thường, số và dấu gạch ngang."
+          title: "Article URL Slug",
+          text: "The static URL route of the article. Generated automatically from the title. Can be edited manually to be more concise. Only lowercase letters, numbers, and hyphens allowed."
         };
       case "category":
         return {
-          title: "Danh mục tin tức",
-          text: "Chọn danh mục phù hợp nhất để bài viết được tự động sắp xếp vào đúng luồng bài trên website cổng thông tin."
+          title: "News Category",
+          text: "Select the most relevant category to automatically organize the article in the correct channel on the website portal."
         };
       case "tags":
         return {
-          title: "Thẻ bài viết (Tags)",
-          text: "Gán các thẻ từ khóa chính của bài viết. Giúp tạo sự liên kết giữa các bài viết cùng chủ đề nhỏ và cải thiện cấu trúc liên kết nội bộ."
+          title: "Article Tags",
+          text: "Assign main keyword tags for the article. This helps link articles of similar subtopics and improves the internal SEO link structure."
         };
       case "thumbnail":
         return {
-          title: "Ảnh đại diện bài viết",
-          text: "Chọn hình ảnh có tỷ lệ chuẩn (thường là 3:2 hoặc 16:9). Hãy đảm bảo ảnh chất lượng tốt, không bị mờ và có tính liên quan trực tiếp đến bài viết."
+          title: "Article Cover Image",
+          text: "Select an image with a standard aspect ratio (usually 3:2 or 16:9). Ensure high resolution, clear imagery, and direct relevance to the article."
         };
       case "summary":
         return {
-          title: "Tóm tắt bài viết",
-          text: "Nhập một đoạn tóm tắt khoảng 30 - 200 từ để hiển thị ngoài trang chủ hoặc trang danh mục, giúp người đọc nắm bắt nhanh nội dung trước khi click."
+          title: "Article Summary",
+          text: "Enter a brief summary of 30 - 200 words to display on the home or category pages, helping readers quickly grasp the topic before opening it."
         };
       case "seoTitle":
         return {
-          title: "SEO Title (Tiêu đề Google)",
-          text: "Tiêu đề hiển thị trực tiếp trên kết quả tìm kiếm. Giới hạn khoảng 50 - 70 ký tự để không bị cắt bớt dấu chấm lửng."
+          title: "SEO Title (Google Title)",
+          text: "The title that displays directly on search engine results. Keep between 50 - 70 characters so it doesn't get cut off with ellipses."
         };
       case "seoDescription":
         return {
-          title: "SEO Description (Mô tả)",
-          text: "Đoạn mô tả ngắn hiển thị dưới tiêu đề tìm kiếm. Nên có độ dài lý tưởng 120 - 160 ký tự, chứa từ khóa để gia tăng tỷ lệ click (CTR)."
+          title: "SEO Description (Snippet)",
+          text: "The short description snippet below the search title. Ideally 120 - 160 characters. Include key search terms to boost Click-Through Rate (CTR)."
         };
       case "seoKeywords":
         return {
           title: "SEO Keywords",
-          text: "Các từ khóa mô tả chủ đề chính của bài viết, ngăn cách nhau bởi dấu phẩy để hệ thống robot của Google dễ lập chỉ mục."
+          text: "Key search keywords describing the main theme of the article, separated by commas, making it easy for search bots to index."
         };
       default:
         return {
-          title: "Gợi ý điền thông tin",
-          text: "Nhấp chuột hoặc di chuột vào các ô nhập dữ liệu ở cột bên phải để hiển thị hướng dẫn chi tiết và cách tối ưu hóa chuẩn SEO của trường nhập liệu đó tại đây."
+          title: "Input Helper Suggestions",
+          text: "Click or focus on any input field in the right panel to display detailed writing tips and SEO optimization guidelines here."
         };
     }
   };
@@ -513,16 +514,16 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
             type="button"
             onClick={onClose}
             className="p-2.5 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors"
-            title="Quay lại danh sách"
+            title="Back to List"
           >
             <ArrowLeft size={16} />
           </button>
           <div>
             <h1 className="text-sm font-extrabold text-slate-900 leading-tight">
-              {newsToEdit ? "Chỉnh sửa bài viết" : "Tạo bài viết mới"}
+              {newsToEdit ? "Edit Article" : "Create New Article"}
             </h1>
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
-              Trạng thái bài viết:{" "}
+              Article Status:{" "}
               <span
                 className={`ml-1 text-[9.5px] font-extrabold uppercase ${
                   status === "PUBLISHED"
@@ -533,10 +534,10 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
                 }`}
               >
                 {status === "PUBLISHED"
-                  ? "Đã xuất bản"
+                  ? "Published"
                   : status === "PENDING_REVIEW"
-                  ? "Chờ duyệt"
-                  : "Bản nháp"}
+                  ? "Pending Review"
+                  : "Draft"}
               </span>
             </p>
           </div>
@@ -545,7 +546,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
         {/* Action buttons */}
         <div className="flex items-center gap-2">
           <PremiumButton
-            label="Hủy bỏ"
+            label="Cancel"
             variant="gray"
             size="md"
             onClick={onClose}
@@ -553,7 +554,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
           />
           {status !== "PUBLISHED" && (
             <PremiumButton
-              label="Lưu nháp"
+              label="Save Draft"
               variant="gray"
               size="md"
               onClick={() => handleSave("DRAFT")}
@@ -561,7 +562,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
             />
           )}
           <PremiumButton
-            label={newsToEdit ? "Cập nhật" : "Đăng bài"}
+            label={newsToEdit ? "Update" : "Publish"}
             variant="orange"
             size="md"
             onClick={() => handleSave(status === "DRAFT" ? "PENDING_REVIEW" : status)}

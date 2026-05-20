@@ -18,7 +18,7 @@ export const TableView = ({ Icon = Search }: TableViewProps) => (
         className="relative z-10"
       >
         <Image
-          src="/icon/icon-noTable.png"
+          src="/icons/icon-noTable.png"
           alt="No Table Data"
           width={120}
           height={120}

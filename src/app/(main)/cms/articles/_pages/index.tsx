@@ -74,7 +74,7 @@ export const ManagerCMSScreen = () => {
             if (itemDate > end) return false;
           }
         } catch (e) {
-          console.error("Lỗi khi chuyển đổi ngày tạo bài viết", e);
+          console.error("Error converting article creation date", e);
         }
       }
 
@@ -102,9 +102,9 @@ export const ManagerCMSScreen = () => {
   const handleDeleteNews = async (id: string) => {
     const itemToDelete = newsList.find((n) => n.id === id);
     if (itemToDelete) {
-      if (confirm(`Bạn có chắc chắn muốn xóa bài viết "${itemToDelete.title}" không?`)) {
+      if (confirm(`Are you sure you want to delete the article "${itemToDelete.title}"?`)) {
         await deleteArticle(id);
-        showToast(`Đã xóa bài viết thành công`, "warning");
+        showToast(`Article deleted successfully`, "warning");
       }
     }
   };
@@ -116,9 +116,9 @@ export const ManagerCMSScreen = () => {
     });
 
     if (selectedNewsToEdit) {
-      showToast(`Đã cập nhật bài viết thành công!`, "success");
+      showToast(`Article updated successfully!`, "success");
     } else {
-      showToast(`Đã thêm bài viết mới thành công!`, "success");
+      showToast(`New article added successfully!`, "success");
     }
 
     setIsDrawerOpen(false);
@@ -131,7 +131,7 @@ export const ManagerCMSScreen = () => {
     setSelectedStatus("ALL");
     setStartDate("");
     setEndDate("");
-    showToast("Đã thiết lập lại bộ lọc", "info");
+    showToast("Filters reset successfully", "info");
   };
 
   const columns = useMemo(() => getColumns(handleEditNews, handleDeleteNews), [newsList]);
@@ -164,30 +164,30 @@ export const ManagerCMSScreen = () => {
       {/* Page Header */}
       <AdminPageHeader
         icon={Newspaper}
-        title="Quản lý"
-        highlightTitle="Tin tức & CMS"
-        subtitle="Soạn thảo, quản lý chuyên mục, tối ưu SEO và cấu hình xuất bản tin bài viết"
+        title="Manage"
+        highlightTitle="News & CMS"
+        subtitle="Draft, manage categories, optimize SEO, and configure article publishing settings"
         metrics={[
           {
-            label: "Tổng bài viết",
+            label: "Total Articles",
             value: stats.total,
             icon: <BookOpen size={14} />,
             color: "blue"
           },
           {
-            label: "Đã xuất bản",
+            label: "Published",
             value: stats.published,
             icon: <Sparkles size={14} />,
             color: "emerald"
           },
           {
-            label: "Bản nháp",
+            label: "Drafts",
             value: stats.draft,
             icon: <Flame size={14} />,
             color: "orange"
           },
           {
-            label: "Chờ duyệt",
+            label: "Pending Review",
             value: stats.pendingReview,
             icon: <MessageSquare size={14} />,
             color: "rose"
@@ -201,7 +201,7 @@ export const ManagerCMSScreen = () => {
         columns={columns}
         loading={false}
         rowKey="id"
-        emptyMessage="Không tìm thấy bài viết nào phù hợp với bộ lọc."
+        emptyMessage="No articles found matching the current filters."
         page={currentPage}
         headerContent={
           <CMSFilters

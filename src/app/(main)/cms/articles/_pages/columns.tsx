@@ -29,7 +29,7 @@ export const getColumns = (
   handleDeleteNews: (id: string) => void
 ) => [
   {
-    header: "Bài viết",
+    header: "Article",
     accessor: "title" as keyof NewsItem,
     className: "w-[40%] min-w-[320px]",
     render: (news: NewsItem) => (
@@ -53,7 +53,7 @@ export const getColumns = (
     )
   },
   {
-    header: "Danh mục",
+    header: "Category",
     accessor: "category" as keyof NewsItem,
     className: "w-[12%] text-center",
     align: "center" as const,
@@ -64,7 +64,7 @@ export const getColumns = (
     )
   },
   {
-    header: "Tác giả",
+    header: "Author",
     accessor: "authorName" as keyof NewsItem,
     className: "w-[15%]",
     render: (news: NewsItem) => (
@@ -81,7 +81,7 @@ export const getColumns = (
     )
   },
   {
-    header: "Trạng thái",
+    header: "Status",
     accessor: "status" as keyof NewsItem,
     className: "w-[12%] text-center",
     align: "center" as const,
@@ -90,7 +90,7 @@ export const getColumns = (
     )
   },
   {
-    header: "Ngày tạo",
+    header: "Created Date",
     accessor: "createdDate" as keyof NewsItem,
     className: "w-[15%]",
     render: (news: NewsItem) => (
@@ -101,7 +101,7 @@ export const getColumns = (
     )
   },
   {
-    header: "Lượt xem",
+    header: "Views",
     accessor: "views" as keyof NewsItem,
     className: "w-[10%] text-center",
     align: "center" as const,
@@ -112,7 +112,7 @@ export const getColumns = (
     )
   },
   {
-    header: "Thao tác",
+    header: "Actions",
     className: "w-[10%] text-center",
     align: "center" as const,
     render: (news: NewsItem) => (
@@ -121,13 +121,13 @@ export const getColumns = (
           onClick={() => handleEditNews(news)}
           icon={<Edit size={13} />}
           color="orange"
-          tooltip="Chỉnh sửa bài viết"
+          tooltip="Edit article"
         />
         <ActionTooltipBtn
           onClick={() => handleDeleteNews(news.id)}
           icon={<Trash2 size={13} />}
           color="red"
-          tooltip="Xóa bài viết"
+          tooltip="Delete article"
         />
       </div>
     )

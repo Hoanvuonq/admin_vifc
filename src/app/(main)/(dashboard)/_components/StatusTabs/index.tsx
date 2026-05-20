@@ -215,7 +215,7 @@ export const StatusTabs = <T extends string>({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         className={cn(
-                          "ml-1 flex items-center justify-center min-w-[16px] md:min-w-5 h-4 md:h-5 px-1 md:px-1.5 rounded-full text-[8px] md:text-[10px] font-bold tabular-nums transition-all duration-300",
+                          "ml-1 flex items-center justify-center min-w-4 md:min-w-5 h-4 md:h-5 px-1 md:px-1.5 rounded-full text-[8px] md:text-[10px] font-bold tabular-nums transition-all duration-300",
                           isActive || tab.isImportant
                             ? "bg-orange-500 text-white shadow-lg shadow-orange-200"
                             : "bg-gray-200 text-gray-500"
