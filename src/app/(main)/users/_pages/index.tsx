@@ -15,7 +15,7 @@ import {
     X
 } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
-import { UserFilters, UserModal, PaymentHistoryModal } from "../_components";
+import { UserFilters, UserModal, PaymentHistoryModal, UserDetailModal } from "../_components";
 import { getColumns } from "./columns";
 import { INITIAL_USERS } from "../_constants/users.constants";
 import { UserItem } from "./types";
@@ -34,6 +34,9 @@ export const ManagerUsersScreen = () => {
 
     const [isPaymentHistoryModalOpen, setIsPaymentHistoryModalOpen] = useState(false);
     const [selectedUserIdForHistory, setSelectedUserIdForHistory] = useState<string | null>(null);
+
+    const [isUserDetailModalOpen, setIsUserDetailModalOpen] = useState(false);
+    const [selectedUserForDetail, setSelectedUserForDetail] = useState<string | null>(null);
 
 
     const [currentPage, setCurrentPage] = useState(0);
@@ -181,7 +184,12 @@ export const ManagerUsersScreen = () => {
         setIsPaymentHistoryModalOpen(true);
     };
 
-    const columns = useMemo(() => getColumns(handleCycleRole, handleToggleBlock, handleDeleteUser, handleViewPaymentHistory), []);
+    const handleViewUserDetail = (id: string) => {
+        setSelectedUserForDetail(id);
+        setIsUserDetailModalOpen(true);
+    };
+
+    const columns = useMemo(() => getColumns(handleCycleRole, handleToggleBlock, handleDeleteUser, handleViewPaymentHistory, handleViewUserDetail), []);
 
     const renderUserDetail = (user: UserItem) => {
         return (
@@ -328,6 +336,15 @@ export const ManagerUsersScreen = () => {
                     setSelectedUserIdForHistory(null);
                 }}
                 userId={selectedUserIdForHistory}
+            />
+
+            <UserDetailModal
+                open={isUserDetailModalOpen}
+                userId={selectedUserForDetail}
+                onClose={() => {
+                    setIsUserDetailModalOpen(false);
+                    setSelectedUserForDetail(null);
+                }}
             />
 
         </div>

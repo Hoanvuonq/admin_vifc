@@ -1,5 +1,5 @@
 import { ItemImage, ActionTooltipBtn, StatusBadge } from "@/components";
-import { Clock, History, Lock, Pencil, Shield, Trash2, Unlock } from "lucide-react";
+import { Clock, History, Lock, Pencil, Shield, Trash2, Unlock, UserIcon } from "lucide-react";
 import { UserItem } from "./types";
 import { RoleBadge } from "../_components/RoleBadge";
 
@@ -7,7 +7,8 @@ export const getColumns = (
     handleCycleRole: (id: string) => void,
     handleToggleBlock: (id: string, status: "ACTIVE" | "BANNED") => void,
     handleDeleteUser: (id: string) => void,
-    handleViewPaymentHistory: (id: string) => void
+    handleViewPaymentHistory: (id: string) => void,
+    handleViewUserDetail: (id: string) => void
 ) => [
         {
             header: "User & Contact",
@@ -80,7 +81,17 @@ export const getColumns = (
             render: (user: UserItem) => (
                 <div className="flex items-center justify-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                     <ActionTooltipBtn
-                        onClick={() => handleCycleRole(user.id)}
+                        onClick={() => handleViewUserDetail(user.id)}
+                        icon={<UserIcon size={14} />}
+                        color="blue"
+                        tooltip="View Profile"
+                    />
+                    <ActionTooltipBtn
+                        onClick={() => {
+                            // This should open the edit modal, but for now we'll leave it as handleCycleRole 
+                            // or pass handleEditUser. The user previously bound this to handleCycleRole.
+                            handleCycleRole(user.id);
+                        }}
                         icon={<Pencil size={14} />}
                         color="emerald"
                         tooltip="Edit User"
