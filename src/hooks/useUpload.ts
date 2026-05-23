@@ -1,6 +1,5 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
-import { generatePdfThumbnail } from "@/utils/pdf";
 
 export const useUpload = () => {
   const uploadFile = useCallback(
@@ -15,6 +14,7 @@ export const useUpload = () => {
             formData.append("file", file);
 
             try {
+              const { generatePdfThumbnail } = await import("@/utils/pdf");
               const thumbnailBlob = await generatePdfThumbnail(file);
               if (thumbnailBlob) {
                 formData.append("thumbnail", thumbnailBlob, "thumbnail.jpg");
@@ -36,7 +36,10 @@ export const useUpload = () => {
             xhr.onload = () => {
               if (xhr.status === 200) {
                 const response = JSON.parse(xhr.responseText);
-                resolve({ url: response.fileUrl, thumbnailUrl: response.thumbnailUrl });
+                resolve({
+                  url: response.fileUrl,
+                  thumbnailUrl: response.thumbnailUrl,
+                });
               } else {
                 let errorMsg = "Failed to upload PDF";
                 try {
@@ -47,12 +50,13 @@ export const useUpload = () => {
               }
             };
 
-            xhr.onerror = () => reject(new Error("Network error during upload"));
+            xhr.onerror = () =>
+              reject(new Error("Network error during upload"));
             xhr.send(formData);
           });
         }
 
-        const response = await fetch("/api/upload", {
+        const response = await fetch("/api/upload/image", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ filename: file.name, contentType: file.type }),

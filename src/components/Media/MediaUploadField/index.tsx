@@ -90,21 +90,21 @@ export const MediaUploadField: React.FC<
         currentList = [...currentList, newFile];
         onChange(currentList);
 
-        // if (onUploadApi) {
-        //   try {
-        //     const result = await onUploadApi(file, (p) => {
-        //       onChange(valueRef.current.map((f) => f.uid === uid ? { ...f, percent: p } : f));
-        //     });
-        //     onChange(valueRef.current.map((f) => f.uid === uid ? {
-        //       ...f, status: "done", percent: 100,
-        //       url: result?.url || result?.data?.url || objectUrl,
-        //       thumbnailUrl: result?.thumbnailUrl || result?.data?.thumbnailUrl || initialThumbnailUrl,
-        //       assetId: result?.id || result?.data?.id,
-        //     } : f));
-        //   } catch { 
-        //     onChange(valueRef.current.map((f) => f.uid === uid ? { ...f, status: "error" } : f)); 
-        //   }
-        // }
+        if (onUploadApi) {
+          try {
+            const result = await onUploadApi(file, (p) => {
+              onChange(valueRef.current.map((f) => f.uid === uid ? { ...f, percent: p } : f));
+            });
+            onChange(valueRef.current.map((f) => f.uid === uid ? {
+              ...f, status: "done", percent: 100,
+              url: result?.url || result?.data?.url || objectUrl,
+              thumbnailUrl: result?.thumbnailUrl || result?.data?.thumbnailUrl || initialThumbnailUrl,
+              assetId: result?.id || result?.data?.id,
+            } : f));
+          } catch { 
+            onChange(valueRef.current.map((f) => f.uid === uid ? { ...f, status: "error" } : f)); 
+          }
+        }
       }
       if (fileInputRef.current) fileInputRef.current.value = "";
     };

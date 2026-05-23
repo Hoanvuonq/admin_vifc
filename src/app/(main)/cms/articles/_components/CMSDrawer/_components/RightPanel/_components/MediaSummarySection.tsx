@@ -1,6 +1,7 @@
 import React from "react";
 import { FormInput, MediaUploadField } from "@/components";
 import { Image as ImageIcon } from "lucide-react";
+import { useUpload } from "@/hooks/useUpload";
 
 interface MediaSummarySectionProps {
   activeInput: string | null;
@@ -21,6 +22,8 @@ export const MediaSummarySection: React.FC<MediaSummarySectionProps> = ({
   setSummary,
   sectionMediaCompleted,
 }) => {
+  const { uploadFile } = useUpload();
+
   return (
     <div
       id="form-section-media"
@@ -33,9 +36,8 @@ export const MediaSummarySection: React.FC<MediaSummarySectionProps> = ({
           <span className="text-[11px] font-extrabold uppercase text-gray-700 tracking-wider">2. Media & Summary</span>
         </div>
         <span
-          className={`text-[8.5px] font-extrabold px-2 py-0.5 rounded-full ${
-            sectionMediaCompleted ? "bg-emerald-50 text-emerald-600" : "bg-red-50/50 text-red-500"
-          }`}
+          className={`text-[8.5px] font-extrabold px-2 py-0.5 rounded-full ${sectionMediaCompleted ? "bg-emerald-50 text-emerald-600" : "bg-red-50/50 text-red-500"
+            }`}
         >
           {sectionMediaCompleted ? "Completed" : "Incomplete"}
         </span>
@@ -46,6 +48,7 @@ export const MediaSummarySection: React.FC<MediaSummarySectionProps> = ({
           <label className="text-[11px] font-bold text-gray-700 ml-0.5">Article Cover Image</label>
           <div className="p-3 bg-slate-50/60 rounded-xl flex justify-center">
             <MediaUploadField
+              onUploadApi={uploadFile}
               value={thumbnail && !thumbnail.includes("api.dicebear.com") ? [{ uid: "thumbnail", url: thumbnail, status: "done" }] : []}
               onChange={(files) => {
                 if (files.length > 0) {
