@@ -9,7 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@hookform/resolvers": "^5.4.0",
+=======
+    "@aws-sdk/client-s3": "^3.1053.0",
+    "@aws-sdk/s3-request-presigner": "^3.1053.0",
+>>>>>>> cc5ea4c8d42465b6f962c819f3ccfe4562fefe6d
     "@reduxjs/toolkit": "^2.12.0",
     "@tanstack/react-query": "^5.100.11",
     "clsx": "^2.1.1",
