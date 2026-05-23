@@ -13,6 +13,7 @@ export * from "./ThemeSwitcher";
 export * from "./MetricItem";
 export * from "./AdminPageHeader";
 export * from "./SectionHeader";
+export * from "./DataTable";
 export * from "./ChartComponents";
 export * from "./AppPopover";
 export * from "./AccountDropdown";

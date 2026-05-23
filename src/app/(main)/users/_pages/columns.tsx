@@ -1,12 +1,13 @@
 import { ItemImage, ActionTooltipBtn, StatusBadge } from "@/components";
-import { Clock, Lock, Shield, Trash2, Unlock } from "lucide-react";
+import { Clock, History, Lock, Pencil, Shield, Trash2, Unlock } from "lucide-react";
 import { UserItem } from "./types";
 import { RoleBadge } from "../_components/RoleBadge";
 
 export const getColumns = (
     handleCycleRole: (id: string) => void,
     handleToggleBlock: (id: string, status: "ACTIVE" | "BANNED") => void,
-    handleDeleteUser: (id: string) => void
+    handleDeleteUser: (id: string) => void,
+    handleViewPaymentHistory: (id: string) => void
 ) => [
         {
             header: "User & Contact",
@@ -80,9 +81,15 @@ export const getColumns = (
                 <div className="flex items-center justify-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                     <ActionTooltipBtn
                         onClick={() => handleCycleRole(user.id)}
-                        icon={<Shield size={14} />}
-                        color="orange"
-                        tooltip="Change Role"
+                        icon={<Pencil size={14} />}
+                        color="emerald"
+                        tooltip="Edit User"
+                    />
+                    <ActionTooltipBtn
+                        onClick={() => handleViewPaymentHistory(user.id)}
+                        icon={<History size={14} />}
+                        color="emerald"
+                        tooltip="History Payment"
                     />
                     {user.status === "BANNED" ? (
                         <ActionTooltipBtn

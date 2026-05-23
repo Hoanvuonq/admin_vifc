@@ -82,12 +82,10 @@ export const ManagerCMSScreen = () => {
     });
   }, [newsList, searchText, selectedCategory, selectedStatus, startDate, endDate]);
 
-  // Auto-reset page when filtering changes
   useEffect(() => {
     setCurrentPage(0);
   }, [searchText, selectedCategory, selectedStatus, startDate, endDate]);
 
-  // Paginated data
   const paginatedNews = useMemo(() => {
     const start = currentPage * pageSize;
     const end = start + pageSize;
@@ -154,7 +152,7 @@ export const ManagerCMSScreen = () => {
     <div className="min-h-screen space-y-6 animate-in fade-in duration-700 relative">
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-5 right-5 z-[100000] px-5 py-3 rounded-2xl shadow-lg border text-xs font-bold transition-all duration-300 animate-in slide-in-from-top-5 ${toast.type === "success" ? "bg-emerald-50 text-emerald-600 border-emerald-200" :
+        <div className={`fixed top-5 right-5 z-100000 px-5 py-3 rounded-2xl shadow-lg border text-xs font-bold transition-all duration-300 animate-in slide-in-from-top-5 ${toast.type === "success" ? "bg-emerald-50 text-emerald-600 border-emerald-200" :
           toast.type === "warning" ? "bg-red-50 text-red-600 border-red-200" : "bg-blue-50 text-blue-600 border-blue-200"
           }`}>
           {toast.message}

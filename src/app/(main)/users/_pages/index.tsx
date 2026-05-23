@@ -15,7 +15,7 @@ import {
     X
 } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
-import { UserFilters, UserModal } from "../_components";
+import { UserFilters, UserModal, PaymentHistoryModal } from "../_components";
 import { getColumns } from "./columns";
 import { INITIAL_USERS } from "../_constants/users.constants";
 import { UserItem } from "./types";
@@ -31,6 +31,9 @@ export const ManagerUsersScreen = () => {
 
     const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
     const [selectedUserToEdit, setSelectedUserToEdit] = useState<UserItem | null>(null);
+
+    const [isPaymentHistoryModalOpen, setIsPaymentHistoryModalOpen] = useState(false);
+    const [selectedUserIdForHistory, setSelectedUserIdForHistory] = useState<string | null>(null);
 
 
     const [currentPage, setCurrentPage] = useState(0);
@@ -173,7 +176,12 @@ export const ManagerUsersScreen = () => {
         setSelectedUserToEdit(null);
     };
 
-    const columns = useMemo(() => getColumns(handleCycleRole, handleToggleBlock, handleDeleteUser), []);
+    const handleViewPaymentHistory = (id: string) => {
+        setSelectedUserIdForHistory(id);
+        setIsPaymentHistoryModalOpen(true);
+    };
+
+    const columns = useMemo(() => getColumns(handleCycleRole, handleToggleBlock, handleDeleteUser, handleViewPaymentHistory), []);
 
     const renderUserDetail = (user: UserItem) => {
         return (
@@ -311,6 +319,15 @@ export const ManagerUsersScreen = () => {
                 }}
                 userToEdit={selectedUserToEdit}
                 onSave={handleSaveUser}
+            />
+
+            <PaymentHistoryModal
+                isOpen={isPaymentHistoryModalOpen}
+                onClose={() => {
+                    setIsPaymentHistoryModalOpen(false);
+                    setSelectedUserIdForHistory(null);
+                }}
+                userId={selectedUserIdForHistory}
             />
 
         </div>
