@@ -4,7 +4,7 @@ export interface NewsItem {
   slug: string;
   summary: string;
   content: string;
-  category: string;
+  category: string[];
   tags: string[];
   thumbnail: string;
   authorName: string;

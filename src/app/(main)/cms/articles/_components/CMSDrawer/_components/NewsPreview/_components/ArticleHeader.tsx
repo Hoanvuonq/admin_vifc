@@ -3,7 +3,7 @@ import { Calendar, Clock, User } from "lucide-react";
 
 interface ArticleHeaderProps {
   title: string;
-  category: string;
+  category: string[];
   getReadingTime: () => number;
   hideBorderTop?: boolean;
 }
@@ -12,13 +12,22 @@ export const ArticleHeader: React.FC<ArticleHeaderProps> = ({
   title, category, getReadingTime, hideBorderTop = false
 }) => (
   <div className="space-y-4">
-    <div className="flex items-center gap-2 select-none">
+    <div className="flex flex-wrap items-center gap-2 select-none">
       <span className="text-[9px] font-extrabold text-slate-455 uppercase tracking-widest">News</span>
       <span className="text-slate-300 text-xs">/</span>
-      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 text-orange-655 text-[9.5px] font-extrabold uppercase tracking-wide">
-        <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-        {category || "No Category Selected"}
-      </span>
+      {category && (Array.isArray(category) ? category : [category]).length > 0 ? (
+        (Array.isArray(category) ? category : [category]).map((cat, idx) => (
+          <span key={idx} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 text-orange-655 text-[9.5px] font-extrabold uppercase tracking-wide">
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+            {cat}
+          </span>
+        ))
+      ) : (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 text-orange-655 text-[9.5px] font-extrabold uppercase tracking-wide">
+          <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+          No Category Selected
+        </span>
+      )}
     </div>
 
     <h1 className="text-xl md:text-2.5xl font-extrabold text-slate-900 leading-tight tracking-tight">

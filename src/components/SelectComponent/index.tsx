@@ -63,7 +63,7 @@ export const SelectComponent = ({
           .map((opt) => opt.label)
           .join(", ");
       }
-      return `Đã chọn ${vals.length} mục`;
+      return `Selected ${vals.length} items`;
     } else {
       const selectedOpt = combinedOptions.find((opt) => opt.value === value);
       return selectedOpt ? selectedOpt.label : placeholder;

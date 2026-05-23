@@ -1,12 +1,15 @@
 import React from "react";
 import { RightPanelProps } from "../type";
 import { FormInput, MediaUploadField } from "@/components";
+import { useUpload } from "@/hooks/useUpload";
 
 export const PDFSection: React.FC<RightPanelProps> = ({
   pdfUrl, setPdfUrl,
   pdfCover, setPdfCover,
   pdfName, setPdfName,
 }) => {
+  const { uploadFile } = useUpload();
+
   return (
     <div id="section-pdf" className="space-y-4">
       <div className="flex items-center justify-between pb-2 border-b border-gray-100">
@@ -35,10 +38,12 @@ export const PDFSection: React.FC<RightPanelProps> = ({
                   setPdfUrl("");
                 }
               }}
+              onUploadApi={uploadFile}
               allowedTypes={["application/pdf"]}
               maxCount={1}
               size="md"
               isBanner={true}
+              isPDF={true}
               className="w-full"
             />
           </div>
@@ -62,6 +67,7 @@ export const PDFSection: React.FC<RightPanelProps> = ({
                   setPdfCover("");
                 }
               }}
+              onUploadApi={uploadFile}
               maxCount={1}
               size="md"
               isBanner={true}

@@ -10,8 +10,8 @@ interface BasicInfoSectionProps {
   handleTitleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   slug: string;
   setSlug: (val: string) => void;
-  category: string;
-  setCategory: (val: string) => void;
+  category: string[];
+  setCategory: (val: string[]) => void;
   tags: string[];
   setTags: (val: string[]) => void;
   tagOptions: { value: string; label: string }[];
@@ -44,9 +44,8 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
           <span className="text-[11px] font-extrabold uppercase text-gray-700 tracking-wider">1. Basic Info</span>
         </div>
         <span
-          className={`text-[8.5px] font-extrabold px-2 py-0.5 rounded-full ${
-            sectionBasicCompleted ? "bg-emerald-50 text-emerald-600" : "bg-red-50/50 text-red-500"
-          }`}
+          className={`text-[8.5px] font-extrabold px-2 py-0.5 rounded-full ${sectionBasicCompleted ? "bg-emerald-50 text-emerald-600" : "bg-red-50/50 text-red-500"
+            }`}
         >
           {sectionBasicCompleted ? "Completed" : "Incomplete"}
         </span>
@@ -78,8 +77,9 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
             label="News Category"
             required
             value={category}
-            onChange={setCategory}
+            onChange={(val) => setCategory(Array.isArray(val) ? val : [val])}
             options={CATEGORY_OPTIONS}
+            isMulti
           />
         </div>
         <div className="space-y-2" onFocusCapture={() => setActiveInput("tags")}>

@@ -53,7 +53,7 @@ export const ManagerCMSScreen = () => {
         (n.content && n.content.toLowerCase().includes(searchText.toLowerCase())) ||
         n.id.toLowerCase().includes(searchText.toLowerCase());
 
-      const matchesCategory = selectedCategory === "ALL" || n.category === selectedCategory;
+      const matchesCategory = selectedCategory === "ALL" || (Array.isArray(n.category) ? n.category.includes(selectedCategory) : n.category === selectedCategory);
       const matchesStatus = selectedStatus === "ALL" || n.status === selectedStatus;
 
       // Date range filtering

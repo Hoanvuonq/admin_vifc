@@ -25,6 +25,7 @@ export const MediaUploadField: React.FC<
     isBanner?: boolean;
     isVideo?: boolean;
     isPost?: boolean;
+    isPDF?: boolean;
   }
 > = ({
   value = [],
@@ -40,6 +41,7 @@ export const MediaUploadField: React.FC<
   isBanner = false,
   isVideo = false,
   isPost = false,
+  isPDF = false,
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [previewIndex, setPreviewIndex] = useState<number | null>(null);
@@ -116,8 +118,8 @@ export const MediaUploadField: React.FC<
                       {file.type?.includes("video") || file.url?.toLowerCase().endsWith(".mp4") || file.url?.toLowerCase().endsWith(".mov")
                         ? <video src={file.url} className="w-full h-full object-cover" muted loop autoPlay playsInline />
                         : file.type?.includes("pdf") || file.url?.toLowerCase().endsWith(".pdf")
-                        ? <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-rose-500"><File size={32} /><span className="text-[10px] mt-2 font-bold uppercase text-slate-500">{file.name || "PDF Document"}</span></div>
-                        : <img src={file.url} alt="preview" className={cn("w-full h-full object-cover group-hover:scale-105", COMMON_TRANSITION)} />
+                          ? <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-rose-500"><File size={32} /><span className="text-[10px] mt-2 font-bold uppercase text-slate-500">{file.name || "PDF Document"}</span></div>
+                          : <img src={file.url} alt="preview" className={cn("w-full h-full object-cover group-hover:scale-105", COMMON_TRANSITION)} />
                       }
                       <div className="absolute inset-0 bg-linear-to-t from-orange-950/40 via-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>
@@ -183,11 +185,11 @@ export const MediaUploadField: React.FC<
 
               <div className="relative z-10 flex flex-col items-center p-2 text-center">
                 <div className={cn("w-14 h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-gray-600 group-hover:text-orange-600 group-hover:shadow-xl group-hover:shadow-orange-500/20 group-hover:-rotate-12", COMMON_TRANSITION)}>
-                  {isVideo ? <VideoIcon size={24} /> : isBanner ? <Layout size={24} /> : <Plus size={24} />}
+                  {isPDF ? <File size={24} /> : isVideo ? <VideoIcon size={24} /> : isBanner ? <Layout size={24} /> : <Plus size={24} />}
                 </div>
                 <div className="mt-2">
                   <p className="text-xs font-bold text-gray-800 group-hover:text-orange-600 transition-colors flex items-center justify-center gap-1">
-                    {isVideo ? "Post Video" : isBanner ? "Add Banner" : "Add Image"}
+                    {isPDF ? "Upload PDF" : isVideo ? "Post Video" : isBanner ? "Add Banner" : "Add Image"}
                     <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5" />
                   </p>
                   <p className="mt-1 text-[9px] font-medium text-gray-600 uppercase leading-none">Up to {maxSizeMB}MB</p>

@@ -10,8 +10,8 @@ export interface RightPanelProps {
   slug: string;
 
   setSlug: (val: string) => void;
-  category: string;
-  setCategory: (val: string) => void;
+  category: string[];
+  setCategory: (val: string[]) => void;
   tags: string[];
   setTags: (val: string[]) => void;
   tagOptions: { value: string; label: string }[];

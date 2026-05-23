@@ -1,7 +1,7 @@
 "use client";
 
 import { PremiumButton } from "@/components";
-import { FileText, ArrowLeft } from "lucide-react";
+import { FileText, ArrowLeft, X, Check, Save } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
 import { NewsItem } from "../../_pages/types";
@@ -114,7 +114,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
   // Form states
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [category, setCategory] = useState("Web3");
+  const [category, setCategory] = useState<string[]>(["Web3"]);
   const [tags, setTags] = useState<string[]>([]);
   const [thumbnail, setThumbnail] = useState("");
   const [summary, setSummary] = useState("");
@@ -177,7 +177,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
       } else {
         setTitle("");
         setSlug("");
-        setCategory("Web3");
+        setCategory(["Web3"]);
         setTags([]);
         setThumbnail("https://api.dicebear.com/7.x/shapes/svg?seed=" + Math.random().toString());
         setSummary("");
@@ -516,19 +516,18 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
               Article Status:{" "}
               <span
-                className={`ml-1 text-[9.5px] font-extrabold uppercase ${
-                  status === "PUBLISHED"
-                    ? "text-emerald-500"
-                    : status === "PENDING_REVIEW"
+                className={`ml-1 text-[9.5px] font-extrabold uppercase ${status === "PUBLISHED"
+                  ? "text-emerald-500"
+                  : status === "PENDING_REVIEW"
                     ? "text-amber-500"
                     : "text-blue-500"
-                }`}
+                  }`}
               >
                 {status === "PUBLISHED"
                   ? "Published"
                   : status === "PENDING_REVIEW"
-                  ? "Pending Review"
-                  : "Draft"}
+                    ? "Pending Review"
+                    : "Draft"}
               </span>
             </p>
           </div>
@@ -537,24 +536,27 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
         {/* Action buttons */}
         <div className="flex items-center gap-2">
           <PremiumButton
+            icon={X}
             label="Cancel"
-            variant="gray"
+            variant="rose"
             size="md"
             onClick={onClose}
             className="rounded-xl font-bold px-4 py-2 text-xs"
           />
-          {status !== "PUBLISHED" && (
+          {/* {status !== "PUBLISHED" && (
             <PremiumButton
               label="Save Draft"
+              icon={Save}
               variant="gray"
               size="md"
               onClick={() => handleSave("DRAFT")}
               className="rounded-xl font-bold border border-gray-200 px-4 py-2 bg-white text-gray-700 hover:bg-slate-50 text-xs"
             />
-          )}
+          )} */}
           <PremiumButton
             label={newsToEdit ? "Update" : "Publish"}
-            variant="orange"
+            variant="emerald"
+            icon={Check}
             size="md"
             onClick={() => handleSave(status === "DRAFT" ? "PENDING_REVIEW" : status)}
             className="rounded-xl font-bold px-6 py-2 text-xs"

@@ -13,7 +13,7 @@ export interface ContentBlock {
 
 export interface NewsPreviewProps {
   title: string;
-  category: string;
+  category: string[];
   thumbnail: string;
   summary: string;
   content: string;

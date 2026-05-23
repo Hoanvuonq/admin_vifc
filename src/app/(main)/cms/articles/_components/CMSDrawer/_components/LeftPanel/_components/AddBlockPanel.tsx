@@ -13,7 +13,6 @@ const BLOCK_BUTTONS = [
   {
     type: "text", label: "Paragraph", icon: FileText,
     hover: "hover:border-orange-200 hover:text-orange-500 hover:bg-orange-50/10",
-    className: "col-span-2 py-3",
   },
   {
     type: "heading", label: "Heading H2", icon: Heading2,
