@@ -1,4 +1,4 @@
-import { s3PdfClient, s3ImageClient } from "@/config";
+import s3Client from "@/config";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
-    console.log("process.env.AWS_BUCKET_BDF", process.env.AWS_BUCKET_BDF);
+    console.log("process.env.AWS_BUCKET_NAME", process.env.AWS_BUCKET_NAME);
 
     if (file.type !== "application/pdf") {
       return NextResponse.json({ error: "Only PDF allowed" }, { status: 400 });
@@ -33,31 +33,31 @@ export async function POST(req: NextRequest) {
     const thumbKey = `pdfs/thumbnails/${Date.now()}-thumb.jpg`;
 
     // Upload PDF
-    await s3PdfClient.send(
+    await s3Client.send(
       new PutObjectCommand({
-        Bucket: process.env.AWS_BUCKET_BDF!,
+        Bucket: process.env.AWS_BUCKET_NAME,
         Key: pdfKey,
         Body: buffer,
         ContentType: "application/pdf",
       }),
     );
 
-    const fileUrl = `https://${process.env.AWS_BUCKET_BDF}.s3.amazonaws.com/${pdfKey}`;
+    const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${pdfKey}`;
 
     let thumbnailUrl = null;
 
     if (thumbnail) {
       try {
         const thumbBuffer = Buffer.from(await thumbnail.arrayBuffer());
-        await s3ImageClient.send(
+        await s3Client.send(
           new PutObjectCommand({
-            Bucket: process.env.AWS_BUCKET_IMAGE!,
+            Bucket: process.env.AWS_BUCKET_NAME!,
             Key: thumbKey,
             Body: thumbBuffer,
             ContentType: "image/jpeg",
           }),
         );
-        thumbnailUrl = `https://${process.env.AWS_BUCKET_IMAGE}.s3.amazonaws.com/${thumbKey}`;
+        thumbnailUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${thumbKey}`;
       } catch (thumbErr) {
         console.warn("Thumbnail upload failed, but PDF succeeded:", thumbErr);
       }
