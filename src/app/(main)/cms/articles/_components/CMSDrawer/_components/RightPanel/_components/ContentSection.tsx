@@ -10,6 +10,7 @@ import {
   Trash2
 } from "lucide-react";
 import { ContentBlock } from "../../NewsPreview/type";
+import { useUpload } from "@/hooks/useUpload";
 
 interface ContentSectionProps {
   activeInput: string | null;
@@ -30,6 +31,7 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
   handleDeleteBlock,
   sectionContentCompleted,
 }) => {
+  const { uploadFile } = useUpload();
   const alignOptions = [
     { key: "left" as const, Icon: AlignLeft },
     { key: "center" as const, Icon: AlignCenter },
@@ -161,6 +163,7 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
                         maxCount={1}
                         size="md"
                         isBanner={true}
+                        onUploadApi={uploadFile}
                         className="w-full"
                       />
                     </div>
@@ -174,6 +177,49 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
                       value={block.caption || ""}
                       onChange={(e) => handleBlockChange(block.id, { caption: e.target.value })}
                       placeholder="Image description / caption..."
+                      className="h-10 text-xs"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {block.type === "pdf" && (
+                <div className="space-y-3">
+                  <div className="space-y-2 pt-1.5 border-t border-slate-100/60">
+                    <label className="text-[9px] uppercase text-gray-500 tracking-wider font-semibold">PDF File</label>
+                    <div className="flex justify-center p-3 bg-slate-50/60 rounded-xl border border-slate-100">
+                      <MediaUploadField
+                        value={block.content ? [{ uid: block.id, url: block.content, status: "done", name: block.caption, thumbnailUrl: block.thumbnailUrl }] : []}
+                        onChange={(files) => {
+                          if (files.length > 0) {
+                            handleBlockChange(block.id, {
+                              content: files[0].url || "",
+                              caption: files[0].name || block.caption,
+                              thumbnailUrl: files[0].thumbnailUrl || block.thumbnailUrl
+                            });
+                          } else {
+                            handleBlockChange(block.id, { content: "", caption: "", thumbnailUrl: "" });
+                          }
+                        }}
+                        allowedTypes={["application/pdf"]}
+                        maxCount={1}
+                        size="md"
+                        isBanner={true}
+                        isPDF={true}
+                        onUploadApi={uploadFile}
+                        className="w-full"
+                      />
+                    </div>
+                    <FormInput
+                      value={block.content}
+                      onChange={(e) => handleBlockChange(block.id, { content: e.target.value })}
+                      placeholder="Or enter the PDF file URL..."
+                      className="h-10 text-xs"
+                    />
+                    <FormInput
+                      value={block.caption || ""}
+                      onChange={(e) => handleBlockChange(block.id, { caption: e.target.value })}
+                      placeholder="PDF Document Name"
                       className="h-10 text-xs"
                     />
                   </div>

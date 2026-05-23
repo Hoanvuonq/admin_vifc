@@ -1,6 +1,6 @@
 export interface ContentBlock {
   id: string;
-  type: "text" | "heading" | "image";
+  type: "text" | "heading" | "image" | "pdf";
   align: "left" | "center" | "right";
   content: string;
   caption?: string;
@@ -9,6 +9,7 @@ export interface ContentBlock {
   imageSideText?: string;
   imageDirection?: "image-text" | "text-image";
   imagePadding?: "none" | "small" | "medium" | "large";
+  thumbnailUrl?: string;
 }
 
 export interface NewsPreviewProps {

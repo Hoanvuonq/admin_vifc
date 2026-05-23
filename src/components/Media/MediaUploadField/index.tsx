@@ -70,27 +70,41 @@ export const MediaUploadField: React.FC<
 
         const uid = Math.random().toString(36).substring(7);
         const objectUrl = URL.createObjectURL(file);
+
+        let initialThumbnailUrl: string | undefined;
+        if (file.type === "application/pdf") {
+          const { generatePdfThumbnail } = await import("@/utils/pdf");
+          const thumbBlob = await generatePdfThumbnail(file);
+          if (thumbBlob) {
+            initialThumbnailUrl = URL.createObjectURL(thumbBlob);
+          }
+        }
+        console.log("initialThumbnailUrl", initialThumbnailUrl);
         const newFile: CustomFile = {
           uid, name: file.name, status: onUploadApi ? "uploading" : "done",
           originFileObj: file, url: objectUrl, type: file.type,
+          thumbnailUrl: initialThumbnailUrl,
           percent: 0, isPublic: mode === "public", isPrivate: mode === "private",
         };
 
         currentList = [...currentList, newFile];
         onChange(currentList);
 
-        if (onUploadApi) {
-          try {
-            const result = await onUploadApi(file, (p) => {
-              onChange(valueRef.current.map((f) => f.uid === uid ? { ...f, percent: p } : f));
-            });
-            onChange(valueRef.current.map((f) => f.uid === uid ? {
-              ...f, status: "done", percent: 100,
-              url: result?.url || result?.data?.url || objectUrl,
-              assetId: result?.id || result?.data?.id,
-            } : f));
-          } catch { onChange(valueRef.current.filter((f) => f.uid !== uid)); }
-        }
+        // if (onUploadApi) {
+        //   try {
+        //     const result = await onUploadApi(file, (p) => {
+        //       onChange(valueRef.current.map((f) => f.uid === uid ? { ...f, percent: p } : f));
+        //     });
+        //     onChange(valueRef.current.map((f) => f.uid === uid ? {
+        //       ...f, status: "done", percent: 100,
+        //       url: result?.url || result?.data?.url || objectUrl,
+        //       thumbnailUrl: result?.thumbnailUrl || result?.data?.thumbnailUrl || initialThumbnailUrl,
+        //       assetId: result?.id || result?.data?.id,
+        //     } : f));
+        //   } catch { 
+        //     onChange(valueRef.current.map((f) => f.uid === uid ? { ...f, status: "error" } : f)); 
+        //   }
+        // }
       }
       if (fileInputRef.current) fileInputRef.current.value = "";
     };
@@ -117,9 +131,11 @@ export const MediaUploadField: React.FC<
                     <div className="w-full h-full overflow-hidden">
                       {file.type?.includes("video") || file.url?.toLowerCase().endsWith(".mp4") || file.url?.toLowerCase().endsWith(".mov")
                         ? <video src={file.url} className="w-full h-full object-cover" muted loop autoPlay playsInline />
-                        : file.type?.includes("pdf") || file.url?.toLowerCase().endsWith(".pdf")
-                          ? <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-rose-500"><File size={32} /><span className="text-[10px] mt-2 font-bold uppercase text-slate-500">{file.name || "PDF Document"}</span></div>
-                          : <img src={file.url} alt="preview" className={cn("w-full h-full object-cover group-hover:scale-105", COMMON_TRANSITION)} />
+                        : file.thumbnailUrl
+                          ? <img src={file.thumbnailUrl} alt="preview" className={cn("w-full h-full object-cover group-hover:scale-105", COMMON_TRANSITION)} />
+                          : file.type?.includes("pdf") || file.url?.toLowerCase().endsWith(".pdf") || isPDF
+                            ? <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-rose-500"><File size={32} /><span className="text-[10px] mt-2 font-bold uppercase text-slate-500">{file.name || "PDF Document"}</span></div>
+                            : <img src={file.url} alt="preview" className={cn("w-full h-full object-cover group-hover:scale-105", COMMON_TRANSITION)} />
                       }
                       <div className="absolute inset-0 bg-linear-to-t from-orange-950/40 via-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>

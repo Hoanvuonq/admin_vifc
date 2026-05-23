@@ -1,45 +1,66 @@
 import s3Client from "@/config";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { filename, contentType } = await req.json();
+    const formData = await req.formData();
+    const file = formData.get("file") as File;
+    const thumbnail = formData.get("thumbnail") as Blob | null;
 
-    // ✅ validate file type
-    if (contentType !== "application/pdf") {
-      return NextResponse.json(
-        { error: "Only PDF allowed" },
-        { status: 400 }
-      );
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const key = `pdfs/${Date.now()}-${filename}`;
+    if (file.type !== "application/pdf") {
+      return NextResponse.json({ error: "Only PDF allowed" }, { status: 400 });
+    }
 
-    const command = new PutObjectCommand({
+    // Validate 10MB
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: "File exceeds 10MB limit" }, { status: 400 });
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const safeFilename = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+    const pdfKey = `pdfs/${Date.now()}-${safeFilename}`;
+    const thumbKey = `pdfs/thumbnails/${Date.now()}-thumb.jpg`;
+
+    // Upload PDF
+    await s3Client.send(new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME!,
-      Key: key,
-      ContentType: contentType, // phải là application/pdf
-    });
+      Key: pdfKey,
+      Body: buffer,
+      ContentType: "application/pdf",
+    }));
 
-    const uploadUrl = await getSignedUrl(s3Client, command, {
-      expiresIn: 60,
-    });
+    let thumbnailUrl = null;
 
-    const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${key}`;
+    if (thumbnail) {
+      const thumbBuffer = Buffer.from(await thumbnail.arrayBuffer());
+      // Upload Thumbnail
+      await s3Client.send(new PutObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME!,
+        Key: thumbKey,
+        Body: thumbBuffer,
+        ContentType: "image/jpeg",
+      }));
+      thumbnailUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${thumbKey}`;
+    }
 
-    return NextResponse.json({
-      uploadUrl,
-      fileUrl,
-    });
+    const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${pdfKey}`;
+
+    return NextResponse.json({ fileUrl, thumbnailUrl });
   } catch (err) {
+    console.error("PDF upload error:", err);
     return NextResponse.json(
       {
         error: "Upload error",
         message: err instanceof Error ? err.message : String(err),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

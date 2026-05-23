@@ -29,6 +29,10 @@ const BLOCK_BUTTONS = [
     hover: "hover:border-emerald-200 hover:text-emerald-500 hover:bg-emerald-50/10",
     defaults: { imageLayout: "full" as const, imagePadding: "medium" as const },
   },
+  {
+    type: "pdf", label: "PDF Block", icon: File,
+    hover: "hover:border-rose-200 hover:text-rose-500 hover:bg-rose-50/10",
+  },
 ] as const;
 
 export const AddBlockPanel: React.FC<AddBlockPanelProps> = ({ handleAddBlock }) => (

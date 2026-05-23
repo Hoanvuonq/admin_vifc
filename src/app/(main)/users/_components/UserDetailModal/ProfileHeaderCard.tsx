@@ -4,7 +4,7 @@ import { cn } from "@/utils/cn";
 import { Clock, Mail, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-import { UserItem } from "../../../_pages/types";
+import { UserItem } from "../../_pages/types";
 
 interface ProfileHeaderCardProps {
   user: UserItem;

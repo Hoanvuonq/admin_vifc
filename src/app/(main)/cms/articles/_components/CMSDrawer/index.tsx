@@ -6,26 +6,13 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { NewsItem } from "../../_pages/types";
 import { LeftPanel, NewsPreview, RightPanel } from "./_components";
-
+import { ContentBlock } from "./_components/NewsPreview/type";
 
 interface CMSDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   newsToEdit: NewsItem | null;
   onSave: (newsData: Omit<NewsItem, "id" | "createdDate" | "views" | "authorName" | "authorAvatar">) => void;
-}
-
-interface ContentBlock {
-  id: string;
-  type: "text" | "heading" | "image";
-  align: "left" | "center" | "right";
-  content: string;
-  caption?: string;
-  level?: "h2" | "h3";
-  imageLayout?: "full" | "side-by-side";
-  imageSideText?: string;
-  imageDirection?: "image-text" | "text-image";
-  imagePadding?: "none" | "small" | "medium" | "large";
 }
 
 type SectionType = "section-basic" | "section-media" | "section-content" | "section-seo" | "section-pdf" | "section-settings";

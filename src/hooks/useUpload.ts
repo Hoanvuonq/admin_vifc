@@ -1,13 +1,57 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
+import { generatePdfThumbnail } from "@/utils/pdf";
 
 export const useUpload = () => {
   const uploadFile = useCallback(
     async (
       file: File,
       onProgress?: (p: number) => void,
-    ): Promise<{ url: string }> => {
+    ): Promise<{ url: string; thumbnailUrl?: string }> => {
       try {
+        if (file.type === "application/pdf") {
+          return new Promise(async (resolve, reject) => {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+              const thumbnailBlob = await generatePdfThumbnail(file);
+              if (thumbnailBlob) {
+                formData.append("thumbnail", thumbnailBlob, "thumbnail.jpg");
+              }
+            } catch (err) {
+              console.warn("Failed to generate PDF thumbnail client-side", err);
+            }
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/api/upload/pdf", true);
+
+            xhr.upload.onprogress = (event) => {
+              if (event.lengthComputable && onProgress) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                onProgress(percentComplete);
+              }
+            };
+
+            xhr.onload = () => {
+              if (xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                resolve({ url: response.fileUrl, thumbnailUrl: response.thumbnailUrl });
+              } else {
+                let errorMsg = "Failed to upload PDF";
+                try {
+                  const errorRes = JSON.parse(xhr.responseText);
+                  if (errorRes.error) errorMsg = errorRes.error;
+                } catch (e) {}
+                reject(new Error(errorMsg));
+              }
+            };
+
+            xhr.onerror = () => reject(new Error("Network error during upload"));
+            xhr.send(formData);
+          });
+        }
+
         const response = await fetch("/api/upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

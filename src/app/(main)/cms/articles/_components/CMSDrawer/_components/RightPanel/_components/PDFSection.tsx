@@ -27,15 +27,19 @@ export const PDFSection: React.FC<RightPanelProps> = ({
           <label className="text-[9px] uppercase text-gray-500 tracking-wider font-semibold">Upload PDF File</label>
           <div className="flex justify-center p-3 bg-slate-50/60 rounded-xl border border-slate-100">
             <MediaUploadField
-              value={pdfUrl ? [{ uid: "pdf", url: pdfUrl, status: "done", name: pdfName }] : []}
+              value={pdfUrl ? [{ uid: "pdf", url: pdfUrl, status: "done", name: pdfName, thumbnailUrl: pdfCover }] : []}
               onChange={(files) => {
                 if (files.length > 0) {
                   setPdfUrl(files[0].url || "");
+                  if (files[0].thumbnailUrl) {
+                    setPdfCover(files[0].thumbnailUrl);
+                  }
                   if (!pdfName && files[0].name) {
                     setPdfName(files[0].name);
                   }
                 } else {
                   setPdfUrl("");
+                  setPdfCover("");
                 }
               }}
               onUploadApi={uploadFile}
@@ -51,33 +55,6 @@ export const PDFSection: React.FC<RightPanelProps> = ({
             value={pdfUrl}
             onChange={(e) => setPdfUrl(e.target.value)}
             placeholder="Or enter the PDF file URL..."
-            className="h-10 text-xs"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-[9px] uppercase text-gray-500 tracking-wider font-semibold">Select PDF Cover Image</label>
-          <div className="flex justify-center p-3 bg-slate-50/60 rounded-xl border border-slate-100">
-            <MediaUploadField
-              value={pdfCover ? [{ uid: "pdfCover", url: pdfCover, status: "done" }] : []}
-              onChange={(files) => {
-                if (files.length > 0) {
-                  setPdfCover(files[0].url || "");
-                } else {
-                  setPdfCover("");
-                }
-              }}
-              onUploadApi={uploadFile}
-              maxCount={1}
-              size="md"
-              isBanner={true}
-              className="w-full"
-            />
-          </div>
-          <FormInput
-            value={pdfCover || ""}
-            onChange={(e) => setPdfCover(e.target.value)}
-            placeholder="Or enter the PDF cover image URL..."
             className="h-10 text-xs"
           />
         </div>

@@ -4,6 +4,7 @@ export interface CustomFile {
   id?: string | number;
   name?: string;
   url?: string;
+  thumbnailUrl?: string;
   preview?: string;
   originFileObj?: File;
   status?: "uploading" | "done" | "error" | "removed" | "pending";
@@ -22,7 +23,7 @@ export interface MediaUploadFieldProps {
   onUpload?: (
     file: File,
     onProgress: (p: number) => void,
-  ) => Promise<{ url: string; id?: string | number }>;
+  ) => Promise<{ url: string; id?: string | number; thumbnailUrl?: string }>;
 
   maxCount?: number;
   size?: "sm" | "md" | "lg";

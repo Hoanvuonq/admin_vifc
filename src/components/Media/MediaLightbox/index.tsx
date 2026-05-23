@@ -54,6 +54,11 @@ export const MediaLightbox = ({
     rawPath?.toLowerCase().endsWith(".mp4") ||
     rawPath?.toLowerCase().endsWith(".mov");
 
+  const isPdf =
+    currentMedia.type?.toLowerCase().includes("pdf") ||
+    rawPath?.toLowerCase().endsWith(".pdf") ||
+    rawPath?.toLowerCase().includes(".pdf?");
+
   return (
     <PortalModal
       isOpen={isOpen}
@@ -68,10 +73,11 @@ export const MediaLightbox = ({
             <div>
               <h3 className="text-white text-sm font-semibold tracking-wide uppercase flex items-center gap-2">
                 {isVideo && <MonitorPlay size={14} className="text-orange-500" />}
+                {isPdf && <MonitorPlay size={14} className="text-orange-500" />}
                 {currentMedia.title || currentMedia.name || "Hình ảnh sản phẩm"}
               </h3>
               <p className="text-white/40 text-xs mt-0.5 font-medium tracking-tighter">
-                {currentIndex + 1} / {mediaList.length} • {isVideo ? "Video Format" : "Chất lượng cao"}
+                {currentIndex + 1} / {mediaList.length} • {isVideo ? "Video Format" : isPdf ? "PDF Document" : "Chất lượng cao"}
               </p>
             </div>
           </div>
@@ -116,11 +122,15 @@ export const MediaLightbox = ({
               exit={{ opacity: 0, scale: 1.02, filter: "blur(5px)" }}
               transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
               onClick={(e) => e.stopPropagation()}
-              className="relative max-w-full max-h-full flex items-center justify-center"
+              className="relative w-full max-h-full flex items-center justify-center cursor-default"
             >
               {isVideo ? (
                 <div className="w-full max-w-6xl aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl ring-1 ring-white/10">
                   <video src={fullUrl} controls autoPlay className="w-full h-full object-contain" />
+                </div>
+              ) : isPdf ? (
+                <div className="w-full max-w-5xl h-[85vh] rounded-xl overflow-hidden bg-white shadow-2xl">
+                   <iframe src={fullUrl} className="w-full h-full border-none" title="PDF Viewer" />
                 </div>
               ) : (
                 <div className="relative group cursor-default">

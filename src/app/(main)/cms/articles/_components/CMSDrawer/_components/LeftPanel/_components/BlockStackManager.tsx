@@ -18,12 +18,14 @@ const BLOCK_TYPE_STYLES: Record<string, string> = {
   heading: "bg-blue-50 text-blue-600 border-blue-100",
   image: "bg-emerald-50 text-emerald-600 border-emerald-100",
   text: "bg-slate-50 text-slate-500 border-slate-100",
+  pdf: "bg-rose-50 text-rose-600 border-rose-100",
 };
 
 const BLOCK_TYPE_LABELS: Record<string, string> = {
   heading: "Heading",
   image: "Image",
   text: "Paragraph",
+  pdf: "PDF Block",
 };
 
 
