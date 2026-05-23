@@ -12,38 +12,18 @@ export const ArticleHeader: React.FC<ArticleHeaderProps> = ({
   title, category, getReadingTime, hideBorderTop = false
 }) => (
   <div className="space-y-4">
-    <div className="flex flex-wrap items-center gap-2 select-none">
-      <span className="text-[9px] font-extrabold text-slate-455 uppercase tracking-widest">News</span>
-      <span className="text-slate-300 text-xs">/</span>
-      {category && (Array.isArray(category) ? category : [category]).length > 0 ? (
-        (Array.isArray(category) ? category : [category]).map((cat, idx) => (
-          <span key={idx} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 text-orange-655 text-[9.5px] font-extrabold uppercase tracking-wide">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-            {cat}
-          </span>
-        ))
-      ) : (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 text-orange-655 text-[9.5px] font-extrabold uppercase tracking-wide">
-          <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-          No Category Selected
-        </span>
-      )}
-    </div>
+
 
     <h1 className="text-xl md:text-2.5xl font-extrabold text-slate-900 leading-tight tracking-tight">
       {title || "Article Title..."}
     </h1>
 
     <div className={`flex flex-wrap items-center gap-4 text-[10px] font-extrabold text-slate-455 py-3.5 select-none ${hideBorderTop ? "border-t border-slate-100/80" : "border-y border-slate-100/80"}`}>
-      <span className="flex items-center gap-1.5 bg-slate-55 px-3 py-1 rounded-xl border border-slate-100/50 shadow-3xs">
-        <User size={13} className="text-slate-455" /> Admin VIFC
-      </span>
+
       <span className="flex items-center gap-1.5 bg-slate-55 px-3 py-1 rounded-xl border border-slate-100/50 shadow-3xs">
         <Calendar size={13} className="text-slate-455" /> {new Date().toLocaleDateString("en-US")}
       </span>
-      <span className="flex items-center gap-1.5 bg-slate-55 px-3 py-1 rounded-xl border border-slate-100/50 shadow-3xs">
-        <Clock size={13} className="text-slate-455" /> {getReadingTime()} min read
-      </span>
+
     </div>
   </div>
 );

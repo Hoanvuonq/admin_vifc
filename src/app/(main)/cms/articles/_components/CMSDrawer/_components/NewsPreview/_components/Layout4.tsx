@@ -2,14 +2,13 @@ import React from "react";
 import { FormInput } from "@/components";
 import { NewsPreviewProps } from "../type";
 import { ArticleHeader, SummaryBlock } from "./ArticleHeader";
-import { BannerImage, PDFPreview } from "./shared";
+import { BannerImage } from "./shared";
 import { BlockList } from "./BlockList";
 
 export const Layout4: React.FC<NewsPreviewProps> = ({
   title, category, thumbnail, summary, tags, allowComments,
   blocks, activeInput, onBlockSelect, getReadingTime,
   handleMoveBlock, handleDeleteBlock, handleBlockChange,
-  pdfUrl, pdfCover, pdfName
 }) => (
   <div className="max-w-210 mx-auto bg-white min-h-screen shadow-xs">
     <div className="p-8 md:p-12">
@@ -35,7 +34,7 @@ export const Layout4: React.FC<NewsPreviewProps> = ({
             blocks={blocks} activeInput={activeInput} onBlockSelect={onBlockSelect}
             onMoveBlock={handleMoveBlock} onDeleteBlock={handleDeleteBlock} onBlockChange={handleBlockChange}
           />
-          <PDFPreview url={pdfUrl} cover={pdfCover} name={pdfName} />
+
           {allowComments && (
             <div className="pt-8 border-t border-slate-100 space-y-4">
               <span className="text-[10.5px] font-extrabold text-slate-800 uppercase tracking-widest block">Article Comments</span>

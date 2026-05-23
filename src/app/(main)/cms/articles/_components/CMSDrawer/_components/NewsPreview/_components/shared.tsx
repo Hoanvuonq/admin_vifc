@@ -148,6 +148,36 @@ export const BlockContent: React.FC<{ block: ContentBlock }> = ({ block }) => {
     );
   }
 
+  if (block.type === "pdf") {
+    return (
+      <div className="py-4 w-full">
+        <div className="bg-[#3b3b3b] rounded-[18px] p-5 max-w-[280px] mx-auto flex flex-col items-center justify-center relative overflow-hidden shadow-md">
+          {block.thumbnailUrl ? (
+            <div className="w-full relative shadow-sm rounded-lg overflow-hidden border border-[#555]">
+              <img src={block.thumbnailUrl} alt={block.caption || "PDF Cover"} className="w-full h-auto object-cover" />
+            </div>
+          ) : (
+            <div className="w-full aspect-3/4 bg-[#444] border border-dashed border-[#666] rounded-lg flex items-center justify-center">
+              <span className="text-xs text-[#888] font-bold uppercase">No PDF Cover</span>
+            </div>
+          )}
+
+          <div className="absolute inset-x-0 bottom-12 flex justify-center z-10">
+            <a href={block.content || "#"} target="_blank" rel="noopener noreferrer" className="bg-white hover:bg-slate-50 text-slate-900 px-5 py-2 rounded-full text-[10px] font-extrabold flex items-center gap-1.5 shadow-lg transition-transform hover:scale-105 active:scale-95">
+              View full report <ArrowUp size={11} className="rotate-45" />
+            </a>
+          </div>
+
+          <div className="mt-5 text-center w-full">
+            <span className="text-[10px] font-medium text-slate-300 truncate block w-full px-2">
+              {block.caption || "Untitled Document.pdf"}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return null;
 };
 
