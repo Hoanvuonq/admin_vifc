@@ -1,6 +1,6 @@
 export interface ContentBlock {
   id: string;
-  type: "text" | "heading" | "image" | "quote" | "divider";
+  type: "text" | "heading" | "image";
   align: "left" | "center" | "right";
   content: string;
   caption?: string;
@@ -29,4 +29,7 @@ export interface NewsPreviewProps {
   handleMoveBlock?: (index: number, dir: "up" | "down") => void;
   handleDeleteBlock?: (blockId: string) => void;
   handleBlockChange?: (blockId: string, update: Partial<ContentBlock>) => void;
+  pdfUrl?: string;
+  pdfCover?: string;
+  pdfName?: string;
 }

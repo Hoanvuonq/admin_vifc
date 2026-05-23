@@ -3,7 +3,7 @@ import {
   FileText, Image as ImageIcon, Layers, Search, Settings, Check
 } from "lucide-react";
 
-type SectionType = "section-basic" | "section-media" | "section-content" | "section-seo" | "section-settings";
+type SectionType = "section-basic" | "section-media" | "section-content" | "section-seo" | "section-pdf" | "section-settings";
 
 interface Section {
   id: SectionType;
@@ -30,7 +30,8 @@ export const SectionNavigator: React.FC<SectionNavigatorProps> = ({
     { id: "section-media", label: "2. Cover & Summary", icon: ImageIcon, completed: sectionMediaCompleted },
     { id: "section-content", label: "3. Article Content", icon: Layers, completed: sectionContentCompleted },
     { id: "section-seo", label: "4. SEO Optimization", icon: Search, completed: sectionSEOCompleted },
-    { id: "section-settings", label: "5. Publishing Settings", icon: Settings, completed: true },
+    { id: "section-pdf", label: "5. PDF Settings", icon: FileText, completed: true },
+    { id: "section-settings", label: "6. Publishing Settings", icon: Settings, completed: true },
   ];
 
   return (

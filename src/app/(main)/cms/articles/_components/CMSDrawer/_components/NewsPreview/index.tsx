@@ -27,7 +27,7 @@ const LAYOUT_MAP: Record<LayoutKey, React.FC<NewsPreviewProps>> = {
 };
 
 export const NewsPreview: React.FC<NewsPreviewProps> = (props) => {
-  const [layout, setLayout] = useState<LayoutKey>("layout1");
+  const [layout, setLayout] = useState<LayoutKey>("layout2");
   const ActiveLayout = LAYOUT_MAP[layout];
 
   return (
@@ -47,13 +47,13 @@ export const NewsPreview: React.FC<NewsPreviewProps> = (props) => {
             Article Layout Preview
           </span>
         </div>
-        <StatusTabs
+        {/* <StatusTabs
           tabs={LAYOUT_TABS}
           current={layout}
           onChange={setLayout}
           layoutId="preview-layouts-tab"
           className="max-w-none flex-1 flex justify-end"
-        />
+        /> */}
       </div>
 
       {/* Active layout */}

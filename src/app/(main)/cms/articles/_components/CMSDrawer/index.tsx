@@ -17,7 +17,7 @@ interface CMSDrawerProps {
 
 interface ContentBlock {
   id: string;
-  type: "text" | "heading" | "image" | "quote" | "divider";
+  type: "text" | "heading" | "image";
   align: "left" | "center" | "right";
   content: string;
   caption?: string;
@@ -28,7 +28,7 @@ interface ContentBlock {
   imagePadding?: "none" | "small" | "medium" | "large";
 }
 
-type SectionType = "section-basic" | "section-media" | "section-content" | "section-seo" | "section-settings";
+type SectionType = "section-basic" | "section-media" | "section-content" | "section-seo" | "section-pdf" | "section-settings";
 
 // Compiles content blocks into clean static HTML markup
 const compileBlocksToHTML = (blocks: ContentBlock[]): string => {
@@ -39,17 +39,8 @@ const compileBlocksToHTML = (blocks: ContentBlock[]): string => {
         const tag = block.level || "h2";
         return `<${tag}${styleAttr}>${block.content}</${tag}>`;
       case "image": {
-        const layout = block.imageLayout || "full";
-        const dir = block.imageDirection || "image-text";
-        const padding = block.imagePadding || "medium";
-        const sideText = block.imageSideText || "";
-        const escapedSideText = sideText.replace(/"/g, "&quot;");
-        return `<div${styleAttr} class="image-block-wrapper" data-image-layout="${layout}" data-image-direction="${dir}" data-image-padding="${padding}" data-image-side-text="${escapedSideText}"><img src="${block.content}" alt="${block.caption || ''}" class="rounded-2xl max-w-full my-4 inline-block" />${block.caption ? `<p class="text-xs text-gray-500 italic mt-1 text-center">${block.caption}</p>` : ''}</div>`;
+        return `<div${styleAttr} class="image-block-wrapper w-full"><img src="${block.content}" alt="${block.caption || ''}" class="rounded-2xl max-w-full my-4 inline-block w-full" />${block.caption ? `<p class="text-xs text-gray-500 italic mt-1 text-center">${block.caption}</p>` : ''}</div>`;
       }
-      case "quote":
-        return `<blockquote${styleAttr} class="border-l-4 border-orange-500 pl-4 py-2 my-4 italic text-gray-600 bg-slate-50">${block.content}</blockquote>`;
-      case "divider":
-        return `<hr class="my-6 border-slate-200" />`;
       case "text":
       default:
         return `<p${styleAttr}>${block.content}</p>`;
@@ -77,20 +68,6 @@ const parseHTMLToBlocks = (html: string): ContentBlock[] => {
           content: el.innerHTML,
           level: el.tagName === "H2" ? "h2" : "h3"
         });
-      } else if (el.tagName === "BLOCKQUOTE") {
-        blocks.push({
-          id,
-          type: "quote",
-          align: textAlign,
-          content: el.innerHTML
-        });
-      } else if (el.tagName === "HR") {
-        blocks.push({
-          id,
-          type: "divider",
-          align: "center",
-          content: ""
-        });
       } else if (el.tagName === "DIV" && el.classList.contains("image-block-wrapper")) {
         const img = el.querySelector("img");
         const captionEl = el.querySelector("p");
@@ -100,9 +77,6 @@ const parseHTMLToBlocks = (html: string): ContentBlock[] => {
           align: textAlign,
           content: img?.getAttribute("src") || "",
           caption: captionEl?.innerHTML || "",
-          imageLayout: el.getAttribute("data-image-layout") as "full" | "side-by-side" || "full",
-          imageSideText: el.getAttribute("data-image-side-text") || "",
-          imageDirection: el.getAttribute("data-image-direction") as "image-text" | "text-image" || "image-text",
           imagePadding: el.getAttribute("data-image-padding") as "none" | "small" | "medium" | "large" || "medium",
         });
       } else if (el.tagName === "IMG") {
@@ -160,6 +134,11 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
   const [scheduledDate, setScheduledDate] = useState("");
   const [status, setStatus] = useState<NewsItem["status"]>("DRAFT");
 
+  // PDF states
+  const [pdfUrl, setPdfUrl] = useState("");
+  const [pdfCover, setPdfCover] = useState("");
+  const [pdfName, setPdfName] = useState("");
+
   // UI state
   const [activeSection, setActiveSection] = useState<string>("section-basic");
   const [activeInput, setActiveInput] = useState<string | null>(null);
@@ -191,6 +170,10 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
         setIsFeatured(newsToEdit.isFeatured ?? false);
         setScheduledDate(newsToEdit.scheduledDate || "");
         setStatus(newsToEdit.status);
+
+        setPdfUrl(newsToEdit.pdfUrl || "");
+        setPdfCover(newsToEdit.pdfCover || "");
+        setPdfName(newsToEdit.pdfName || "");
       } else {
         setTitle("");
         setSlug("");
@@ -212,6 +195,10 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
         setIsFeatured(false);
         setScheduledDate("");
         setStatus("DRAFT");
+
+        setPdfUrl("");
+        setPdfCover("");
+        setPdfName("");
       }
     }
   }, [isOpen, newsToEdit]);
@@ -226,6 +213,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
       "section-media",
       "section-content",
       "section-seo",
+      "section-pdf",
       "section-settings",
     ];
 
@@ -376,6 +364,9 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
       isFeatured,
       scheduledDate,
       status: finalStatus || status,
+      pdfUrl,
+      pdfCover,
+      pdfName,
     });
   };
 
@@ -416,7 +407,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
     if (activeInput && activeInput.startsWith("block-")) {
       const block = blocks.find((b) => b.id === activeInput);
       return {
-        title: `Align Element: ${block?.type === "heading" ? "Heading" : block?.type === "image" ? "Image" : block?.type === "quote" ? "Quote" : "Paragraph"}`,
+        title: `Align Element: ${block?.type === "heading" ? "Heading" : block?.type === "image" ? "Image" : "Paragraph"}`,
         text: "Use the position controls (Up/Down) to reorder elements. Formatting alignments (Left/Center/Right) will update live on the central news article detail preview."
       };
     }
@@ -610,6 +601,9 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
           handleMoveBlock={handleMoveBlock}
           handleDeleteBlock={handleDeleteBlock}
           handleBlockChange={handleBlockChange}
+          pdfUrl={pdfUrl}
+          pdfCover={pdfCover}
+          pdfName={pdfName}
         />
 
         {/* COLUMN 3: RIGHT SCROLLABLE FORM INPUTS PANEL */}
@@ -652,6 +646,12 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
           sectionMediaCompleted={sectionMediaCompleted}
           sectionContentCompleted={sectionContentCompleted}
           sectionSEOCompleted={sectionSEOCompleted}
+          pdfUrl={pdfUrl}
+          setPdfUrl={setPdfUrl}
+          pdfCover={pdfCover}
+          setPdfCover={setPdfCover}
+          pdfName={pdfName}
+          setPdfName={setPdfName}
         />
       </div>
     </div>

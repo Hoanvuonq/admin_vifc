@@ -1,7 +1,7 @@
 import React from "react";
 import {
-  FileText, Image as ImageIcon, Quote, Heading2, Heading3,
-  SeparatorHorizontal, Layout
+  FileText, Image as ImageIcon, Heading2, Heading3,
+  File
 } from "lucide-react";
 import { ContentBlock } from "../../NewsPreview/type";
 
@@ -26,22 +26,9 @@ const BLOCK_BUTTONS = [
     defaults: { level: "h3" as const },
   },
   {
-    type: "image", label: "Image Banner", icon: ImageIcon,
+    type: "image", label: "Image", icon: ImageIcon,
     hover: "hover:border-emerald-200 hover:text-emerald-500 hover:bg-emerald-50/10",
     defaults: { imageLayout: "full" as const, imagePadding: "medium" as const },
-  },
-  {
-    type: "image", label: "Image & Text", icon: Layout,
-    hover: "hover:border-teal-200 hover:text-teal-500 hover:bg-teal-50/10",
-    defaults: { imageLayout: "side-by-side" as const, imageDirection: "image-text" as const, imagePadding: "none" as const },
-  },
-  {
-    type: "quote", label: "Block Quote", icon: Quote,
-    hover: "hover:border-purple-200 hover:text-purple-500 hover:bg-purple-50/10",
-  },
-  {
-    type: "divider", label: "Layout Divider", icon: SeparatorHorizontal,
-    hover: "hover:border-amber-200 hover:text-amber-500 hover:bg-amber-50/10",
   },
 ] as const;
 

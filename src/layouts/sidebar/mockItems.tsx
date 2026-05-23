@@ -19,7 +19,7 @@ export const MOCK_SIDEBAR_ITEMS: MenuItemSidebar[] = [
     key: "dashboard",
     label: "Dashboard & Reports",
     icon: <BarChart3 size={20} />,
-    href: "/dashboard",
+    href: "/",
   },
   {
     type: "divider",

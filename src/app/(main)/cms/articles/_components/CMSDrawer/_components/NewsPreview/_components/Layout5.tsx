@@ -1,13 +1,14 @@
 import React from "react";
 import { NewsPreviewProps } from "../type";
 import { ArticleHeader, SummaryBlock } from "./ArticleHeader";
-import { BannerImage, TagsAndComments } from "./shared";
+import { BannerImage, TagsAndComments, PDFPreview } from "./shared";
 import { BlockList } from "./BlockList";
 
 export const Layout5: React.FC<NewsPreviewProps> = ({
   title, category, thumbnail, summary, tags, allowComments,
   blocks, activeInput, onBlockSelect, getReadingTime,
-  handleMoveBlock, handleDeleteBlock, handleBlockChange
+  handleMoveBlock, handleDeleteBlock, handleBlockChange,
+  pdfUrl, pdfCover, pdfName
 }) => (
   <div className="max-w-200 mx-auto bg-white min-h-screen shadow-xs rounded-3xl overflow-hidden">
     <div className="relative w-full overflow-hidden">
@@ -22,6 +23,7 @@ export const Layout5: React.FC<NewsPreviewProps> = ({
         blocks={blocks} activeInput={activeInput} onBlockSelect={onBlockSelect}
         onMoveBlock={handleMoveBlock} onDeleteBlock={handleDeleteBlock} onBlockChange={handleBlockChange}
       />
+      <PDFPreview url={pdfUrl} cover={pdfCover} name={pdfName} />
       <TagsAndComments tags={tags} allowComments={allowComments} />
     </div>
   </div>

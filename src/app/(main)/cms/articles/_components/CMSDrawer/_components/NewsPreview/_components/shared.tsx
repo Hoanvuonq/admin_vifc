@@ -98,22 +98,7 @@ export const BlockControls: React.FC<{
       <ArrowDown size={11} className="stroke-[2.5]" />
     </button>
 
-    {block.type !== "divider" && (
-      <>
-        <div className="w-px h-3.5 bg-slate-200 mx-0.5" />
-        {ALIGN_OPTIONS.map(({ key, Icon, title }) => (
-          <button
-            key={key}
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onBlockChange?.(block.id, { align: key }); }}
-            className={`p-1 rounded-lg transition-all duration-200 ${block.align === key ? "bg-orange-105 text-orange-655 font-extrabold shadow-3xs" : "text-slate-400 hover:bg-slate-100 hover:text-slate-800"}`}
-            title={title}
-          >
-            <Icon size={11} className="stroke-[2.5]" />
-          </button>
-        ))}
-      </>
-    )}
+
 
     <div className="w-px h-3.5 bg-slate-200 mx-0.5" />
     <button
@@ -151,68 +136,50 @@ export const BlockContent: React.FC<{ block: ContentBlock }> = ({ block }) => {
   }
 
   if (block.type === "image") {
-    const imgLayout = block.imageLayout || "full";
-    const padding = block.imagePadding || "medium";
-    const direction = block.imageDirection || "image-text";
-    const sideText = block.imageSideText || "";
-
-    if (imgLayout === "side-by-side") {
-      const imgCol = (
-        <div className="w-full">
-          <BlockImage block={block} />
-          {block.caption && (
-            <p className="text-[9.5px] text-slate-450 italic text-center font-bold mt-2">{block.caption}</p>
-          )}
-        </div>
-      );
-      const textCol = (
-        <div className="w-full flex flex-col justify-center px-2">
-          <p className="text-[12px] font-semibold leading-relaxed text-slate-655 whitespace-pre-wrap">
-            {sideText || <span className="text-slate-355 italic font-medium">Enter text content beside the image in the editor panel...</span>}
-          </p>
-        </div>
-      );
-      return (
-        <div className="py-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center p-3 bg-slate-55/40 rounded-3xl border border-slate-100/60 shadow-3xs">
-            {direction === "image-text" ? <>{imgCol}{textCol}</> : <>{textCol}{imgCol}</>}
-          </div>
-        </div>
-      );
-    }
-
-    const widthClass = PADDING_MAP[padding] ?? "max-w-[85%] mx-auto";
     return (
       <div className="py-2.5 w-full text-center">
-        <div className={`${widthClass} transition-all duration-300`}>
+        <div className="w-full transition-all duration-300">
           <BlockImage block={block} />
           {block.caption && (
             <p className="text-[9.5px] text-slate-450 italic text-center font-bold mt-2">{block.caption}</p>
           )}
         </div>
-      </div>
-    );
-  }
-
-  if (block.type === "quote") {
-    return (
-      <blockquote style={blockStyle} className="relative border-l-4 border-purple-500 pl-5 py-2 font-bold italic text-[12px] text-purple-800 bg-purple-50/15 rounded-r-2xl shadow-3xs">
-        {block.content || <span className="text-purple-305 italic font-semibold">Enter quote content...</span>}
-      </blockquote>
-    );
-  }
-
-  if (block.type === "divider") {
-    return (
-      <div className="py-6 flex items-center justify-center select-none">
-        <div className="w-12 h-0.5 bg-linear-to-r from-transparent to-slate-205" />
-        <div className="w-2 h-2 rounded-full bg-orange-400 mx-4 animate-pulse shadow-3xs" />
-        <div className="w-12 h-0.5 bg-linear-to-l from-transparent to-slate-205" />
       </div>
     );
   }
 
   return null;
+};
+
+export const PDFPreview: React.FC<{ url?: string; cover?: string; name?: string }> = ({ url, cover, name }) => {
+  if (!url && !cover && !name) return null;
+  return (
+    <div className="py-4 w-full">
+      <div className="bg-[#3b3b3b] rounded-[18px] p-5 max-w-[280px] mx-auto flex flex-col items-center justify-center relative overflow-hidden shadow-md">
+        {cover ? (
+          <div className="w-full relative shadow-sm rounded-lg overflow-hidden border border-[#555]">
+            <img src={cover} alt={name || "PDF Cover"} className="w-full h-auto object-cover" />
+          </div>
+        ) : (
+          <div className="w-full aspect-3/4 bg-[#444] border border-dashed border-[#666] rounded-lg flex items-center justify-center">
+            <span className="text-xs text-[#888] font-bold uppercase">No PDF Cover</span>
+          </div>
+        )}
+
+        <div className="absolute inset-x-0 bottom-12 flex justify-center z-10">
+          <a href={url || "#"} target="_blank" rel="noopener noreferrer" className="bg-white hover:bg-slate-50 text-slate-900 px-5 py-2 rounded-full text-[10px] font-extrabold flex items-center gap-1.5 shadow-lg transition-transform hover:scale-105 active:scale-95">
+            View full report <ArrowUp size={11} className="rotate-45" />
+          </a>
+        </div>
+
+        <div className="mt-5 text-center w-full">
+          <span className="text-[10px] font-medium text-slate-300 truncate block w-full px-2">
+            {name || "Untitled Document.pdf"}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export const TagsAndComments: React.FC<{ tags: string[]; allowComments: boolean }> = ({
@@ -226,12 +193,6 @@ export const TagsAndComments: React.FC<{ tags: string[]; allowComments: boolean 
             #{tg}
           </span>
         ))}
-      </div>
-    )}
-    {allowComments && (
-      <div className="pt-8 space-y-4 mt-6">
-        <span className="text-[10.5px] font-extrabold text-slate-800 uppercase tracking-widest block select-none">Article Comments</span>
-        <FormInput placeholder="Write your comment..." className="text-xs h-11" />
       </div>
     )}
   </>

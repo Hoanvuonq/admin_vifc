@@ -4,6 +4,7 @@ import { BasicInfoSection } from "./_components/BasicInfoSection";
 import { MediaSummarySection } from "./_components/MediaSummarySection";
 import { ContentSection } from "./_components/ContentSection";
 import { SEOSection } from "./_components/SEOSection";
+import { PDFSection } from "./_components/PDFSection";
 import { PublishSettingsSection } from "./_components/PublishSettingsSection";
 
 export const RightPanel: React.FC<RightPanelProps> = (props) => {
@@ -19,6 +20,7 @@ export const RightPanel: React.FC<RightPanelProps> = (props) => {
       <MediaSummarySection {...props} />
       <ContentSection {...props} />
       <SEOSection {...props} />
+      <PDFSection {...props} />
       <PublishSettingsSection {...props} />
     </div>
   );

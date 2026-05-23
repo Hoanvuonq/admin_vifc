@@ -11,7 +11,8 @@ import {
   Lock,
   Plus,
   Trash2,
-  Video as VideoIcon
+  Video as VideoIcon,
+  File
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { MediaLightbox } from "../MediaLightbox";
@@ -114,6 +115,8 @@ export const MediaUploadField: React.FC<
                     <div className="w-full h-full overflow-hidden">
                       {file.type?.includes("video") || file.url?.toLowerCase().endsWith(".mp4") || file.url?.toLowerCase().endsWith(".mov")
                         ? <video src={file.url} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+                        : file.type?.includes("pdf") || file.url?.toLowerCase().endsWith(".pdf")
+                        ? <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-rose-500"><File size={32} /><span className="text-[10px] mt-2 font-bold uppercase text-slate-500">{file.name || "PDF Document"}</span></div>
                         : <img src={file.url} alt="preview" className={cn("w-full h-full object-cover group-hover:scale-105", COMMON_TRANSITION)} />
                       }
                       <div className="absolute inset-0 bg-linear-to-t from-orange-950/40 via-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

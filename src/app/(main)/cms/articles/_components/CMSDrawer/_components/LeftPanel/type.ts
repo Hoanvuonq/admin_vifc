@@ -1,6 +1,6 @@
 import { ContentBlock } from "../NewsPreview/type";
 
-type SectionType = "section-basic" | "section-media" | "section-content" | "section-seo" | "section-settings";
+type SectionType = "section-basic" | "section-media" | "section-content" | "section-seo" | "section-pdf" | "section-settings";
 
 export interface LeftPanelProps {
   sectionBasicCompleted: boolean;
@@ -17,4 +17,7 @@ export interface LeftPanelProps {
   handleDeleteBlock: (blockId: string) => void;
   handleBlockChange: (blockId: string, update: Partial<ContentBlock>) => void;
   currentSuggestion: { title: string; text: string };
+  pdfUrl?: string;
+  pdfCover?: string;
+  pdfName?: string;
 }

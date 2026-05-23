@@ -22,4 +22,9 @@ export interface NewsItem {
   allowComments?: boolean;
   isFeatured?: boolean;
   scheduledDate?: string;
+
+  // PDF Attachment
+  pdfUrl?: string;
+  pdfCover?: string;
+  pdfName?: string;
 }
