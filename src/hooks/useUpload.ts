@@ -56,28 +56,13 @@ export const useUpload = () => {
           });
         }
 
-        const response = await fetch("/api/upload/image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ filename: file.name, contentType: file.type }),
-        });
-
-        const data = await response.json();
-        if (!response.ok)
-          throw new Error(
-            data.message || data.error || "Failed to get upload URL",
-          );
-
-        const { uploadUrl, fileUrl } = data;
-
-        if (!uploadUrl) {
-          throw new Error("Missing uploadUrl from response");
-        }
-
+        // === Image upload: send file directly via FormData ===
         return new Promise((resolve, reject) => {
+          const formData = new FormData();
+          formData.append("file", file);
+
           const xhr = new XMLHttpRequest();
-          xhr.open("PUT", uploadUrl, true);
-          xhr.setRequestHeader("Content-Type", file.type);
+          xhr.open("POST", "/api/upload/image", true);
 
           xhr.upload.onprogress = (event) => {
             if (event.lengthComputable && onProgress) {
@@ -88,14 +73,20 @@ export const useUpload = () => {
 
           xhr.onload = () => {
             if (xhr.status === 200) {
-              resolve({ url: fileUrl });
+              const response = JSON.parse(xhr.responseText);
+              resolve({ url: response.fileUrl });
             } else {
-              reject(new Error("Failed to upload file to S3"));
+              let errorMsg = "Failed to upload image";
+              try {
+                const errorRes = JSON.parse(xhr.responseText);
+                if (errorRes.error) errorMsg = errorRes.error;
+              } catch (e) {}
+              reject(new Error(errorMsg));
             }
           };
 
           xhr.onerror = () => reject(new Error("Network error during upload"));
-          xhr.send(file);
+          xhr.send(formData);
         });
       } catch (error: any) {
         toast.error("Upload failed", { description: error.message });

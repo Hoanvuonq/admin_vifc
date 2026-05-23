@@ -1,21 +1,38 @@
 import s3Client from "@/config";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { filename, contentType } = await req.json();
+    const formData = await req.formData();
+    const file = formData.get("file") as File;
 
-    const key = `image/${Date.now()}-${filename}`;
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
+
+    // Validate 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "File exceeds 5MB limit" },
+        { status: 400 },
+      );
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const safeFilename = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "");
+    const key = `image/${Date.now()}-${safeFilename}`;
 
     await s3Client.send(
       new PutObjectCommand({
-        Bucket: process.env.AWS_BUCKET_NAME,
+        Bucket: process.env.AWS_BUCKET_NAME!,
         Key: key,
-        ContentType: contentType,
-      })
-    )
+        Body: buffer,
+        ContentType: file.type,
+      }),
+    );
 
     const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${key}`;
 
