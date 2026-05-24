@@ -4,7 +4,8 @@ import { AdminPageHeader, DonutChartStatus, RevenueLineChart } from "@/component
 import _ from "lodash";
 import { BookDashed, CalendarCheck, CalendarClock, CalendarDays, CalendarRange, DollarSign, Eye, ShoppingBag, Users } from "lucide-react";
 import { useMemo, useState } from "react";
-import { SmartKPICard, StatusTabItem, StatusTabs, TopTokensList, LowLiquidityList, MarketSentimentAnalysis } from "../_components";
+import { SmartKPICard, StatusTabs, TopTokensList, LowLiquidityList, MarketSentimentAnalysis } from "../_components";
+import { StatusTabItem } from "../_components/StatusTabs/type";
 
 export function parseGrowthValue(value: string | number | undefined | null): number | undefined {
     if (value === undefined || value === null) {
