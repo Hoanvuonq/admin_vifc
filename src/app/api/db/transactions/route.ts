@@ -50,6 +50,7 @@ export async function GET(request: Request) {
         users: {
           select: {
             email: true,
+            avatar_url: true,
           },
         },
       },
@@ -60,6 +61,7 @@ export async function GET(request: Request) {
       id: t.id,
       user_id: t.user_id,
       user_email: t.users?.email || null,
+      user_avatar: t.users?.avatar_url || null,
       subscription_plan_id: t.subscription_plan_id,
       start_date: t.start_date ? t.start_date.toISOString() : null,
       end_date: t.end_date ? t.end_date.toISOString() : null,
