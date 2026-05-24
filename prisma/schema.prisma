@@ -75,18 +75,25 @@ model UserSubscription {
 }
 
 model articles {
-  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title       String      @db.VarChar(500)
-  slug        String      @unique @db.VarChar(600)
-  content     String?
-  status      String      @default("draft") @db.VarChar(50)
-  category_id String?     @db.Uuid
-  created_by  String?     @db.Uuid
-  created_at  DateTime    @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime    @default(now()) @db.Timestamptz(6)
-  deleted_at  DateTime?   @db.Timestamptz(6)
-  categories  categories? @relation(fields: [category_id], references: [id], onUpdate: NoAction)
-  users       User?       @relation(fields: [created_by], references: [id], onUpdate: NoAction)
+  id              String      @id @db.VarChar(255)
+  title           String      @db.VarChar(500)
+  slug            String      @unique @db.VarChar(600)
+  content         String?
+  status          String      @default("draft") @db.VarChar(50)
+  category_id     String?     @db.Uuid
+  created_by      String?     @db.Uuid
+  created_at      DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime    @default(now()) @db.Timestamptz(6)
+  deleted_at      DateTime?   @db.Timestamptz(6)
+  description     String?
+  thumbnail       String?
+  layouts         String?     @db.VarChar(255)
+  blocks          Json?
+  seo_title       String?     @db.VarChar(255)
+  seo_description String?
+  seo_keywords    String?     @db.VarChar(500)
+  categories      categories? @relation(fields: [category_id], references: [id], onUpdate: NoAction)
+  users           User?       @relation(fields: [created_by], references: [id], onUpdate: NoAction)
 
   @@index([category_id], map: "idx_articles_category_id")
   @@index([created_by], map: "idx_articles_created_by")
