@@ -11,7 +11,6 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
-    console.log("process.env.AWS_BUCKET_NAME", process.env.AWS_BUCKET_NAME);
 
     if (file.type !== "application/pdf") {
       return NextResponse.json({ error: "Only PDF allowed" }, { status: 400 });

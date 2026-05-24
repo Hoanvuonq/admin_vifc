@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model User {
+  id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email              String             @unique @db.VarChar(255)
+  password           String?            @db.VarChar(255)
+  full_name          String             @db.VarChar(255)
+  status             String             @default("active") @db.VarChar(50)
+  created_at         DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime           @default(now()) @db.Timestamptz(6)
+  deleted_at         DateTime?          @db.Timestamptz(6)
+  auth_provider      String?            @db.VarChar(50)
+  provider_id        String?            @db.VarChar(255)
+  avatar_url         String?
+  company            String?            @db.VarChar(255)
+  title              String?            @db.VarChar(255)
+  country            String?            @db.VarChar(100)
+  articles           articles[]
+  payments           payments[]
+  user_roles         UserRole[]
+  user_subscriptions UserSubscription[]
+
+  @@index([deleted_at], map: "idx_users_deleted_at")
+  @@index([email], map: "idx_users_email")
+  @@index([status], map: "idx_users_status")
+  @@map("users")
+}
+
+model Role {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String             @unique @db.VarChar(100)
+  description      String?            @db.VarChar(255)
+  created_at       DateTime           @default(now()) @db.Timestamptz(6)
+  role_permissions role_permissions[]
+  user_roles       UserRole[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  user_id    String   @db.Uuid
+  role_id    String   @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  role       Role     @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, role_id])
+  @@map("user_roles")
+}
+
+model UserSubscription {
+  id                   String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id              String             @db.Uuid
+  subscription_plan_id String             @db.Uuid
+  start_date           DateTime?          @db.Timestamptz(6)
+  end_date             DateTime?          @db.Timestamptz(6)
+  status               String             @default("pending") @db.VarChar(50)
+  created_at           DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime           @default(now()) @db.Timestamptz(6)
+  payments             payments[]
+  subscription_plans   subscription_plans @relation(fields: [subscription_plan_id], references: [id], onUpdate: NoAction)
+  users                User               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([end_date], map: "idx_user_subscriptions_end_date")
+  @@index([status], map: "idx_user_subscriptions_status")
+  @@index([user_id], map: "idx_user_subscriptions_user_id")
+  @@map("user_subscriptions")
+}
+
+model articles {
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String      @db.VarChar(500)
+  slug        String      @unique @db.VarChar(600)
+  content     String?
+  status      String      @default("draft") @db.VarChar(50)
+  category_id String?     @db.Uuid
+  created_by  String?     @db.Uuid
+  created_at  DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime    @default(now()) @db.Timestamptz(6)
+  deleted_at  DateTime?   @db.Timestamptz(6)
+  categories  categories? @relation(fields: [category_id], references: [id], onUpdate: NoAction)
+  users       User?       @relation(fields: [created_by], references: [id], onUpdate: NoAction)
+
+  @@index([category_id], map: "idx_articles_category_id")
+  @@index([created_by], map: "idx_articles_created_by")
+  @@index([deleted_at], map: "idx_articles_deleted_at")
+  @@index([slug], map: "idx_articles_slug")
+  @@index([status], map: "idx_articles_status")
+}
+
+model categories {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String     @unique @db.VarChar(255)
+  created_at DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at DateTime   @default(now()) @db.Timestamptz(6)
+  deleted_at DateTime?  @db.Timestamptz(6)
+  articles   articles[]
+}
+
+model payments {
+  id                 String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id            String            @db.Uuid
+  gateway            String            @db.VarChar(50)
+  amount             Decimal           @db.Decimal(12, 2)
+  currency           String            @default("VND") @db.VarChar(10)
+  transaction_id     String?           @db.VarChar(255)
+  status             String            @default("pending") @db.VarChar(50)
+  metadata           Json?
+  subscription_id    String?           @db.Uuid
+  created_at         DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime          @default(now()) @db.Timestamptz(6)
+  user_subscriptions UserSubscription? @relation(fields: [subscription_id], references: [id], onUpdate: NoAction)
+  users              User              @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([gateway], map: "idx_payments_gateway")
+  @@index([status], map: "idx_payments_status")
+  @@index([transaction_id], map: "idx_payments_transaction_id")
+  @@index([user_id], map: "idx_payments_user_id")
+}
+
+model permissions {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key              String             @unique @db.VarChar(100)
+  module           String?            @db.VarChar(100)
+  created_at       DateTime           @default(now()) @db.Timestamptz(6)
+  role_permissions role_permissions[]
+}
+
+model role_permissions {
+  role_id       String      @db.Uuid
+  permission_id String      @db.Uuid
+  permissions   permissions @relation(fields: [permission_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  roles         Role        @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([role_id, permission_id])
+}
+
+model subscription_plans {
+  id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String             @db.VarChar(255)
+  price              Decimal            @db.Decimal(12, 2)
+  duration_days      Int
+  description        String?
+  is_active          Boolean            @default(true)
+  created_at         DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime           @default(now()) @db.Timestamptz(6)
+  deleted_at         DateTime?          @db.Timestamptz(6)
+  user_subscriptions UserSubscription[]
+}
