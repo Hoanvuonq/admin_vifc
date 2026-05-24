@@ -114,7 +114,7 @@ export async function GET(request: Request) {
   }
 }
 
-// POST /api/db/articles - Create or update an article
+// POST /api/db/articles - Create an article
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -151,28 +151,11 @@ export async function POST(request: Request) {
     // Format layouts to string (if array, serialize it; otherwise keep as string)
     const formattedLayouts = typeof layouts === "object" ? JSON.stringify(layouts) : String(layouts);
 
-    // Upsert article based on ID (if ID exists, update; otherwise create new)
+    // Create new article
     const articleId = id || `post-uuid-${Date.now()}`;
 
-    const upsertedArticle = await prisma.articles.upsert({
-      where: { id: articleId },
-      update: {
-        title,
-        slug,
-        description: description || null,
-        thumbnail: thumbnail || null,
-        layouts: formattedLayouts,
-        content: content || null,
-        blocks: blocks ? (blocks as any) : null,
-        status,
-        seo_title: seoTitle || null,
-        seo_description: seoDescription || null,
-        seo_keywords: seoKeywords || null,
-        category_id: category_id || null,
-        created_by: created_by || null,
-        updated_at: new Date(),
-      },
-      create: {
+    const createdArticle = await prisma.articles.create({
+      data: {
         id: articleId,
         title,
         slug,
@@ -195,39 +178,39 @@ export async function POST(request: Request) {
     // Format response conforming to Article interface
     let parsedBlocks: ArticleBlock[] = [];
     try {
-      if (upsertedArticle.blocks) {
-        parsedBlocks = typeof upsertedArticle.blocks === "string"
-          ? JSON.parse(upsertedArticle.blocks)
-          : (upsertedArticle.blocks as unknown as ArticleBlock[]);
+      if (createdArticle.blocks) {
+        parsedBlocks = typeof createdArticle.blocks === "string"
+          ? JSON.parse(createdArticle.blocks)
+          : (createdArticle.blocks as unknown as ArticleBlock[]);
       }
     } catch (e) {
       // Ignored
     }
 
-    let parsedLayouts: string | string[] = upsertedArticle.layouts || "1";
-    if (upsertedArticle.layouts && (upsertedArticle.layouts.startsWith("[") || upsertedArticle.layouts.startsWith("{"))) {
+    let parsedLayouts: string | string[] = createdArticle.layouts || "1";
+    if (createdArticle.layouts && (createdArticle.layouts.startsWith("[") || createdArticle.layouts.startsWith("{"))) {
       try {
-        parsedLayouts = JSON.parse(upsertedArticle.layouts);
+        parsedLayouts = JSON.parse(createdArticle.layouts);
       } catch (e) {
         // Ignored
       }
     }
 
     const transformed: Article = {
-      id: upsertedArticle.id,
-      title: upsertedArticle.title,
-      slug: upsertedArticle.slug,
+      id: createdArticle.id,
+      title: createdArticle.title,
+      slug: createdArticle.slug,
       layouts: parsedLayouts,
-      summary: upsertedArticle.description || "",
-      description: upsertedArticle.description || "",
-      content: upsertedArticle.content || "",
-      thumbnail: upsertedArticle.thumbnail || "",
-      createdAt: upsertedArticle.created_at.toISOString(),
-      updatedAt: upsertedArticle.updated_at.toISOString(),
+      summary: createdArticle.description || "",
+      description: createdArticle.description || "",
+      content: createdArticle.content || "",
+      thumbnail: createdArticle.thumbnail || "",
+      createdAt: createdArticle.created_at.toISOString(),
+      updatedAt: createdArticle.updated_at.toISOString(),
       blocks: parsedBlocks,
-      seoTitle: upsertedArticle.seo_title || undefined,
-      seoDescription: upsertedArticle.seo_description || undefined,
-      seoKeywords: upsertedArticle.seo_keywords || undefined,
+      seoTitle: createdArticle.seo_title || undefined,
+      seoDescription: createdArticle.seo_description || undefined,
+      seoKeywords: createdArticle.seo_keywords || undefined,
     };
 
     return NextResponse.json(

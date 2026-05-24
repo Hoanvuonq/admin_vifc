@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${pdfKey}`;
 
-    let thumbnailUrl = null;
+    let thumbnailUrl: string | null = null;
 
     if (thumbnail) {
       try {
