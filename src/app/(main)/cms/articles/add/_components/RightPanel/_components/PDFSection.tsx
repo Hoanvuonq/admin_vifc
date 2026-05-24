@@ -4,12 +4,13 @@ import { FormInput, MediaUploadField } from "@/components";
 import { useUpload } from "@/hooks/useUpload";
 
 export const PDFSection: React.FC<RightPanelProps> = ({
-  pdfUrl, setPdfUrl,
-  pdfCover, setPdfCover,
-  pdfName, setPdfName,
-  pdfRole, setPdfRole,
+  blocks,
+  handleBlockChange
 }) => {
   const { uploadFile } = useUpload();
+
+  const pdfBlock = blocks.find((b) => b.type === "pdf");
+  if (!pdfBlock) return null;
 
   return (
     <div id="section-pdf" className="space-y-4">
@@ -28,19 +29,16 @@ export const PDFSection: React.FC<RightPanelProps> = ({
           <label className="text-[9px] uppercase text-gray-500 tracking-wider font-semibold">Upload PDF File</label>
           <div className="flex justify-center p-3 bg-slate-50/60 rounded-xl border border-slate-100">
             <MediaUploadField
-              value={pdfUrl ? [{ uid: "pdf", url: pdfUrl, status: "done", name: pdfName, thumbnailUrl: pdfCover }] : []}
+              value={pdfBlock.content ? [{ uid: pdfBlock.id, url: pdfBlock.content, status: "done", name: pdfBlock.caption, thumbnailUrl: pdfBlock.thumbnailUrl }] : []}
               onChange={(files) => {
                 if (files.length > 0) {
-                  setPdfUrl(files[0].url || "");
-                  if (files[0].thumbnailUrl) {
-                    setPdfCover(files[0].thumbnailUrl);
-                  }
-                  if (!pdfName && files[0].name) {
-                    setPdfName(files[0].name);
-                  }
+                  handleBlockChange(pdfBlock.id, {
+                    content: files[0].url || "",
+                    thumbnailUrl: files[0].thumbnailUrl || pdfBlock.thumbnailUrl,
+                    caption: files[0].name || pdfBlock.caption
+                  });
                 } else {
-                  setPdfUrl("");
-                  setPdfCover("");
+                  handleBlockChange(pdfBlock.id, { content: "", thumbnailUrl: "", caption: "" });
                 }
               }}
               onUploadApi={uploadFile}
@@ -53,8 +51,8 @@ export const PDFSection: React.FC<RightPanelProps> = ({
             />
           </div>
           <FormInput
-            value={pdfUrl}
-            onChange={(e) => setPdfUrl(e.target.value)}
+            value={pdfBlock.content}
+            onChange={(e) => handleBlockChange(pdfBlock.id, { content: e.target.value })}
             placeholder="Or enter the PDF file URL..."
             className="h-10 text-xs"
           />
@@ -63,8 +61,8 @@ export const PDFSection: React.FC<RightPanelProps> = ({
         <div className="space-y-2 pb-2">
           <label className="text-[9px] uppercase text-gray-500 tracking-wider font-semibold">PDF Document Name</label>
           <FormInput
-            value={pdfName || ""}
-            onChange={(e) => setPdfName(e.target.value)}
+            value={pdfBlock.caption || ""}
+            onChange={(e) => handleBlockChange(pdfBlock.id, { caption: e.target.value })}
             placeholder="e.g. Wealth and asset management outlook.pdf"
             className="h-10 text-xs"
           />
@@ -73,8 +71,8 @@ export const PDFSection: React.FC<RightPanelProps> = ({
         <div className="space-y-2 pb-2">
           <label className="text-[9px] uppercase text-gray-500 tracking-wider font-semibold">Minimum Required Role</label>
           <select
-            value={pdfRole}
-            onChange={(e) => setPdfRole(e.target.value as "free" | "base" | "standard" | "premium")}
+            value={pdfBlock.activeRole || "free"}
+            onChange={(e) => handleBlockChange(pdfBlock.id, { activeRole: e.target.value as any })}
             className="w-full h-10 px-3 text-xs bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all text-slate-700"
           >
             <option value="free">Free (All users can view)</option>
@@ -83,10 +81,10 @@ export const PDFSection: React.FC<RightPanelProps> = ({
             <option value="premium">Premium (Only Premium users)</option>
           </select>
           <p className="text-[9.5px] text-gray-450 italic mt-1 leading-snug">
-            {pdfRole === "free" && "Users from Free level and up can view the PDF."}
-            {pdfRole === "base" && "Only users from Base level, Standard, and Premium can view."}
-            {pdfRole === "standard" && "Only users from Standard level and Premium can view."}
-            {pdfRole === "premium" && "Exclusive to Premium users only."}
+            {(pdfBlock.activeRole || "free") === "free" && "Users from Free level and up can view the PDF."}
+            {pdfBlock.activeRole === "base" && "Only users from Base level, Standard, and Premium can view."}
+            {pdfBlock.activeRole === "standard" && "Only users from Standard level and Premium can view."}
+            {pdfBlock.activeRole === "premium" && "Exclusive to Premium users only."}
           </p>
         </div>
       </div>

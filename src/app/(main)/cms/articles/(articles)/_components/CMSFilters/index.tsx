@@ -3,7 +3,6 @@
 import { StatusTabs } from "@/app/(main)/(dashboard)/_components";
 import { DateTimeInput, PremiumButton, SearchComponent, SelectComponent } from "@/components";
 import {
-  Archive,
   BookOpen,
   CheckCircle2,
   Clock,
@@ -11,9 +10,11 @@ import {
   FileText,
   Filter,
   Plus,
-  RefreshCw
+  RefreshCw,
+  Trash2
 } from "lucide-react";
 import React, { useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { CATEGORY_OPTIONS } from "../../_constants/cms.constants";
 import { CMSFiltersProps } from "./type";
 
@@ -33,12 +34,13 @@ export const CMSFilters: React.FC<CMSFiltersProps> = ({
   onReset,
   onAddClick,
 }) => {
+  const router = useRouter();
+
   const tabs = useMemo(() => [
     { key: "ALL", label: "All", icon: BookOpen, count: counts.total },
     { key: "PUBLISHED", label: "Published", icon: CheckCircle2, count: counts.published },
     { key: "DRAFT", label: "Drafts", icon: FileText, count: counts.draft },
-    { key: "PENDING_REVIEW", label: "Pending Review", icon: Clock, count: counts.pendingReview },
-    { key: "ARCHIVED", label: "Archived", icon: Archive, count: counts.archived },
+    { key: "ARCHIVED", label: "Deleted", icon: Trash2, count: counts.archived },
   ], [counts]);
 
   const categoryOptions = useMemo(() => [
@@ -50,8 +52,7 @@ export const CMSFilters: React.FC<CMSFiltersProps> = ({
     { label: "All Statuses", value: "ALL" },
     { label: "Published", value: "PUBLISHED" },
     { label: "Draft", value: "DRAFT" },
-    { label: "Pending Review", value: "PENDING_REVIEW" },
-    { label: "Archived", value: "ARCHIVED" }
+    { label: "Deleted", value: "ARCHIVED" }
   ], []);
 
   return (
@@ -86,7 +87,7 @@ export const CMSFilters: React.FC<CMSFiltersProps> = ({
             label="Add Article"
             variant="orange"
             icon={Plus}
-            onClick={onAddClick}
+            onClick={() => router.push("/cms/articles/add")}
             className="rounded-2xl px-5 h-10 text-[11px] font-extrabold uppercase tracking-wider"
           />
         </div>

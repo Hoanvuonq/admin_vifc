@@ -131,7 +131,7 @@ export const PremiumButton = ({
       onClick={onClick}
       disabled={disabled || isLoading}
       className={cn(
-        "group/btn relative overflow-hidden rounded-2xl border transition-all duration-500 flex items-center justify-center font-bold uppercase tracking-wider shadow-sm active:scale-95 disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap",
+        "group/btn relative cursor-pointer overflow-hidden rounded-2xl border transition-all duration-500 flex items-center justify-center font-bold uppercase tracking-wider shadow-sm active:scale-95 disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap",
         block ? "w-full" : "w-fit",
         isAddToCart
           ? "bg-linear-to-br from-orange-500 to-orange-600 text-white border-orange-400/50 shadow-[0_10px_20px_-10px_rgba(249,115,22,0.5)] hover:shadow-[0_15px_30px_-10px_rgba(249,115,22,0.6)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"

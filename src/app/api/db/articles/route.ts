@@ -1,6 +1,6 @@
+import { Article, ArticleBlock } from "@/types/article";
 import { NextResponse } from "next/server";
 import prisma from "../../../../lib/prisma";
-import { Article, ArticleBlock } from "@/types/article";
 
 // GET /api/db/articles - List paginated articles
 export async function GET(request: Request) {
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
             message: "Invalid pagination parameters",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -43,9 +43,10 @@ export async function GET(request: Request) {
       let parsedBlocks: ArticleBlock[] = [];
       try {
         if (art.blocks) {
-          parsedBlocks = typeof art.blocks === "string" 
-            ? JSON.parse(art.blocks) 
-            : (art.blocks as unknown as ArticleBlock[]);
+          parsedBlocks =
+            typeof art.blocks === "string"
+              ? JSON.parse(art.blocks)
+              : (art.blocks as unknown as ArticleBlock[]);
         }
       } catch (e) {
         console.error("Failed to parse blocks JSON for article:", art.id, e);
@@ -53,7 +54,10 @@ export async function GET(request: Request) {
 
       // Check if layouts is a serialized JSON array or a plain string
       let parsedLayouts: string | string[] = art.layouts || "1";
-      if (art.layouts && (art.layouts.startsWith("[") || art.layouts.startsWith("{"))) {
+      if (
+        art.layouts &&
+        (art.layouts.startsWith("[") || art.layouts.startsWith("{"))
+      ) {
         try {
           parsedLayouts = JSON.parse(art.layouts);
         } catch (e) {
@@ -67,9 +71,7 @@ export async function GET(request: Request) {
         slug: art.slug,
         status: art.status,
         layouts: parsedLayouts,
-        summary: art.description || "",
         description: art.description || "",
-        content: art.content || "",
         thumbnail: art.thumbnail || "",
         createdAt: art.created_at.toISOString(),
         updatedAt: art.updated_at.toISOString(),
@@ -97,7 +99,7 @@ export async function GET(request: Request) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Prisma articles GET failed:", error);
@@ -110,7 +112,7 @@ export async function GET(request: Request) {
           details: error instanceof Error ? error.message : String(error),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -126,7 +128,6 @@ export async function POST(request: Request) {
       description,
       thumbnail,
       layouts,
-      content,
       blocks,
       status = "draft",
       seoTitle,
@@ -145,12 +146,29 @@ export async function POST(request: Request) {
             message: "Title and slug are required fields",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Format layouts to string (if array, serialize it; otherwise keep as string)
-    const formattedLayouts = typeof layouts === "object" ? JSON.stringify(layouts) : String(layouts);
+    const formattedLayouts =
+      typeof layouts === "object" ? JSON.stringify(layouts) : String(layouts);
+
+    let finalCategoryId: string | null = null;
+    if (category_id) {
+      if (category_id.length === 36 && category_id.includes("-")) {
+        finalCategoryId = category_id;
+      } else {
+        let cat = await prisma.categories.findFirst({
+          where: { name: { equals: category_id, mode: "insensitive" } },
+        });
+        if (!cat) {
+          cat = await prisma.categories.create({
+            data: { name: category_id },
+          });
+        }
+        finalCategoryId = cat.id;
+      }
+    }
 
     // Create new article
     const articleId = id || `post-uuid-${Date.now()}`;
@@ -163,13 +181,12 @@ export async function POST(request: Request) {
         description: description || null,
         thumbnail: thumbnail || null,
         layouts: formattedLayouts,
-        content: content || null,
         blocks: blocks ? (blocks as any) : null,
         status,
         seo_title: seoTitle || null,
         seo_description: seoDescription || null,
         seo_keywords: seoKeywords || null,
-        category_id: category_id || null,
+        category_id: finalCategoryId,
         created_by: created_by || null,
         created_at: new Date(),
         updated_at: new Date(),
@@ -180,16 +197,21 @@ export async function POST(request: Request) {
     let parsedBlocks: ArticleBlock[] = [];
     try {
       if (createdArticle.blocks) {
-        parsedBlocks = typeof createdArticle.blocks === "string"
-          ? JSON.parse(createdArticle.blocks)
-          : (createdArticle.blocks as unknown as ArticleBlock[]);
+        parsedBlocks =
+          typeof createdArticle.blocks === "string"
+            ? JSON.parse(createdArticle.blocks)
+            : (createdArticle.blocks as unknown as ArticleBlock[]);
       }
     } catch (e) {
       // Ignored
     }
 
     let parsedLayouts: string | string[] = createdArticle.layouts || "1";
-    if (createdArticle.layouts && (createdArticle.layouts.startsWith("[") || createdArticle.layouts.startsWith("{"))) {
+    if (
+      createdArticle.layouts &&
+      (createdArticle.layouts.startsWith("[") ||
+        createdArticle.layouts.startsWith("{"))
+    ) {
       try {
         parsedLayouts = JSON.parse(createdArticle.layouts);
       } catch (e) {
@@ -202,9 +224,7 @@ export async function POST(request: Request) {
       title: createdArticle.title,
       slug: createdArticle.slug,
       layouts: parsedLayouts,
-      summary: createdArticle.description || "",
       description: createdArticle.description || "",
-      content: createdArticle.content || "",
       thumbnail: createdArticle.thumbnail || "",
       createdAt: createdArticle.created_at.toISOString(),
       updatedAt: createdArticle.updated_at.toISOString(),
@@ -222,7 +242,7 @@ export async function POST(request: Request) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Prisma articles POST failed:", error);
@@ -235,7 +255,7 @@ export async function POST(request: Request) {
           details: error instanceof Error ? error.message : String(error),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

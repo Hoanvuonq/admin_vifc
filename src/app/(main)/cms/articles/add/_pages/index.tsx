@@ -10,6 +10,7 @@ import { ContentBlock } from "../_components/NewsPreview/type";
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useArticles } from "@/hooks/useArticles";
 
 type SectionType = "section-basic" | "section-media" | "section-content" | "section-seo" | "section-pdf" | "section-settings";
 
@@ -42,6 +43,8 @@ const compileBlocksToHTML = (blocks: ContentBlock[]): string => {
 
 export const AddArticlePage: React.FC = () => {
   const router = useRouter();
+  const { createArticle, isCreating } = useArticles();
+
   // Form states
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -65,11 +68,6 @@ export const AddArticlePage: React.FC = () => {
   const [scheduledDate, setScheduledDate] = useState("");
   const [status, setStatus] = useState<NewsItem["status"]>("DRAFT");
 
-  // PDF states
-  const [pdfUrl, setPdfUrl] = useState("");
-  const [pdfCover, setPdfCover] = useState("");
-  const [pdfName, setPdfName] = useState("");
-  const [pdfRole, setPdfRole] = useState<"free" | "base" | "standard" | "premium">("free");
 
   // UI state
   const [activeSection, setActiveSection] = useState<string>("section-basic");
@@ -103,10 +101,6 @@ export const AddArticlePage: React.FC = () => {
     setScheduledDate("");
     setStatus("DRAFT");
 
-    setPdfUrl("");
-    setPdfCover("");
-    setPdfName("");
-    setPdfRole("free");
   }, []);
 
   // Scroll spy inside the right form panel
@@ -256,7 +250,7 @@ export const AddArticlePage: React.FC = () => {
     }
   };
 
-  const handleSave = (finalStatus?: NewsItem["status"]) => {
+  const handleSave = async (finalStatus?: NewsItem["status"]) => {
     if (!title || !slug || !category) {
       alert("Please fill in all required fields (*)");
       return;
@@ -277,19 +271,19 @@ export const AddArticlePage: React.FC = () => {
       if (b.type === "image") {
         return { type: "image", url: b.content };
       }
+      if (b.type === "pdf") {
+        return {
+          type: "pdf",
+          url: b.content,
+          thumbnail: b.thumbnailUrl || undefined,
+          activeRole: b.activeRole || "free",
+          name: b.caption || undefined
+        };
+      }
       return null;
     }).filter(Boolean);
 
-    // Append PDF as a block if it exists
-    if (pdfUrl) {
-      formattedBlocks.push({
-        type: "pdf",
-        url: pdfUrl,
-        thumbnail: pdfCover || undefined,
-        activeRole: pdfRole || "free",
-        name: pdfName || undefined,
-      });
-    }
+
 
     // Build the final JSON matching the schema
     const articleJsonPayload = {
@@ -301,18 +295,22 @@ export const AddArticlePage: React.FC = () => {
       layouts: "2",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      content: content,
       blocks: formattedBlocks,
       seoTitle,
       seoDescription,
       seoKeywords,
+      status: (finalStatus || status).toLowerCase(),
+      category_id: category[0] || "WEB3",
     };
 
-    console.log("=== DUMP ARTICLE JSON PAYLOAD ===");
-    console.log(JSON.stringify(articleJsonPayload, null, 2));
-
-    toast.success("Article saved successfully!");
-    router.push("/cms/articles");
+    try {
+      await createArticle(articleJsonPayload);
+      router.push("/cms/articles");
+    } catch (e: any) {
+      console.error(e);
+      // Let useArticles hook handle the toast error since it already does it via onError!
+      // But we can keep it simple.
+    }
   };
 
   const tagOptions = [
@@ -488,22 +486,12 @@ export const AddArticlePage: React.FC = () => {
             onClick={() => router.push("/cms/articles")}
             className="rounded-xl font-bold px-4 py-2 text-xs"
           />
-          {/* {status !== "PUBLISHED" && (
-            <PremiumButton
-              label="Save Draft"
-              icon={Save}
-              variant="gray"
-              size="md"
-              onClick={() => handleSave("DRAFT")}
-              className="rounded-xl font-bold border border-gray-200 px-4 py-2 bg-white text-gray-700 hover:bg-slate-50 text-xs"
-            />
-          )} */}
           <PremiumButton
             label={"Publish"}
             variant="emerald"
             icon={Check}
             size="md"
-            onClick={() => handleSave(status === "DRAFT" ? "PENDING_REVIEW" : status)}
+            onClick={() => handleSave("PUBLISHED")}
             className="rounded-xl font-bold px-6 py-2 text-xs"
           />
         </div>
@@ -548,9 +536,7 @@ export const AddArticlePage: React.FC = () => {
           handleMoveBlock={handleMoveBlock}
           handleDeleteBlock={handleDeleteBlock}
           handleBlockChange={handleBlockChange}
-          pdfUrl={pdfUrl}
-          pdfCover={pdfCover}
-          pdfName={pdfName}
+
         />
 
         {/* COLUMN 3: RIGHT SCROLLABLE FORM INPUTS PANEL */}
@@ -593,14 +579,7 @@ export const AddArticlePage: React.FC = () => {
           sectionMediaCompleted={sectionMediaCompleted}
           sectionContentCompleted={sectionContentCompleted}
           sectionSEOCompleted={sectionSEOCompleted}
-          pdfUrl={pdfUrl}
-          setPdfUrl={setPdfUrl}
-          pdfCover={pdfCover}
-          setPdfCover={setPdfCover}
-          pdfName={pdfName}
-          setPdfName={setPdfName}
-          pdfRole={pdfRole}
-          setPdfRole={setPdfRole}
+
         />
       </div>
     </div>

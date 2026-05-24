@@ -2,6 +2,7 @@ export interface NewsItem {
   id: string;
   title: string;
   slug: string;
+  layouts?: string | string[];
   summary: string;
   content: string;
   category: string[];

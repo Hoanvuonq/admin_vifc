@@ -1,113 +1,111 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import _ from "lodash";
-import { INITIAL_NEWS } from "../_constants/cms.constants";
+import { useQueryClient } from "@tanstack/react-query";
 import { NewsItem } from "../_pages/types";
+import { useArticles } from "@/hooks/useArticles";
+import { toast } from "sonner";
+import { Article } from "@/types/article";
 
-const CMS_ARTICLES_KEY = ["cms-articles"];
-
-const getArticles = (): NewsItem[] => {
-  if (typeof window === "undefined") return INITIAL_NEWS;
-  const stored = localStorage.getItem("cms_articles");
-  if (!stored) {
-    localStorage.setItem("cms_articles", JSON.stringify(INITIAL_NEWS));
-    return INITIAL_NEWS;
-  }
-  try {
-    return JSON.parse(stored);
-  } catch (e) {
-    return INITIAL_NEWS;
-  }
-};
-
-const saveArticle = (
-  newsData: Omit<NewsItem, "id" | "createdDate" | "views" | "authorName" | "authorAvatar">,
-  selectedId?: string
-): NewsItem[] => {
-  const list = _.cloneDeep(getArticles());
-  if (selectedId) {
-    const updated = list.map((n) =>
-      n.id === selectedId
-        ? {
-            ...n,
-            ...newsData,
-          }
-        : n
-    );
-    localStorage.setItem("cms_articles", JSON.stringify(updated));
-    return updated;
-  } else {
-    const now = new Date();
-    const formatTime = (num: number) => String(num).padStart(2, "0");
-    const dateString = `${formatTime(now.getDate())}/${formatTime(
-      now.getMonth() + 1
-    )}/${now.getFullYear()} ${formatTime(now.getHours())}:${formatTime(
-      now.getMinutes()
-    )}`;
-
-    const newId = `NEWS${String(list.length + 1).padStart(3, "0")}`;
-    const newNewsItem: NewsItem = {
-      id: newId,
-      authorName: "Admin VIFC",
-      authorAvatar: "/icons/icon_sidebar2.png",
-      createdDate: dateString,
-      views: 0,
-      ...newsData,
-    };
-    const updated = [newNewsItem, ...list];
-    localStorage.setItem("cms_articles", JSON.stringify(updated));
-    return updated;
-  }
-};
-
-const deleteArticle = (id: string): NewsItem[] => {
-  const list = _.cloneDeep(getArticles());
-  const updated = list.filter((n) => n.id !== id);
-  localStorage.setItem("cms_articles", JSON.stringify(updated));
-  return updated;
+const formatDate = (dateString: string) => {
+  const d = new Date(dateString);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
 };
 
 export const useCMSArticles = () => {
   const queryClient = useQueryClient();
+  const {
+    articles: dbArticles,
+    isLoading,
+    error,
+    refetch,
+    createArticle,
+    isCreating,
+    updateArticle,
+    isUpdating,
+    deleteArticle: deleteArticleApi,
+    isDeleting,
+  } = useArticles(1, 100);
 
-  const { data: articles = [], isLoading } = useQuery({
-    queryKey: CMS_ARTICLES_KEY,
-    queryFn: getArticles,
-    initialData: typeof window !== "undefined" ? getArticles() : INITIAL_NEWS,
-  });
+  const articles: NewsItem[] = dbArticles.map((art: Article) => ({
+    id: art.id,
+    title: art.title || "Untitled",
+    slug: art.slug || "",
+    layouts: art.layouts,
+    summary: art.summary || art.description || "",
+    content: art.content || "",
+    category: ["WEB3"],
+    tags: [],
+    thumbnail: art.thumbnail || "",
+    authorName: "Admin VIFC",
+    authorAvatar: "/icons/icon_sidebar2.png",
+    status: (art.status?.toUpperCase() as NewsItem["status"]) || "PUBLISHED",
+    createdDate: formatDate(art.createdAt),
+    views: 0,
+    seoTitle: art.seoTitle,
+    seoDescription: art.seoDescription,
+    seoKeywords: art.seoKeywords,
+  }));
 
-  const saveMutation = useMutation({
-    mutationFn: async ({
-      newsData,
-      selectedId
-    }: {
-      newsData: Omit<
-        NewsItem,
-        "id" | "createdDate" | "views" | "authorName" | "authorAvatar"
-      >;
-      selectedId?: string;
-    }) => {
-      return saveArticle(newsData, selectedId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: CMS_ARTICLES_KEY });
+  const saveArticle = async ({
+    newsData,
+    selectedId,
+  }: {
+    newsData: Omit<
+      NewsItem,
+      "id" | "createdDate" | "views" | "authorName" | "authorAvatar"
+    >;
+    selectedId?: string;
+  }) => {
+    if (selectedId) {
+      await updateArticle({
+        id: selectedId,
+        title: newsData.title,
+        slug: newsData.slug,
+        summary: newsData.summary,
+        description: newsData.summary,
+        content: newsData.content,
+        thumbnail: newsData.thumbnail,
+        seoTitle: newsData.seoTitle,
+        seoDescription: newsData.seoDescription,
+        seoKeywords: newsData.seoKeywords,
+        layouts: newsData.layouts || "1",
+        status: newsData.status || "DRAFT",
+        category_id: newsData.category?.[0] || "WEB3",
+        blocks: (newsData as any).blocks || [],
+      });
+      toast.success("Article updated successfully!");
+    } else {
+      await createArticle({
+        id: `NEWS${Date.now()}`,
+        title: newsData.title,
+        slug: newsData.slug,
+        summary: newsData.summary,
+        description: newsData.summary,
+        content: newsData.content,
+        thumbnail: newsData.thumbnail,
+        seoTitle: newsData.seoTitle,
+        seoDescription: newsData.seoDescription,
+        seoKeywords: newsData.seoKeywords,
+        layouts: newsData.layouts || "1",
+        status: newsData.status || "DRAFT",
+        category_id: newsData.category?.[0] || "WEB3",
+        blocks: (newsData as any).blocks || [],
+      });
     }
-  });
+  };
 
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      return deleteArticle(id);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: CMS_ARTICLES_KEY });
-    }
-  });
+  const deleteArticle = async (id: string) => {
+    await deleteArticleApi(id);
+    toast.success("Article deleted successfully!");
+  };
 
   return {
     articles,
     isLoading,
-    saveArticle: saveMutation.mutateAsync,
-    deleteArticle: deleteMutation.mutateAsync,
-    isSaving: saveMutation.isPending,
-    isDeleting: deleteMutation.isPending
+    saveArticle,
+    deleteArticle,
+    isSaving: isCreating || isUpdating,
+    isDeleting,
   };
 };

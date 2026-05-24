@@ -10,7 +10,7 @@ import { getColumns } from "./columns";
 import { NewsItem } from "./types";
 
 export const ManagerCMSScreen = () => {
-  const { articles: newsList, saveArticle, deleteArticle } = useCMSArticles();
+  const { articles: newsList, isLoading, saveArticle, deleteArticle } = useCMSArticles();
   const [toast, setToast] = useState<{ message: string; type: "success" | "info" | "warning" } | null>(null);
 
   const [searchText, setSearchText] = useState("");
@@ -18,7 +18,6 @@ export const ManagerCMSScreen = () => {
   const [selectedStatus, setSelectedStatus] = useState("ALL");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedNewsToEdit, setSelectedNewsToEdit] = useState<NewsItem | null>(null);
 
@@ -32,7 +31,6 @@ export const ManagerCMSScreen = () => {
     }, 3000);
   };
 
-  // Stats calculation
   const stats = useMemo(() => {
     const total = newsList.length;
     const published = newsList.filter((n) => n.status === "PUBLISHED").length;
@@ -42,7 +40,6 @@ export const ManagerCMSScreen = () => {
     return { total, published, draft, pendingReview, archived };
   }, [newsList]);
 
-  // Apply filters including Date Range
   const filteredNews = useMemo(() => {
     return newsList.filter((n) => {
       const matchesSearch =
@@ -54,10 +51,9 @@ export const ManagerCMSScreen = () => {
       const matchesCategory = selectedCategory === "ALL" || (Array.isArray(n.category) ? n.category.includes(selectedCategory) : n.category === selectedCategory);
       const matchesStatus = selectedStatus === "ALL" || n.status === selectedStatus;
 
-      // Date range filtering
       if (startDate || endDate) {
         try {
-          const itemDateStr = n.createdDate.split(" ")[0]; // e.g. "25/05/2024"
+          const itemDateStr = n.createdDate.split(" ")[0];
           const [day, month, year] = itemDateStr.split("/").map(Number);
           const itemDate = new Date(year, month - 1, day);
 
@@ -182,7 +178,7 @@ export const ManagerCMSScreen = () => {
       <DataTable
         data={paginatedNews}
         columns={columns}
-        loading={false}
+        loading={isLoading}
         rowKey="id"
         emptyMessage="No articles found matching the current filters."
         page={currentPage}

@@ -3,6 +3,7 @@ import { ClientProviders, ToastProvider } from "@/providers";
 import type { Metadata } from "next";
 
 import "./globals.css";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

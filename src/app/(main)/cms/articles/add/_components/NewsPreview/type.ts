@@ -10,6 +10,7 @@ export interface ContentBlock {
   imageDirection?: "image-text" | "text-image";
   imagePadding?: "none" | "small" | "medium" | "large";
   thumbnailUrl?: string;
+  activeRole?: "free" | "base" | "standard" | "premium";
 }
 
 export interface NewsPreviewProps {
@@ -30,7 +31,5 @@ export interface NewsPreviewProps {
   handleMoveBlock?: (index: number, dir: "up" | "down") => void;
   handleDeleteBlock?: (blockId: string) => void;
   handleBlockChange?: (blockId: string, update: Partial<ContentBlock>) => void;
-  pdfUrl?: string;
-  pdfCover?: string;
-  pdfName?: string;
+
 }

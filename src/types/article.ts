@@ -45,4 +45,7 @@ export interface Article {
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
+  status?: string;
+  category_id?: string;
+  created_by?: string;
 }

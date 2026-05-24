@@ -1,11 +1,12 @@
 "use client";
 
-import { EmptyState } from "@/components";
+import { EmptyState, SectionLoading } from "@/components";
 import { cn } from "@/utils/cn";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Loader } from "lucide-react";
 import React, { useRef } from "react";
 import { DataTableProps } from "./type";
+import Skeleton from "react-loading-skeleton";
 
 export const DataTable = <T,>({
   data,
@@ -93,22 +94,27 @@ export const DataTable = <T,>({
 
             <tbody className="divide-y divide-gray-100">
               {loading ? (
-                <motion.tr
-                  key="loading"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <td colSpan={columns.length} className="py-32 text-center">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="relative">
-                        <Loader className="w-8 h-8 text-orange-500 animate-spin" />
-                        <div className="absolute inset-0 w-8 h-8 bg-orange-500/10 rounded-full animate-pulse" />
-                      </div>
-                      <span className="text-[10px] font-bold uppercase text-gray-600">Loading...</span>
-                    </div>
-                  </td>
-                </motion.tr>
+                Array.from({ length: size || 5 }).map((_, rowIdx) => (
+                  <motion.tr
+                    key={`loading-${rowIdx}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="border-b border-gray-50/50"
+                  >
+                    {columns.map((col, colIdx) => (
+                      <td key={colIdx} className="px-4 py-4">
+                        <div className={col.align === "center" ? "flex justify-center" : col.align === "right" ? "flex justify-end" : "flex justify-start"}>
+                          <Skeleton
+                            height={28}
+                            width={colIdx === 0 ? 240 : 80}
+                            borderRadius="0.5rem"
+                          />
+                        </div>
+                      </td>
+                    ))}
+                  </motion.tr>
+                ))
               ) : data.length === 0 ? (
                 <motion.tr
                   key="empty"
@@ -133,7 +139,7 @@ export const DataTable = <T,>({
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.98 }}
-                        transition={{ 
+                        transition={{
                           type: "spring",
                           stiffness: 260,
                           damping: 26,
@@ -159,7 +165,7 @@ export const DataTable = <T,>({
                         {columns.map((col, colIdx) => {
                           const rendered = col.render ? col.render(item, rowIdx) : null;
                           let cellContent: React.ReactNode = null;
- 
+
                           if (rendered && typeof rendered === "object" && "content" in rendered) {
                             cellContent = (rendered as any).content;
                           } else if (col.render) {
@@ -167,7 +173,7 @@ export const DataTable = <T,>({
                           } else if (col.accessor) {
                             cellContent = item[col.accessor] as React.ReactNode;
                           }
- 
+
                           return (
                             <td
                               key={colIdx}
@@ -183,23 +189,23 @@ export const DataTable = <T,>({
                           );
                         })}
                       </motion.tr>
- 
+
                       <AnimatePresence initial={false}>
                         {isExpanded && renderDropdown && (
                           <tr className="bg-gray-50/5 border-none">
                             <td colSpan={columns.length} className="p-0 border-b border-gray-100 overflow-hidden">
                               <motion.div
                                 initial={{ height: 0, opacity: 0 }}
-                                animate={{ 
-                                  height: "auto", 
+                                animate={{
+                                  height: "auto",
                                   opacity: 1,
                                   transition: {
                                     height: { duration: 0.35, ease: [0.04, 0.62, 0.23, 0.98] },
                                     opacity: { duration: 0.2, ease: "linear" }
                                   }
                                 }}
-                                exit={{ 
-                                  height: 0, 
+                                exit={{
+                                  height: 0,
                                   opacity: 0,
                                   transition: {
                                     height: { duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] },

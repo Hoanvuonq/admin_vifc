@@ -30,14 +30,7 @@ export interface RightPanelProps {
   setSeoDescription: (val: string) => void;
   seoKeywords: string;
   setSeoKeywords: (val: string) => void;
-  pdfUrl: string;
-  setPdfUrl: (val: string) => void;
-  pdfCover: string;
-  setPdfCover: (val: string) => void;
-  pdfName: string;
-  setPdfName: (val: string) => void;
-  pdfRole: "free" | "base" | "standard" | "premium";
-  setPdfRole: (val: "free" | "base" | "standard" | "premium") => void;
+
   allowComments: boolean;
   setAllowComments: (val: boolean) => void;
   isFeatured: boolean;

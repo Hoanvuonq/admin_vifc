@@ -2,8 +2,10 @@ import {
   AlertCircle,
   CheckCircle2,
   Clock,
+  LayoutTemplate,
   Loader2,
   ShieldCheck,
+  Trash2,
   XCircle,
 } from "lucide-react";
 import React from "react";
@@ -17,6 +19,13 @@ export type StatusConfig = {
 };
 
 export const statusConfig: Record<string, StatusConfig> = {
+  LAYOUT: {
+    label: "Layout",
+    styles: "bg-indigo-50 text-indigo-600 border-indigo-200/60 shadow-none",
+    premiumStyles: "bg-linear-to-br from-indigo-500 to-purple-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(99,102,241,0.3)] backdrop-blur-sm",
+    icon: <LayoutTemplate size={12} />,
+    iconColor: "text-indigo-500",
+  },
   PENDING: {
     label: "Pending",
     styles: "bg-amber-50/50 text-amber-600 border-amber-200/60 shadow-none",
@@ -67,31 +76,31 @@ export const statusConfig: Record<string, StatusConfig> = {
     iconColor: "text-rose-500",
   },
   PUBLISHED: {
-    label: "Đã xuất bản",
+    label: "Published",
     styles: "bg-emerald-50/50 text-emerald-600 border-emerald-200/60 shadow-none",
     premiumStyles: "bg-linear-to-br from-emerald-500 to-teal-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(16,185,129,0.3)] backdrop-blur-sm",
     icon: <CheckCircle2 size={12} />,
     iconColor: "text-emerald-500",
   },
   DRAFT: {
-    label: "Bản nháp",
+    label: "Draft",
     styles: "bg-blue-50 text-blue-600 border-blue-200/60 shadow-none",
     premiumStyles: "bg-linear-to-br from-blue-500 to-blue-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(59,130,246,0.3)] backdrop-blur-sm",
     icon: <Clock size={12} />,
     iconColor: "text-blue-500",
   },
   PENDING_REVIEW: {
-    label: "Chờ duyệt",
+    label: "Pending Review",
     styles: "bg-amber-50/50 text-amber-600 border-amber-200/60 shadow-none",
     premiumStyles: "bg-linear-to-br from-amber-500 to-orange-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(245,158,11,0.3)] backdrop-blur-sm",
     icon: <Clock size={12} />,
     iconColor: "text-amber-500",
   },
   ARCHIVED: {
-    label: "Đã lưu trữ",
+    label: "Deleted",
     styles: "bg-zinc-100 text-zinc-600 border-zinc-200/60 shadow-none",
     premiumStyles: "bg-linear-to-br from-zinc-500 to-zinc-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(115,115,115,0.3)] backdrop-blur-sm",
-    icon: <AlertCircle size={12} />,
+    icon: <Trash2 size={12} />,
     iconColor: "text-zinc-500",
   },
 };
