@@ -19,7 +19,7 @@ export const ManagerTransactionsScreen = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
 
-  const [currentPage, setCurrentPage] = useState(2);
+  const [currentPage, setCurrentPage] = useState(0);
   const [pageSize] = useState(10);
 
   useEffect(() => {

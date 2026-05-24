@@ -24,16 +24,14 @@ export async function GET(request: Request) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const skip = (page - 1) * limit;
 
-    const emailSearch = searchParams.get("email");
-
     // Cache logic
-    const cacheKey = `users:list:${page}:${limit}:${emailSearch || "all"}`;
+    const cacheKey = `transactions:list:${page}:${limit}:${status || "ALL"}:${search || "none"}`;
     try {
       const cachedResponse = await redis.get(cacheKey);
       if (cachedResponse) {
@@ -42,18 +40,18 @@ export async function GET(request: Request) {
     } catch (redisError) {
       console.warn("Redis cache read failed:", redisError);
     }
-    
+
     // Build where clause
     const whereClause: any = {};
     if (status && status !== "ALL") {
       whereClause.status = status;
     }
-    
+
     if (search) {
       whereClause.OR = [
-        { transaction_id: { contains: search, mode: 'insensitive' } },
-        { users: { email: { contains: search, mode: 'insensitive' } } },
-        { users: { full_name: { contains: search, mode: 'insensitive' } } },
+        { transaction_id: { contains: search, mode: "insensitive" } },
+        { users: { email: { contains: search, mode: "insensitive" } } },
+        { users: { full_name: { contains: search, mode: "insensitive" } } },
       ];
     }
 
@@ -65,9 +63,7 @@ export async function GET(request: Request) {
       skip,
       take: limit,
       where: whereClause,
-      orderBy: [
-        { created_at: "desc" }
-      ],
+      orderBy: [{ created_at: "desc" }],
       select: {
         id: true,
         user_id: true,
@@ -89,10 +85,10 @@ export async function GET(request: Request) {
             subscription_plans: {
               select: {
                 name: true,
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       },
     });
 
@@ -103,13 +99,16 @@ export async function GET(request: Request) {
       userName: t.users?.full_name || "Unknown User",
       userEmail: t.users?.email || "",
       userAvatar: t.users?.avatar_url || "",
-      planName: t.user_subscriptions?.subscription_plans?.name || "Unknown Plan",
+      planName:
+        t.user_subscriptions?.subscription_plans?.name || "Unknown Plan",
       amount: Number(t.amount) || 0,
       currency: t.currency || "VND",
       status: t.status ? t.status.toUpperCase() : "PENDING",
       paymentMethod: t.gateway || "Unknown",
       transactionDate: t.created_at.toISOString(),
-      description: t.transaction_id ? `Txn Ref: ${t.transaction_id}` : undefined,
+      description: t.transaction_id
+        ? `Txn Ref: ${t.transaction_id}`
+        : undefined,
     }));
 
     const totalPages = Math.ceil(total / limit);
@@ -152,7 +151,7 @@ export async function GET(request: Request) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
