@@ -50,8 +50,14 @@ export const LoginScreen = () => {
 
   const usernameRef = useRef<HTMLInputElement>(null);
 
-  // Focus & Load Saved Info
+  // Focus & Load Saved Info & Check if already logged in
   useEffect(() => {
+    // Redirect to home if already logged in
+    if (localStorage.getItem("access_token")) {
+      router.replace("/");
+      return;
+    }
+
     usernameRef.current?.focus();
 
     const pendingUsername = localStorage.getItem(CONFIG.storageKeyUser);
@@ -74,7 +80,7 @@ export const LoginScreen = () => {
     if (Object.keys(formValues).length > 0) {
       setFormData((prev) => ({ ...prev, ...formValues }));
     }
-  }, []);
+  }, [router]);
 
   const handleInputChange = (e: React.ChangeEvent<any>) => {
     const { name, value } = e.target;
@@ -95,8 +101,27 @@ export const LoginScreen = () => {
 
     setSubmitting(true);
     try {
-      // Mock UI delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error?.message || "Login failed");
+      }
+
+      // Store token for PrivateRoute & Login redirect
+      if (json.data?.access_token) {
+        localStorage.setItem("access_token", json.data.access_token);
+        // Also store user info if needed later
+        localStorage.setItem("user_info", JSON.stringify(json.data));
+      }
+
       toast.success("Login successful!");
       router.push("/");
     } catch (err: any) {

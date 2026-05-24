@@ -17,6 +17,8 @@
 /.next/
 /out/
 
+/pnpm-lock.yaml
+
 # production
 /build
 

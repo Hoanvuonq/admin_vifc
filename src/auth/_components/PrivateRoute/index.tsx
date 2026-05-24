@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 // import { useAuthVerification } from "@/auth/_hooks/useAuth";
 import { SectionLoading } from "@/components";
 
@@ -17,37 +17,43 @@ export default function PrivateRoute({
   loadingComponent,
   fallbackComponent,
 }: PrivateRouteProps) {
-  // const { authenticated, loading, error } = useAuthVerification({
-  //   redirectOnFailure,
-  //   autoVerify: true,
-  // });
+  const [authenticated, setAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // if (loading) {
-  //   return (
-  //     loadingComponent || (
-  //       <div
-  //         suppressHydrationWarning={true}
-  //         style={{
-  //           display: "flex",
-  //           justifyContent: "center",
-  //           alignItems: "center",
-  //           minHeight: "100vh",
-  //         }}
-  //       >
-  //         <SectionLoading
-  //           message="Đang xác thực..."
-  //         />
-  //       </div>
-  //     )
-  //   );
-  // }
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      setAuthenticated(true);
+    } else if (redirectOnFailure) {
+      window.location.href = "/login";
+    }
+    setLoading(false);
+  }, [redirectOnFailure]);
 
-  // if (!authenticated) {
-  //   if (fallbackComponent) {
-  //     return <>{fallbackComponent}</>;
-  //   }
-  //   return null;
-  // }
+  if (loading) {
+    return (
+      loadingComponent || (
+        <div
+          suppressHydrationWarning={true}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "100vh",
+          }}
+        >
+          <SectionLoading message="Đang xác thực..." />
+        </div>
+      )
+    );
+  }
+
+  if (!authenticated) {
+    if (fallbackComponent) {
+      return <>{fallbackComponent}</>;
+    }
+    return null;
+  }
 
   return <>{children}</>;
 }
