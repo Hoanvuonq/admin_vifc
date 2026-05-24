@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../../lib/prisma";
-import { SubscriptionTransaction, RawSubscriptionTransaction } from "@/types/transaction";
 
 export async function GET(request: Request) {
   try {
@@ -35,9 +34,10 @@ export async function GET(request: Request) {
     const transactions = await prisma.userSubscription.findMany({
       skip,
       take: limit,
-      orderBy: {
-        created_at: "desc",
-      },
+      orderBy: [
+        { status: "desc" },
+        { created_at: "desc" }
+      ],
       select: {
         id: true,
         user_id: true,
@@ -47,13 +47,19 @@ export async function GET(request: Request) {
         status: true,
         created_at: true,
         updated_at: true,
+        users: {
+          select: {
+            email: true,
+          },
+        },
       },
     });
 
     // Transform data to conform to SubscriptionTransaction interface
-    const transformedTransactions: SubscriptionTransaction[] = transactions.map((t: RawSubscriptionTransaction) => ({
+    const transformedTransactions = transactions.map((t: any) => ({
       id: t.id,
       user_id: t.user_id,
+      user_email: t.users?.email || null,
       subscription_plan_id: t.subscription_plan_id,
       start_date: t.start_date ? t.start_date.toISOString() : null,
       end_date: t.end_date ? t.end_date.toISOString() : null,
