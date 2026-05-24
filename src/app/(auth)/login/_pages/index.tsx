@@ -1,18 +1,17 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Home } from "lucide-react";
 import { toast } from "@/providers/ToastProvider";
-import { motion } from "framer-motion";
 import { cn } from "@/utils/cn";
+import { motion } from "framer-motion";
+import { Home } from "lucide-react";
 import Image from "next/image";
-
-// Components
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
 import { FormInput, PremiumButton } from "@/components";
 import { LeftSideForm, SocialButton } from "../_components";
 import { LoginRequest } from "../_constants/formSchema";
+import { useAuth } from "@/auth/_hooks/useAuth";
 
 const CONFIG = {
   storageKeyUser: "user_username",
@@ -40,8 +39,7 @@ const validateForm = (values: LoginRequest): Partial<LoginRequest> | null => {
 
 export const LoginScreen = () => {
   const router = useRouter();
-
-  const loading = false;
+  const { login, loading } = useAuth();
 
   const [formData, setFormData] = useState<LoginRequest>({ username: "", password: "" });
   const [formErrors, setFormErrors] = useState<Partial<LoginRequest>>({});
@@ -50,9 +48,7 @@ export const LoginScreen = () => {
 
   const usernameRef = useRef<HTMLInputElement>(null);
 
-  // Focus & Load Saved Info & Check if already logged in
   useEffect(() => {
-    // Redirect to home if already logged in
     if (localStorage.getItem("access_token")) {
       router.replace("/");
       return;
@@ -101,26 +97,10 @@ export const LoginScreen = () => {
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password,
-        }),
+      await login({
+        username: formData.username,
+        password: formData.password,
       });
-
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        throw new Error(json.error?.message || "Login failed");
-      }
-
-      // Store token for PrivateRoute & Login redirect
-      if (json.data?.access_token) {
-        localStorage.setItem("access_token", json.data.access_token);
-        // Also store user info if needed later
-        localStorage.setItem("user_info", JSON.stringify(json.data));
-      }
 
       toast.success("Login successful!");
       router.push("/");
@@ -134,7 +114,6 @@ export const LoginScreen = () => {
   const handleSocialLogin = async (loginType: "GOOGLE" | "FACEBOOK") => {
     setSocialLoginLoading((prev) => ({ ...prev, [loginType]: true }));
     try {
-      // Mock UI delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       toast.success(`Initiated login with ${loginType}`);
     } catch (err: any) {
@@ -153,12 +132,10 @@ export const LoginScreen = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 md:w-72 md:h-72 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000 bg-pink-200 dark:bg-pink-900"></div>
       </div>
       <div className="relative z-10 flex flex-col lg:flex-row min-h-screen w-full">
-        {/* LEFT SIDE: Form info panel */}
         <div className="hidden lg:flex lg:w-1/2 w-full items-center justify-center px-4 lg:px-12">
           <LeftSideForm type={CONFIG.panelType as any} />
         </div>
 
-        {/* RIGHT SIDE: Form */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-2 sm:p-12 relative">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-orange-500/5 rounded-full blur-[120px] pointer-events-none animate-pulse" />
           <div className="w-full max-w-[460px] relative z-10">
@@ -295,4 +272,3 @@ export const LoginScreen = () => {
     </div>
   );
 };
-

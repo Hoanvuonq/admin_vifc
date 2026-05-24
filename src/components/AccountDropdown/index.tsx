@@ -26,6 +26,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { MenuItem } from "./type";
+import { useAuth } from "@/auth/_hooks/useAuth";
 
 export const GUEST_MENU_ITEMS: MenuItem[] = [
   { key: "login", label: "Login", href: "/login", icon: <LogIn size={16} /> },
@@ -56,6 +57,7 @@ export const ADMIN_MENU_ITEMS: MenuItem[] = [
 export const AccountDropdown = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useAuth();
 
   const isActuallyAuthenticated = true;
   const isManagementRoute = true;
@@ -68,16 +70,33 @@ export const AccountDropdown = () => {
     image: "/icons/icon_sidebar2.png",
   });
   const [mounted, setMounted] = useState(false);
+  const [userRole, setUserRole] = useState<string>("");
 
   useEffect(() => {
     setMounted(true);
+    const userInfoStr = localStorage.getItem("user_info");
+    if (userInfoStr) {
+      try {
+        const user = JSON.parse(userInfoStr);
+        setUserData({
+          name: user.full_name || user.email || "Account",
+          email: user.email || "",
+          image: user.avatar || "/icons/icon_sidebar2.png",
+        });
+        if (user.role) {
+          setUserRole(user.role.toUpperCase());
+        }
+      } catch (e) {
+        console.error("Failed to parse user_info", e);
+      }
+    }
   }, []);
 
   const handleLogoutAction = () => {
-    router.push("/login");
+    logout();
   };
 
-  const hasRole = (role: string) => true;
+  const hasRole = (role: string) => userRole === role;
   const shouldShowBlackText = true;
 
   const currentMenuItems = useMemo((): MenuItem[] => {

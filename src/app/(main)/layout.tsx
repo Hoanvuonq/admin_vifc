@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { cn } from "@/utils/cn";
-import { Header, Sidebar } from "@/layouts";
+import { useAuthVerification } from "@/auth/_hooks/useAuth";
+import { SectionLoading } from "@/components";
 import { useAdminUIStore } from "@/components/AdminPageHeader";
-
+import { Header, Sidebar } from "@/layouts";
+import { cn } from "@/utils/cn";
+import React, { useEffect, useState } from "react";
 export default function ShopLayout({
     children,
 }: {
@@ -12,6 +13,7 @@ export default function ShopLayout({
 }) {
     const [isMobile, setIsMobile] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+    const { authenticated, loading } = useAuthVerification();
 
     const headerInfo = useAdminUIStore((state) => state.headerInfo);
     const scrollY = useAdminUIStore((state) => state.scrollY);
@@ -23,6 +25,12 @@ export default function ShopLayout({
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
+
+    if (loading || !authenticated) {
+        return (
+            <SectionLoading />
+        );
+    }
 
     return (
         <div className="flex h-screen bg-[#f5f7ff] text-gray-800 antialiased overflow-hidden">

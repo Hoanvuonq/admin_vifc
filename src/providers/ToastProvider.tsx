@@ -21,12 +21,14 @@ export interface ToastItemProps {
   message: any;
   options?: ToastOptions;
   config: ToastConfigItem;
+  label?: string;
 }
 
 export const ToastItem = ({
   t,
   message,
   options,
+  label = "Notification",
   config,
 }: ToastItemProps) => {
   const Icon = config.icon;
