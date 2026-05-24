@@ -12,8 +12,10 @@
     "@aws-sdk/client-s3": "^3.1053.0",
     "@aws-sdk/s3-request-presigner": "^3.1053.0",
     "@hookform/resolvers": "^5.4.0",
+    "@prisma/client": "^5.18.0",
     "@reduxjs/toolkit": "^2.12.0",
     "@tanstack/react-query": "^5.100.11",
+    "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "date-fns": "^4.2.1",
     "dayjs": "^1.11.20",
@@ -23,7 +25,6 @@
     "next": "16.2.6",
     "pdfjs-dist": "^5.7.284",
     "pg": "^8.14.0",
-    "@prisma/client": "^5.18.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.76.1",
@@ -43,8 +44,8 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "prisma": "^5.18.0",
     "eslint-config-next": "16.2.6",
+    "prisma": "^5.18.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
