@@ -1,6 +1,7 @@
 import { Article, ArticleBlock } from "@/types/article";
 import { NextResponse } from "next/server";
 import prisma from "../../../../lib/prisma";
+import { redis } from "../../../../lib/redis";
 
 // GET /api/db/articles - List paginated articles
 export async function GET(request: Request) {
@@ -24,6 +25,16 @@ export async function GET(request: Request) {
     }
 
     const skip = (page - 1) * limit;
+
+    const cacheKey = `articles:list:${page}:${limit}:${status || "all"}`;
+    try {
+      const cachedResponse = await redis.get(cacheKey);
+      if (cachedResponse) {
+        return NextResponse.json(JSON.parse(cachedResponse), { status: 200 });
+      }
+    } catch (redisError) {
+      console.warn("Redis cache read failed:", redisError);
+    }
 
     const total = await prisma.articles.count({
       where: status ? { status, deleted_at: null } : { deleted_at: null },
@@ -84,23 +95,29 @@ export async function GET(request: Request) {
 
     const totalPages = Math.ceil(total / limit);
 
-    return NextResponse.json(
-      {
-        success: true,
-        data: transformedArticles,
-        meta: {
-          pagination: {
-            page,
-            limit,
-            total,
-            totalPages,
-            hasMore: page < totalPages,
-          },
-          timestamp: new Date().toISOString(),
+    const responseData = {
+      success: true,
+      data: transformedArticles,
+      meta: {
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages,
+          hasMore: page < totalPages,
         },
+        timestamp: new Date().toISOString(),
       },
-      { status: 200 },
-    );
+    };
+
+    // Save to cache
+    try {
+      await redis.setex(cacheKey, 60, JSON.stringify(responseData));
+    } catch (redisError) {
+      console.warn("Redis cache write failed:", redisError);
+    }
+
+    return NextResponse.json(responseData, { status: 200 });
   } catch (error) {
     console.error("Prisma articles GET failed:", error);
     return NextResponse.json(

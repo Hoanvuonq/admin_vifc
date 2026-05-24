@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../../lib/prisma";
 import { User } from "@/types/user";
+import { redis } from "../../../../lib/redis";
 
 export async function GET(request: Request) {
   try {
@@ -29,6 +30,17 @@ export async function GET(request: Request) {
     const skip = (page - 1) * limit;
 
     const emailSearch = searchParams.get("email");
+
+    // Cache logic
+    const cacheKey = `users:list:${page}:${limit}:${emailSearch || "all"}`;
+    try {
+      const cachedResponse = await redis.get(cacheKey);
+      if (cachedResponse) {
+        return NextResponse.json(JSON.parse(cachedResponse), { status: 200 });
+      }
+    } catch (redisError) {
+      console.warn("Redis cache read failed:", redisError);
+    }
 
     // Build the where clause
     const whereClause: any = {};
@@ -135,23 +147,29 @@ export async function GET(request: Request) {
 
     const totalPages = Math.ceil(total / limit);
 
-    return NextResponse.json(
-      {
-        success: true,
-        data: transformedUsers,
-        meta: {
-          pagination: {
-            page,
-            limit,
-            total,
-            totalPages,
-            hasMore: page < totalPages,
-          },
-          timestamp: new Date().toISOString(),
+    const responseData = {
+      success: true,
+      data: transformedUsers,
+      meta: {
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages,
+          hasMore: page < totalPages,
         },
+        timestamp: new Date().toISOString(),
       },
-      { status: 200 }
-    );
+    };
+
+    // Save to cache
+    try {
+      await redis.setex(cacheKey, 60, JSON.stringify(responseData));
+    } catch (redisError) {
+      console.warn("Redis cache write failed:", redisError);
+    }
+
+    return NextResponse.json(responseData, { status: 200 });
   } catch (error) {
     console.error("Prisma user query failed:", error);
 
