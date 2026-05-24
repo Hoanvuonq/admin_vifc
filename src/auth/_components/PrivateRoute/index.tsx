@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 // import { useAuthVerification } from "@/auth/_hooks/useAuth";
 import { SectionLoading } from "@/components";
 
@@ -17,6 +18,7 @@ export default function PrivateRoute({
   loadingComponent,
   fallbackComponent,
 }: PrivateRouteProps) {
+  const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -25,10 +27,10 @@ export default function PrivateRoute({
     if (token) {
       setAuthenticated(true);
     } else if (redirectOnFailure) {
-      window.location.href = "/login";
+      router.replace("/login");
     }
     setLoading(false);
-  }, [redirectOnFailure]);
+  }, [redirectOnFailure, router]);
 
   if (loading) {
     return (
