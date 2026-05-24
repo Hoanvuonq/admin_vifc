@@ -104,7 +104,7 @@ export async function GET(
   }
 }
 
-// DELETE /api/db/articles/[id] - Soft delete an article
+// DELETE /api/db/articles/[id] - Permanently delete an article
 export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -125,18 +125,15 @@ export async function DELETE(
       );
     }
 
-    // Perform soft delete by setting deleted_at to current timestamp
-    await prisma.articles.update({
+    // Perform hard delete from database
+    await prisma.articles.delete({
       where: { id },
-      data: {
-        deleted_at: new Date(),
-      },
     });
 
     return NextResponse.json(
       {
         success: true,
-        message: "Article soft-deleted successfully",
+        message: "Article deleted successfully from database",
         meta: {
           timestamp: new Date().toISOString(),
         },
