@@ -4,8 +4,17 @@ import { ToastConfigItem, ToastOptions } from "@/types/toast";
 import { cn } from "@/utils/cn";
 import { Loader2, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { toast, Toaster } from "sonner";
+import { toast as sonnerToast, Toaster } from "sonner";
+import { toastConfig } from "@/types/toast";
 
+export const toast = {
+  success: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.success} />),
+  error: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.error} />),
+  warning: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.warning} />),
+  info: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.info} />),
+  loading: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.loading} />),
+  dismiss: (t: string | number) => sonnerToast.dismiss(t),
+};
 
 export interface ToastItemProps {
   t: string | number;
@@ -40,8 +49,6 @@ export const ToastItem = ({
           `error.${errorCode}`,
           `common.errors.${errorCode}`
         ];
-
-
 
         return defaultMsg;
       }
@@ -105,7 +112,7 @@ export const ToastItem = ({
           </p>
         </div>
         <button
-          onClick={() => toast.dismiss(t)}
+          onClick={() => sonnerToast.dismiss(t)}
           className="mt-0.5 p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-full transition-all active:scale-90"
         >
           <X size={16} strokeWidth={3} />

@@ -3,8 +3,7 @@ export interface NewsItem {
   title: string;
   slug: string;
   layouts?: string | string[];
-  summary: string;
-  content: string;
+  description: string;
   category: string[];
   tags: string[];
   thumbnail: string;

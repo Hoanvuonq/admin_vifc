@@ -31,8 +31,8 @@ export const MOCK_SIDEBAR_ITEMS: MenuItemSidebar[] = [
     label: "CMS Management",
     icon: <BookOpen size={20} />,
     children: [
-      { key: "cms-add-article", label: "Tạo bài viết mới", href: "/cms/articles/add", icon: <FolderOpen size={14} /> },
-      { key: "cms-articles", label: "Danh sách bài viết", href: "/cms/articles", icon: <FileText size={14} /> },
+      { key: "cms-add-article", label: "Add Article", href: "/cms/articles/add", icon: <FolderOpen size={14} /> },
+      { key: "cms-articles", label: "List Articles", href: "/cms/articles", icon: <FileText size={14} /> },
     ]
   },
   {

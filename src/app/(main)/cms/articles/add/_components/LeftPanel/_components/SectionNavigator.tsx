@@ -2,6 +2,7 @@ import React from "react";
 import {
   FileText, Image as ImageIcon, Layers, Search, Settings, Check
 } from "lucide-react";
+import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
 type SectionType = "section-basic" | "section-media" | "section-content" | "section-seo" | "section-pdf" | "section-settings";
 
@@ -12,19 +13,20 @@ interface Section {
   completed: boolean;
 }
 
-interface SectionNavigatorProps {
-  activeSection: string;
-  handleTabClick: (id: SectionType) => void;
-  sectionBasicCompleted: boolean;
-  sectionMediaCompleted: boolean;
-  sectionContentCompleted: boolean;
-  sectionSEOCompleted: boolean;
-}
+export const SectionNavigator: React.FC<{ handleTabClick: (id: SectionType) => void }> = ({ handleTabClick }) => {
+  const {
+    activeSection,
+    title, slug, category, tags,
+    thumbnail, summary,
+    content,
+    seoTitle, seoDescription, seoKeywords
+  } = useArticleEditorStore();
 
-export const SectionNavigator: React.FC<SectionNavigatorProps> = ({
-  activeSection, handleTabClick,
-  sectionBasicCompleted, sectionMediaCompleted, sectionContentCompleted, sectionSEOCompleted
-}) => {
+  const sectionBasicCompleted = title.trim().length >= 10 && slug.trim().length > 0 && !!category && tags.length >= 1;
+  const sectionMediaCompleted = !!thumbnail && !thumbnail.includes("api.dicebear.com/7.x/shapes/svg") && summary.trim().length >= 30;
+  const sectionContentCompleted = content.replace(/<[^>]*>/g, "").trim().length >= 100;
+  const sectionSEOCompleted = seoTitle.trim().length >= 10 && seoDescription.trim().length >= 30 && seoKeywords.trim().length >= 3;
+
   const sections: Section[] = [
     { id: "section-basic", label: "1. Basic Info", icon: FileText, completed: sectionBasicCompleted },
     { id: "section-media", label: "2. Cover & Summary", icon: ImageIcon, completed: sectionMediaCompleted },

@@ -5,7 +5,7 @@ import { Article, ArticleBlock } from "@/types/article";
 // GET /api/db/articles/[id] - Retrieve single article details
 export async function GET(
   _req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -19,7 +19,7 @@ export async function GET(
             message: "Article ID is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,7 +36,7 @@ export async function GET(
             message: "Article not found",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -44,16 +44,20 @@ export async function GET(
     let parsedBlocks: ArticleBlock[] = [];
     try {
       if (art.blocks) {
-        parsedBlocks = typeof art.blocks === "string" 
-          ? JSON.parse(art.blocks) 
-          : (art.blocks as unknown as ArticleBlock[]);
+        parsedBlocks =
+          typeof art.blocks === "string"
+            ? JSON.parse(art.blocks)
+            : (art.blocks as unknown as ArticleBlock[]);
       }
     } catch (e) {
       console.error("Failed to parse blocks JSON for article:", art.id, e);
     }
 
     let parsedLayouts: string | string[] = art.layouts || "1";
-    if (art.layouts && (art.layouts.startsWith("[") || art.layouts.startsWith("{"))) {
+    if (
+      art.layouts &&
+      (art.layouts.startsWith("[") || art.layouts.startsWith("{"))
+    ) {
       try {
         parsedLayouts = JSON.parse(art.layouts);
       } catch (e) {
@@ -66,9 +70,7 @@ export async function GET(
       title: art.title,
       slug: art.slug,
       layouts: parsedLayouts,
-      summary: art.description || "",
       description: art.description || "",
-      content: art.content || "",
       thumbnail: art.thumbnail || "",
       createdAt: art.created_at.toISOString(),
       updatedAt: art.updated_at.toISOString(),
@@ -86,7 +88,7 @@ export async function GET(
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Prisma article GET by ID failed:", error);
@@ -99,7 +101,7 @@ export async function GET(
           details: error instanceof Error ? error.message : String(error),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -107,7 +109,7 @@ export async function GET(
 // DELETE /api/db/articles/[id] - Permanently delete an article
 export async function DELETE(
   _req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -121,7 +123,7 @@ export async function DELETE(
             message: "Article ID is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -138,7 +140,7 @@ export async function DELETE(
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Prisma article DELETE failed:", error);
@@ -151,7 +153,7 @@ export async function DELETE(
           details: error instanceof Error ? error.message : String(error),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -159,7 +161,7 @@ export async function DELETE(
 // PUT /api/db/articles/[id] - Update an existing article
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -170,7 +172,6 @@ export async function PUT(
       description,
       thumbnail,
       layouts,
-      content,
       blocks,
       status,
       seoTitle,
@@ -189,29 +190,38 @@ export async function PUT(
             message: "Article ID is required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Check if layouts is an object (array) and serialize it, otherwise keep as string
-    const formattedLayouts = typeof layouts === "object" ? JSON.stringify(layouts) : layouts !== undefined ? String(layouts) : undefined;
+    const formattedLayouts =
+      typeof layouts === "object"
+        ? JSON.stringify(layouts)
+        : layouts !== undefined
+          ? String(layouts)
+          : undefined;
 
     const updatedArticle = await prisma.articles.update({
       where: { id },
       data: {
         title,
         slug,
-        description: description !== undefined ? (description || null) : undefined,
-        thumbnail: thumbnail !== undefined ? (thumbnail || null) : undefined,
+        description:
+          description !== undefined ? description || null : undefined,
+        thumbnail: thumbnail !== undefined ? thumbnail || null : undefined,
         layouts: formattedLayouts,
-        content: content !== undefined ? (content || null) : undefined,
-        blocks: blocks !== undefined ? (blocks ? (blocks as any) : null) : undefined,
+        blocks:
+          blocks !== undefined ? (blocks ? (blocks as any) : null) : undefined,
         status,
-        seo_title: seoTitle !== undefined ? (seoTitle || null) : undefined,
-        seo_description: seoDescription !== undefined ? (seoDescription || null) : undefined,
-        seo_keywords: seoKeywords !== undefined ? (seoKeywords || null) : undefined,
-        category_id: category_id !== undefined ? (category_id || null) : undefined,
-        created_by: created_by !== undefined ? (created_by || null) : undefined,
+        seo_title: seoTitle !== undefined ? seoTitle || null : undefined,
+        seo_description:
+          seoDescription !== undefined ? seoDescription || null : undefined,
+        seo_keywords:
+          seoKeywords !== undefined ? seoKeywords || null : undefined,
+        category_id:
+          category_id !== undefined ? category_id || null : undefined,
+        created_by: created_by !== undefined ? created_by || null : undefined,
         updated_at: new Date(),
       },
     });
@@ -220,16 +230,21 @@ export async function PUT(
     let parsedBlocks: ArticleBlock[] = [];
     try {
       if (updatedArticle.blocks) {
-        parsedBlocks = typeof updatedArticle.blocks === "string"
-          ? JSON.parse(updatedArticle.blocks)
-          : (updatedArticle.blocks as unknown as ArticleBlock[]);
+        parsedBlocks =
+          typeof updatedArticle.blocks === "string"
+            ? JSON.parse(updatedArticle.blocks)
+            : (updatedArticle.blocks as unknown as ArticleBlock[]);
       }
     } catch (e) {
       // Ignored
     }
 
     let parsedLayouts: string | string[] = updatedArticle.layouts || "1";
-    if (updatedArticle.layouts && (updatedArticle.layouts.startsWith("[") || updatedArticle.layouts.startsWith("{"))) {
+    if (
+      updatedArticle.layouts &&
+      (updatedArticle.layouts.startsWith("[") ||
+        updatedArticle.layouts.startsWith("{"))
+    ) {
       try {
         parsedLayouts = JSON.parse(updatedArticle.layouts);
       } catch (e) {
@@ -242,9 +257,7 @@ export async function PUT(
       title: updatedArticle.title,
       slug: updatedArticle.slug,
       layouts: parsedLayouts,
-      summary: updatedArticle.description || "",
       description: updatedArticle.description || "",
-      content: updatedArticle.content || "",
       thumbnail: updatedArticle.thumbnail || "",
       createdAt: updatedArticle.created_at.toISOString(),
       updatedAt: updatedArticle.updated_at.toISOString(),
@@ -262,7 +275,7 @@ export async function PUT(
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Prisma article PUT failed:", error);
@@ -275,8 +288,7 @@ export async function PUT(
           details: error instanceof Error ? error.message : String(error),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

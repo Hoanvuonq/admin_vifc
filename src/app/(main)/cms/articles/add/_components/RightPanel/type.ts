@@ -3,43 +3,5 @@ import { ContentBlock } from "../NewsPreview/type";
 
 export interface RightPanelProps {
   rightPanelRef: React.RefObject<HTMLDivElement | null>;
-  activeInput: string | null;
-  setActiveInput: (val: string | null) => void;
-  title: string;
-  handleTitleChange: (e: any) => void;
-  slug: string;
-
-  setSlug: (val: string) => void;
-  category: string[];
-  setCategory: (val: string[]) => void;
-  tags: string[];
-  setTags: (val: string[]) => void;
-  tagOptions: { value: string; label: string }[];
-  thumbnail: string;
-  setThumbnail: (val: string) => void;
-  handleImageUpload: () => void;
-  summary: string;
-  setSummary: (val: string) => void;
-  blocks: ContentBlock[];
-  handleMoveBlock: (index: number, dir: "up" | "down") => void;
-  handleBlockChange: (blockId: string, update: Partial<ContentBlock>) => void;
-  handleDeleteBlock: (blockId: string) => void;
-  seoTitle: string;
-  setSeoTitle: (val: string) => void;
-  seoDescription: string;
-  setSeoDescription: (val: string) => void;
-  seoKeywords: string;
-  setSeoKeywords: (val: string) => void;
-
-  allowComments: boolean;
-  setAllowComments: (val: boolean) => void;
-  isFeatured: boolean;
-  setIsFeatured: (val: boolean) => void;
-  scheduledDate: string;
-  setScheduledDate: (val: string) => void;
-  newsToEdit: NewsItem | null;
-  sectionBasicCompleted: boolean;
-  sectionMediaCompleted: boolean;
-  sectionContentCompleted: boolean;
-  sectionSEOCompleted: boolean;
+  previewContainerRef: React.RefObject<HTMLDivElement | null>;
 }

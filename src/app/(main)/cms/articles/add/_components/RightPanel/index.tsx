@@ -16,12 +16,12 @@ export const RightPanel: React.FC<RightPanelProps> = (props) => {
       id="right-editor-panel"
       className="w-100 xl:w-112.5 shrink-0 h-full overflow-y-auto p-4 bg-white space-y-4 custom-scrollbar scroll-smooth"
     >
-      <BasicInfoSection {...props} />
-      <MediaSummarySection {...props} />
-      <ContentSection {...props} />
-      <SEOSection {...props} />
-      <PDFSection {...props} />
-      <PublishSettingsSection {...props} />
+      <BasicInfoSection />
+      <MediaSummarySection />
+      <ContentSection formContainerRef={rightPanelRef} previewContainerRef={props.previewContainerRef} />
+      <SEOSection />
+      <PDFSection />
+      <PublishSettingsSection />
     </div>
   );
 };

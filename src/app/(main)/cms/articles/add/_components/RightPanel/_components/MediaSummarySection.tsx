@@ -2,27 +2,13 @@ import React from "react";
 import { FormInput, MediaUploadField } from "@/components";
 import { Image as ImageIcon } from "lucide-react";
 import { useUpload } from "@/hooks/useUpload";
+import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
-interface MediaSummarySectionProps {
-  activeInput: string | null;
-  setActiveInput: (val: string | null) => void;
-  thumbnail: string;
-  setThumbnail: (val: string) => void;
-  summary: string;
-  setSummary: (val: string) => void;
-  sectionMediaCompleted: boolean;
-}
-
-export const MediaSummarySection: React.FC<MediaSummarySectionProps> = ({
-  activeInput,
-  setActiveInput,
-  thumbnail,
-  setThumbnail,
-  summary,
-  setSummary,
-  sectionMediaCompleted,
-}) => {
+export const MediaSummarySection: React.FC = () => {
   const { uploadFile } = useUpload();
+  const { thumbnail, setThumbnail, summary, setSummary, setActiveInput } = useArticleEditorStore();
+
+  const sectionMediaCompleted = !!thumbnail && !thumbnail.includes("api.dicebear.com/7.x/shapes/svg") && summary.trim().length >= 30;
 
   return (
     <div

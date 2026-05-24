@@ -1,36 +1,19 @@
 import React from "react";
 import { FormInput } from "@/components";
 import { Globe } from "lucide-react";
+import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
-interface SEOSectionProps {
-  activeInput: string | null;
-  setActiveInput: (val: string | null) => void;
-  title: string;
-  summary: string;
-  slug: string;
-  seoTitle: string;
-  setSeoTitle: (val: string) => void;
-  seoDescription: string;
-  setSeoDescription: (val: string) => void;
-  seoKeywords: string;
-  setSeoKeywords: (val: string) => void;
-  sectionSEOCompleted: boolean;
-}
+export const SEOSection: React.FC = () => {
+  const {
+    title, summary, slug,
+    seoTitle, setSeoTitle,
+    seoDescription, setSeoDescription,
+    seoKeywords, setSeoKeywords,
+    setActiveInput
+  } = useArticleEditorStore();
 
-export const SEOSection: React.FC<SEOSectionProps> = ({
-  activeInput,
-  setActiveInput,
-  title,
-  summary,
-  slug,
-  seoTitle,
-  setSeoTitle,
-  seoDescription,
-  setSeoDescription,
-  seoKeywords,
-  setSeoKeywords,
-  sectionSEOCompleted,
-}) => {
+  const sectionSEOCompleted = seoTitle.trim().length >= 10 && seoDescription.trim().length >= 30 && seoKeywords.trim().length >= 3;
+
   return (
     <div
       id="form-section-seo"

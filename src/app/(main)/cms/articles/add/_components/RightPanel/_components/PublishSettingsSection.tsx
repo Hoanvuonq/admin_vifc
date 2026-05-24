@@ -1,27 +1,15 @@
 import React from "react";
 import { Checkbox, DateTimeInput } from "@/components";
 import { History, Settings } from "lucide-react";
-import { NewsItem } from "@/app/(main)/cms/articles/(articles)/_pages/types";
+import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
-interface PublishSettingsSectionProps {
-  allowComments: boolean;
-  setAllowComments: (val: boolean) => void;
-  isFeatured: boolean;
-  setIsFeatured: (val: boolean) => void;
-  scheduledDate: string;
-  setScheduledDate: (val: string) => void;
-  newsToEdit: NewsItem | null;
-}
+export const PublishSettingsSection: React.FC = () => {
+  const {
+    allowComments, setAllowComments,
+    isFeatured, setIsFeatured,
+    scheduledDate, setScheduledDate
+  } = useArticleEditorStore();
 
-export const PublishSettingsSection: React.FC<PublishSettingsSectionProps> = ({
-  allowComments,
-  setAllowComments,
-  isFeatured,
-  setIsFeatured,
-  scheduledDate,
-  setScheduledDate,
-  newsToEdit,
-}) => {
   return (
     <div
       id="form-section-settings"
@@ -80,24 +68,9 @@ export const PublishSettingsSection: React.FC<PublishSettingsSectionProps> = ({
           Edit History
         </span>
         <div className="relative border-l border-slate-100 ml-1.5 py-1 space-y-3">
-          {newsToEdit ? (
-            <>
-              <div className="relative pl-4">
-                <div className="absolute left-[-3.5px] top-1 w-1.5 h-1.5 bg-emerald-500 border border-white rounded-full" />
-                <p className="text-[8px] text-gray-400 font-bold uppercase">{newsToEdit.createdDate}</p>
-                <p className="text-[9.5px] font-extrabold text-gray-700">Create New Article</p>
-              </div>
-              <div className="relative pl-4">
-                <div className="absolute left-[-3.5px] top-1 w-1.5 h-1.5 bg-orange-500 border border-white rounded-full" />
-                <p className="text-[8px] text-gray-400 font-bold uppercase">Now</p>
-                <p className="text-[9.5px] font-extrabold text-gray-700">Latest Update</p>
-              </div>
-            </>
-          ) : (
-            <div className="pl-4 text-[9px] text-gray-400 italic font-semibold">
-              No edit history (New article).
-            </div>
-          )}
+          <div className="pl-4 text-[9px] text-gray-400 italic font-semibold">
+            No edit history.
+          </div>
         </div>
       </div>
     </div>

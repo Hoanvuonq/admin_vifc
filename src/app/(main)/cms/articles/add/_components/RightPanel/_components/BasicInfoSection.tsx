@@ -2,36 +2,30 @@ import React from "react";
 import { FormInput, SelectComponent } from "@/components";
 import { FileText } from "lucide-react";
 import { CATEGORY_OPTIONS } from "../../../../(articles)/_constants/cms.constants";
+import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
-interface BasicInfoSectionProps {
-  activeInput: string | null;
-  setActiveInput: (val: string | null) => void;
-  title: string;
-  handleTitleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  slug: string;
-  setSlug: (val: string) => void;
-  category: string[];
-  setCategory: (val: string[]) => void;
-  tags: string[];
-  setTags: (val: string[]) => void;
-  tagOptions: { value: string; label: string }[];
-  sectionBasicCompleted: boolean;
-}
+const tagOptions = [
+  { label: "Web3", value: "Web3" },
+  { label: "Commerce", value: "Commerce" },
+  { label: "Blockchain", value: "Blockchain" },
+  { label: "Crypto", value: "Crypto" },
+  { label: "NFT", value: "NFT" },
+  { label: "Metaverse", value: "Metaverse" },
+  { label: "DeFi", value: "DeFi" },
+  { label: "Tutorial", value: "Tutorial" },
+];
 
-export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
-  activeInput,
-  setActiveInput,
-  title,
-  handleTitleChange,
-  slug,
-  setSlug,
-  category,
-  setCategory,
-  tags,
-  setTags,
-  tagOptions,
-  sectionBasicCompleted,
-}) => {
+export const BasicInfoSection: React.FC = () => {
+  const {
+    title, handleTitleChange,
+    slug, setSlug,
+    category, setCategory,
+    tags, setTags,
+    setActiveInput
+  } = useArticleEditorStore();
+
+  const sectionBasicCompleted = title.trim().length >= 10 && slug.trim().length > 0 && !!category && tags.length >= 1;
+
   return (
     <div
       id="form-section-basic"
@@ -56,7 +50,7 @@ export const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
           label="Article Title"
           required
           value={title}
-          onChange={handleTitleChange}
+          onChange={(e) => handleTitleChange(e.target.value)}
           onFocus={() => setActiveInput("title")}
           placeholder="Enter article title..."
           maxLength={255}

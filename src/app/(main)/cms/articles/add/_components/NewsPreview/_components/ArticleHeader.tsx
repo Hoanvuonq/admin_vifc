@@ -1,5 +1,5 @@
+import { Calendar } from "lucide-react";
 import React from "react";
-import { Calendar, Clock, User } from "lucide-react";
 
 interface ArticleHeaderProps {
   title: string;

@@ -6,7 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "@/providers/ToastProvider";
 
 export const useArticles = (page = 1, limit = 10, status?: string) => {
   const queryClient = useQueryClient();
@@ -126,4 +126,21 @@ export const useArticles = (page = 1, limit = 10, status?: string) => {
     deleteArticle: deleteArticleMutation.mutateAsync,
     isDeleting: deleteArticleMutation.isPending,
   };
+};
+
+export const useArticle = (id?: string) => {
+  return useQuery<{ success: boolean; data: Article; meta: any }, Error>({
+    queryKey: ["article", id],
+    queryFn: async () => {
+      if (!id) throw new Error("ID is required");
+      const response = await fetch(`/api/db/articles/${id}`);
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.error?.message || "Failed to fetch article");
+      }
+      return data;
+    },
+    enabled: !!id,
+    staleTime: 0,
+  });
 };

@@ -1,13 +1,11 @@
 import React from "react";
-import { RightPanelProps } from "../type";
 import { FormInput, MediaUploadField } from "@/components";
 import { useUpload } from "@/hooks/useUpload";
+import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
-export const PDFSection: React.FC<RightPanelProps> = ({
-  blocks,
-  handleBlockChange
-}) => {
+export const PDFSection: React.FC = () => {
   const { uploadFile } = useUpload();
+  const { blocks, handleBlockChange } = useArticleEditorStore();
 
   const pdfBlock = blocks.find((b) => b.type === "pdf");
   if (!pdfBlock) return null;

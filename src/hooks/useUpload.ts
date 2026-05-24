@@ -1,5 +1,5 @@
+import { toast } from "@/providers/ToastProvider";
 import { useCallback } from "react";
-import { toast } from "sonner";
 
 export const useUpload = () => {
   const uploadFile = useCallback(

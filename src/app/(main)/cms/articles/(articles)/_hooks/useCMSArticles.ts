@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { NewsItem } from "../_pages/types";
 import { useArticles } from "@/hooks/useArticles";
-import { toast } from "sonner";
+import { toast } from "@/providers/ToastProvider";
 import { Article } from "@/types/article";
 
 const formatDate = (dateString: string) => {
@@ -32,8 +32,7 @@ export const useCMSArticles = () => {
     title: art.title || "Untitled",
     slug: art.slug || "",
     layouts: art.layouts,
-    summary: art.summary || art.description || "",
-    content: art.content || "",
+    description: art.description || "",
     category: ["WEB3"],
     tags: [],
     thumbnail: art.thumbnail || "",
@@ -62,9 +61,7 @@ export const useCMSArticles = () => {
         id: selectedId,
         title: newsData.title,
         slug: newsData.slug,
-        summary: newsData.summary,
-        description: newsData.summary,
-        content: newsData.content,
+        description: newsData.description,
         thumbnail: newsData.thumbnail,
         seoTitle: newsData.seoTitle,
         seoDescription: newsData.seoDescription,
@@ -80,9 +77,7 @@ export const useCMSArticles = () => {
         id: `NEWS${Date.now()}`,
         title: newsData.title,
         slug: newsData.slug,
-        summary: newsData.summary,
-        description: newsData.summary,
-        content: newsData.content,
+        description: newsData.description,
         thumbnail: newsData.thumbnail,
         seoTitle: newsData.seoTitle,
         seoDescription: newsData.seoDescription,
@@ -92,11 +87,14 @@ export const useCMSArticles = () => {
         category_id: newsData.category?.[0] || "WEB3",
         blocks: (newsData as any).blocks || [],
       });
+      toast.success("New article created successfully!");
     }
+    await refetch();
   };
 
   const deleteArticle = async (id: string) => {
     await deleteArticleApi(id);
+    await refetch();
     toast.success("Article deleted successfully!");
   };
 

@@ -35,9 +35,7 @@ export interface Article {
   title: string;
   slug: string;
   layouts: string | string[];
-  summary?: string;
   description?: string;
-  content?: string;
   thumbnail?: string;
   createdAt: string;
   updatedAt: string;

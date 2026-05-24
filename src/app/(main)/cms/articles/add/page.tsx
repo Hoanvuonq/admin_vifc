@@ -1,5 +1,5 @@
-import { AddArticlePage } from "./_pages";
+import { ArticleEditor } from "./_pages";
 
 export default function Page() {
-    return <AddArticlePage />;
+    return <ArticleEditor />;
 }

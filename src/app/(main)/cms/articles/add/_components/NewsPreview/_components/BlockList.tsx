@@ -22,11 +22,10 @@ export const BlockList: React.FC<BlockListProps> = ({
           key={block.id}
           id={`preview-${block.id}`}
           onClick={() => onBlockSelect(block.id)}
-          className={`relative group rounded-2xl px-5 -mx-5 py-4 transition-all duration-300 cursor-pointer ${
-            isActive
-              ? "bg-orange-50/10 ring-1 ring-orange-200/40 shadow-3xs"
-              : "hover:bg-slate-50/30"
-          }`}
+          className={`relative group rounded-2xl px-5 -mx-5 py-4 transition-all duration-300 cursor-pointer ${isActive
+            ? "bg-orange-50/10 ring-1 ring-orange-200/40 shadow-3xs"
+            : "hover:bg-slate-50/30"
+            }`}
         >
           {isActive && (
             <>

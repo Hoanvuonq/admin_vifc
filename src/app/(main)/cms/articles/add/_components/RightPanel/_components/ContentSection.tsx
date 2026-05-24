@@ -9,41 +9,17 @@ import {
   Compass,
   Trash2
 } from "lucide-react";
-import { ContentBlock } from "../../NewsPreview/type";
 import { useUpload } from "@/hooks/useUpload";
+import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
-interface ContentSectionProps {
-  activeInput: string | null;
-  setActiveInput: (val: string | null) => void;
-  blocks: ContentBlock[];
-  handleMoveBlock: (index: number, dir: "up" | "down") => void;
-  handleBlockChange: (blockId: string, update: Partial<ContentBlock>) => void;
-  handleDeleteBlock: (blockId: string) => void;
-  sectionContentCompleted: boolean;
-}
-
-export const ContentSection: React.FC<ContentSectionProps> = ({
-  activeInput,
-  setActiveInput,
-  blocks,
-  handleMoveBlock,
-  handleBlockChange,
-  handleDeleteBlock,
-  sectionContentCompleted,
-}) => {
+export const ContentSection: React.FC<{ formContainerRef?: React.RefObject<HTMLDivElement | null>; previewContainerRef?: React.RefObject<HTMLDivElement | null>; }> = () => {
   const { uploadFile } = useUpload();
-  const alignOptions = [
-    { key: "left" as const, Icon: AlignLeft },
-    { key: "center" as const, Icon: AlignCenter },
-    { key: "right" as const, Icon: AlignRight }
-  ];
+  const {
+    blocks, activeInput, setActiveInput, content,
+    handleMoveBlock, handleBlockChange, handleDeleteBlock
+  } = useArticleEditorStore();
 
-  const imagePaddingOptions = [
-    { key: "none", label: "Full (100%)" },
-    { key: "small", label: "Wide (95%)" },
-    { key: "medium", label: "Medium (85%)" },
-    { key: "large", label: "Small (70%)" }
-  ];
+  const sectionContentCompleted = content.replace(/<[^>]*>/g, "").trim().length >= 100;
 
   return (
     <div
@@ -79,7 +55,8 @@ export const ContentSection: React.FC<ContentSectionProps> = ({
                 <span className="text-[8.5px] font-extrabold uppercase text-gray-500 tracking-widest">
                   #{index + 1} {
                     block.type === "heading" ? `Heading ${block.level || "H2"}` :
-                      block.type === "image" ? "Image" : "Paragraph"
+                      block.type === "image" ? "Image" :
+                      block.type === "pdf" ? "PDF Attachment" : "Paragraph"
                   }
                 </span>
 

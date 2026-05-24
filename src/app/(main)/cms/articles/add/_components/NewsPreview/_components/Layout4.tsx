@@ -1,11 +1,11 @@
 import React from "react";
 import { FormInput } from "@/components";
-import { NewsPreviewProps } from "../type";
+import { LayoutProps } from "../type";
 import { ArticleHeader, SummaryBlock } from "./ArticleHeader";
 import { BannerImage } from "./shared";
 import { BlockList } from "./BlockList";
 
-export const Layout4: React.FC<NewsPreviewProps> = ({
+export const Layout4: React.FC<LayoutProps> = ({
   title, category, thumbnail, summary, tags, allowComments,
   blocks, activeInput, onBlockSelect, getReadingTime,
   handleMoveBlock, handleDeleteBlock, handleBlockChange,

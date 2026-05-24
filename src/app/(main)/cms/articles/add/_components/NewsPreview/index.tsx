@@ -1,12 +1,12 @@
-import { StatusTabs } from "@/app/(main)/(dashboard)/_components";
 import { BookOpen, Columns, Layers, Layout, Sidebar } from "lucide-react";
 import React, { useState } from "react";
-import { NewsPreviewProps } from "./type";
+import { useArticleEditorStore } from "../../_store/useArticleEditorStore";
 import { Layout1 } from "./_components/Layout1";
 import { Layout2 } from "./_components/Layout2";
 import { Layout3 } from "./_components/Layout3";
 import { Layout4 } from "./_components/Layout4";
 import { Layout5 } from "./_components/Layout5";
+import { LayoutProps, NewsPreviewProps } from "./type";
 
 type LayoutKey = "layout1" | "layout2" | "layout3" | "layout4" | "layout5";
 
@@ -18,7 +18,7 @@ const LAYOUT_TABS = [
   { key: "layout5" as const, label: "Layout 5 (Cinematic)", icon: Layers },
 ];
 
-const LAYOUT_MAP: Record<LayoutKey, React.FC<NewsPreviewProps>> = {
+const LAYOUT_MAP: Record<LayoutKey, React.FC<LayoutProps>> = {
   layout1: Layout1,
   layout2: Layout2,
   layout3: Layout3,
@@ -26,13 +26,27 @@ const LAYOUT_MAP: Record<LayoutKey, React.FC<NewsPreviewProps>> = {
   layout5: Layout5,
 };
 
-export const NewsPreview: React.FC<NewsPreviewProps> = (props) => {
+export const NewsPreview: React.FC<NewsPreviewProps> = ({ centerPanelRef, formContainerRef }) => {
   const [layout, setLayout] = useState<LayoutKey>("layout2");
   const ActiveLayout = LAYOUT_MAP[layout];
 
+  const {
+    title, category, thumbnail, summary, content, tags, allowComments,
+    blocks, activeInput, getReadingTime, slug,
+    handleBlockSelect, handleMoveBlock, handleDeleteBlock, handleBlockChange,
+  } = useArticleEditorStore();
+
+  const layoutProps: LayoutProps = {
+    title, category, thumbnail, summary, content, tags, allowComments,
+    blocks, activeInput, getReadingTime, slug,
+    centerPanelRef, formContainerRef,
+    onBlockSelect: (id) => handleBlockSelect(id, formContainerRef?.current || null, centerPanelRef?.current || null),
+    handleMoveBlock, handleDeleteBlock, handleBlockChange,
+  };
+
   return (
     <div
-      ref={props.centerPanelRef}
+      ref={centerPanelRef}
       id="center-preview-panel"
       className="flex-1 overflow-y-auto bg-slate-100/40 custom-scrollbar select-none relative"
     >
@@ -57,7 +71,7 @@ export const NewsPreview: React.FC<NewsPreviewProps> = (props) => {
       </div>
 
       {/* Active layout */}
-      <ActiveLayout {...props} />
+      <ActiveLayout {...layoutProps} />
     </div>
   );
 };

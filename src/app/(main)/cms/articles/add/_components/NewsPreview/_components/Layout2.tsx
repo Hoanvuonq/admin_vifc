@@ -1,10 +1,11 @@
+"use client";
 import React from "react";
-import { NewsPreviewProps } from "../type";
+import { LayoutProps } from "../type";
 import { ArticleHeader, SummaryBlock } from "./ArticleHeader";
 import { BannerImage, TagsAndComments } from "./shared";
 import { BlockList } from "./BlockList";
 
-export const Layout2: React.FC<NewsPreviewProps> = ({
+export const Layout2: React.FC<LayoutProps> = ({
   title, category, thumbnail, summary, tags, allowComments,
   blocks, activeInput, onBlockSelect, getReadingTime,
   handleMoveBlock, handleDeleteBlock, handleBlockChange,

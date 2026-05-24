@@ -13,7 +13,7 @@ export interface ContentBlock {
   activeRole?: "free" | "base" | "standard" | "premium";
 }
 
-export interface NewsPreviewProps {
+export interface LayoutProps {
   title: string;
   category: string[];
   thumbnail: string;
@@ -25,11 +25,15 @@ export interface NewsPreviewProps {
   activeInput: string | null;
   onBlockSelect: (blockId: string) => void;
   getReadingTime: () => number;
-  getCategoryBadgeClass: (cat: string) => string;
   slug: string;
   centerPanelRef: React.RefObject<HTMLDivElement | null>;
+  formContainerRef?: React.RefObject<HTMLDivElement | null>;
   handleMoveBlock?: (index: number, dir: "up" | "down") => void;
   handleDeleteBlock?: (blockId: string) => void;
   handleBlockChange?: (blockId: string, update: Partial<ContentBlock>) => void;
+}
 
+export interface NewsPreviewProps {
+  centerPanelRef: React.RefObject<HTMLDivElement | null>;
+  formContainerRef?: React.RefObject<HTMLDivElement | null>;
 }

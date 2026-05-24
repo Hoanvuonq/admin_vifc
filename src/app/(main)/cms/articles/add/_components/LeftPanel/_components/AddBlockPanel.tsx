@@ -4,10 +4,7 @@ import {
   File
 } from "lucide-react";
 import { ContentBlock } from "../../NewsPreview/type";
-
-interface AddBlockPanelProps {
-  handleAddBlock: (type: ContentBlock["type"], defaults?: Partial<ContentBlock>) => void;
-}
+import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
 const BLOCK_BUTTONS = [
   {
@@ -35,23 +32,27 @@ const BLOCK_BUTTONS = [
   },
 ] as const;
 
-export const AddBlockPanel: React.FC<AddBlockPanelProps> = ({ handleAddBlock }) => (
-  <div className="bg-white p-3.5 rounded-2xl shadow-3xs space-y-1.5">
-    <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest px-1.5 block pb-1 border-b border-slate-100/50">
-      Add Content Block
-    </span>
-    <div className="grid grid-cols-2 gap-2 pt-2">
-      {BLOCK_BUTTONS.map((btn) => (
-        <button
-          key={btn.label}
-          type="button"
-          onClick={() => handleAddBlock(btn.type as ContentBlock["type"], (btn as any).defaults)}
-          className={`flex flex-col items-center justify-center p-2.5 bg-slate-50/30 border border-slate-200/50 rounded-xl text-[10px] font-extrabold text-slate-550 transition-all duration-300 hover:shadow-2xs active:scale-95 shadow-3xs ${btn.hover} ${(btn as any).className || ""}`}
-        >
-          <btn.icon size={13} className="mb-1 shrink-0 stroke-[2.2]" />
-          <span>{btn.label}</span>
-        </button>
-      ))}
+export const AddBlockPanel: React.FC = () => {
+  const { handleAddBlock } = useArticleEditorStore();
+
+  return (
+    <div className="bg-white p-3.5 rounded-2xl shadow-3xs space-y-1.5">
+      <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest px-1.5 block pb-1 border-b border-slate-100/50">
+        Add Content Block
+      </span>
+      <div className="grid grid-cols-2 gap-2 pt-2">
+        {BLOCK_BUTTONS.map((btn) => (
+          <button
+            key={btn.label}
+            type="button"
+            onClick={() => handleAddBlock(btn.type as ContentBlock["type"], (btn as any).defaults)}
+            className={`flex flex-col items-center justify-center p-2.5 bg-slate-50/30 border border-slate-200/50 rounded-xl text-[10px] font-extrabold text-slate-550 transition-all duration-300 hover:shadow-2xs active:scale-95 shadow-3xs ${btn.hover} ${(btn as any).className || ""}`}
+          >
+            <btn.icon size={13} className="mb-1 shrink-0 stroke-[2.2]" />
+            <span>{btn.label}</span>
+          </button>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};

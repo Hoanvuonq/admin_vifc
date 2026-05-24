@@ -53,8 +53,8 @@ export const getColumns = (
             <span className="font-bold text-gray-800 tracking-tight group-hover:text-orange-600 transition-colors line-clamp-1" title={news.title}>
               {news.title}
             </span>
-            <span className="text-[11px] text-gray-400 font-medium line-clamp-2 leading-relaxed" title={news.summary}>
-              {news.summary}
+            <span className="text-[11px] text-gray-400 font-medium line-clamp-2 leading-relaxed" title={news.description}>
+              {news.description}
             </span>
           </div>
         </div>

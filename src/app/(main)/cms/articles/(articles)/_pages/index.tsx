@@ -3,33 +3,22 @@
 import { AdminPageHeader } from "@/components";
 import { DataTable } from "@/components/DataTable";
 import { BookOpen, Flame, MessageSquare, Newspaper, Sparkles } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { CMSFilters } from "../_components";
 import { useCMSArticles } from "../_hooks/useCMSArticles";
+import { useArticleListStore } from "../_store/useArticleListStore";
 import { getColumns } from "./columns";
 import { NewsItem } from "./types";
 
 export const ManagerCMSScreen = () => {
+  const router = useRouter();
   const { articles: newsList, isLoading, saveArticle, deleteArticle } = useCMSArticles();
-  const [toast, setToast] = useState<{ message: string; type: "success" | "info" | "warning" } | null>(null);
 
-  const [searchText, setSearchText] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const [selectedStatus, setSelectedStatus] = useState("ALL");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedNewsToEdit, setSelectedNewsToEdit] = useState<NewsItem | null>(null);
-
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize] = useState(10);
-
-  const showToast = (message: string, type: "success" | "info" | "warning" = "success") => {
-    setToast({ message, type });
-    setTimeout(() => {
-      setToast(null);
-    }, 3000);
-  };
+  const {
+    searchText, selectedCategory, selectedStatus, startDate, endDate,
+    currentPage, pageSize, toast, setCurrentPage, showToast
+  } = useArticleListStore();
 
   const stats = useMemo(() => {
     const total = newsList.length;
@@ -44,8 +33,7 @@ export const ManagerCMSScreen = () => {
     return newsList.filter((n) => {
       const matchesSearch =
         n.title.toLowerCase().includes(searchText.toLowerCase()) ||
-        n.summary.toLowerCase().includes(searchText.toLowerCase()) ||
-        (n.content && n.content.toLowerCase().includes(searchText.toLowerCase())) ||
+        n.description.toLowerCase().includes(searchText.toLowerCase()) ||
         n.id.toLowerCase().includes(searchText.toLowerCase());
 
       const matchesCategory = selectedCategory === "ALL" || (Array.isArray(n.category) ? n.category.includes(selectedCategory) : n.category === selectedCategory);
@@ -76,10 +64,6 @@ export const ManagerCMSScreen = () => {
     });
   }, [newsList, searchText, selectedCategory, selectedStatus, startDate, endDate]);
 
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [searchText, selectedCategory, selectedStatus, startDate, endDate]);
-
   const paginatedNews = useMemo(() => {
     const start = currentPage * pageSize;
     const end = start + pageSize;
@@ -87,8 +71,7 @@ export const ManagerCMSScreen = () => {
   }, [filteredNews, currentPage, pageSize]);
 
   const handleEditNews = (news: NewsItem) => {
-    setSelectedNewsToEdit(news);
-    setIsDrawerOpen(true);
+    router.push(`/cms/articles/${news.id}`);
   };
 
   const handleDeleteNews = async (id: string) => {
@@ -99,31 +82,6 @@ export const ManagerCMSScreen = () => {
         showToast(`Article deleted successfully`, "warning");
       }
     }
-  };
-
-  const handleSaveNews = async (newsData: Omit<NewsItem, "id" | "createdDate" | "views" | "authorName" | "authorAvatar">) => {
-    await saveArticle({
-      newsData,
-      selectedId: selectedNewsToEdit?.id
-    });
-
-    if (selectedNewsToEdit) {
-      showToast(`Article updated successfully!`, "success");
-    } else {
-      showToast(`New article added successfully!`, "success");
-    }
-
-    setIsDrawerOpen(false);
-    setSelectedNewsToEdit(null);
-  };
-
-  const handleResetFilters = () => {
-    setSearchText("");
-    setSelectedCategory("ALL");
-    setSelectedStatus("ALL");
-    setStartDate("");
-    setEndDate("");
-    showToast("Filters reset successfully", "info");
   };
 
   const columns = useMemo(() => getColumns(handleEditNews, handleDeleteNews), [newsList]);
@@ -183,24 +141,7 @@ export const ManagerCMSScreen = () => {
         emptyMessage="No articles found matching the current filters."
         page={currentPage}
         headerContent={
-          <CMSFilters
-            searchText={searchText}
-            setSearchText={setSearchText}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            selectedStatus={selectedStatus}
-            setSelectedStatus={setSelectedStatus}
-            startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
-            counts={stats}
-            onReset={handleResetFilters}
-            onAddClick={() => {
-              setSelectedNewsToEdit(null);
-              setIsDrawerOpen(true);
-            }}
-          />
+          <CMSFilters counts={stats} />
         }
         size={pageSize}
         totalElements={filteredNews.length}

@@ -17,24 +17,19 @@ import React, { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORY_OPTIONS } from "../../_constants/cms.constants";
 import { CMSFiltersProps } from "./type";
+import { useArticleListStore } from "../../_store/useArticleListStore";
 
-
-export const CMSFilters: React.FC<CMSFiltersProps> = ({
-  searchText,
-  setSearchText,
-  selectedCategory,
-  setSelectedCategory,
-  selectedStatus,
-  setSelectedStatus,
-  startDate,
-  setStartDate,
-  endDate,
-  setEndDate,
-  counts,
-  onReset,
-  onAddClick,
-}) => {
+export const CMSFilters: React.FC<CMSFiltersProps> = ({ counts }) => {
   const router = useRouter();
+
+  const {
+    searchText, setSearchText,
+    selectedCategory, setSelectedCategory,
+    selectedStatus, setSelectedStatus,
+    startDate, setStartDate,
+    endDate, setEndDate,
+    resetFilters
+  } = useArticleListStore();
 
   const tabs = useMemo(() => [
     { key: "ALL", label: "All", icon: BookOpen, count: counts.total },
@@ -69,7 +64,7 @@ export const CMSFilters: React.FC<CMSFiltersProps> = ({
 
         <div className="flex items-center gap-2 w-full lg:w-auto justify-end">
           <button
-            onClick={onReset}
+            onClick={resetFilters}
             className="h-10 px-4 rounded-2xl bg-white border border-gray-200 text-gray-600 hover:text-orange-500 hover:border-orange-200 text-[11px] font-bold uppercase tracking-wider transition-all shadow-xs flex items-center gap-1.5"
             title="Clear Filters"
           >
@@ -144,7 +139,7 @@ export const CMSFilters: React.FC<CMSFiltersProps> = ({
             />
           </div>
           <button
-            onClick={onReset}
+            onClick={resetFilters}
             className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-200 text-gray-500 hover:text-orange-500 hover:bg-orange-50 transition-all shadow-xs shrink-0"
             title="Clear filters"
           >

@@ -1,18 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import {
-  AlignCenter, AlignLeft, AlignRight,
-  ArrowDown, ArrowUp, Check, Trash2
+  ArrowDown, ArrowUp, Trash2
 } from "lucide-react";
-import { ContentBlock } from "../../NewsPreview/type";
-
-interface BlockStackManagerProps {
-  blocks: ContentBlock[];
-  activeInput: string | null;
-  handleBlockSelect: (id: string) => void;
-  handleMoveBlock: (index: number, dir: "up" | "down") => void;
-  handleDeleteBlock: (id: string) => void;
-  handleBlockChange: (id: string, update: Partial<ContentBlock>) => void;
-}
+import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
 const BLOCK_TYPE_STYLES: Record<string, string> = {
   heading: "bg-blue-50 text-blue-600 border-blue-100",
@@ -28,13 +18,11 @@ const BLOCK_TYPE_LABELS: Record<string, string> = {
   pdf: "PDF Block",
 };
 
-
-
-export const BlockStackManager: React.FC<BlockStackManagerProps> = ({
-  blocks, activeInput,
-  handleBlockSelect, handleMoveBlock, handleDeleteBlock, handleBlockChange
-}) => {
-
+export const BlockStackManager: React.FC<{ formContainerRef?: React.RefObject<HTMLDivElement | null>; previewContainerRef?: React.RefObject<HTMLDivElement | null>; }> = ({ formContainerRef, previewContainerRef }) => {
+  const {
+    blocks, activeInput,
+    handleBlockSelect, handleMoveBlock, handleDeleteBlock
+  } = useArticleEditorStore();
 
   return (
     <div className="bg-white p-3.5 rounded-2xl shadow-3xs space-y-2.5">
@@ -57,11 +45,11 @@ export const BlockStackManager: React.FC<BlockStackManagerProps> = ({
             <div
               key={block.id}
               onClick={() => {
-                handleBlockSelect(block.id);
+                handleBlockSelect(block.id, formContainerRef?.current || null, previewContainerRef?.current || null);
               }}
               className={`p-3 rounded-xl border transition-all duration-200 cursor-pointer flex flex-col gap-2 relative ${isActive
-                  ? "border-orange-200 border-r-4 border-r-orange-500 bg-white shadow-3xs"
-                  : "border-slate-200/65 bg-white hover:border-slate-300"
+                ? "border-orange-200 border-r-4 border-r-orange-500 bg-white shadow-3xs"
+                : "border-slate-200/65 bg-white hover:border-slate-300"
                 }`}
             >
               {/* Type badge + align/edit row */}
@@ -69,16 +57,12 @@ export const BlockStackManager: React.FC<BlockStackManagerProps> = ({
                 <span className={`text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded border ${BLOCK_TYPE_STYLES[block.type] ?? BLOCK_TYPE_STYLES.text}`}>
                   {typeLabel}
                 </span>
-
-
               </div>
 
               {/* Content preview */}
               {previewText && (
                 <p className="text-[10px] font-semibold text-gray-700 truncate px-0.5 leading-snug">{previewText}</p>
               )}
-
-
 
               {/* Move/delete controls */}
               {isActive && (
