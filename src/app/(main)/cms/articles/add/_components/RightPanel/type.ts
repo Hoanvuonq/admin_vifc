@@ -1,4 +1,4 @@
-import { NewsItem } from "../../../../_pages/types";
+import { NewsItem } from "../../../(articles)/_pages/types";
 import { ContentBlock } from "../NewsPreview/type";
 
 export interface RightPanelProps {
@@ -36,6 +36,8 @@ export interface RightPanelProps {
   setPdfCover: (val: string) => void;
   pdfName: string;
   setPdfName: (val: string) => void;
+  pdfRole: "free" | "base" | "standard" | "premium";
+  setPdfRole: (val: "free" | "base" | "standard" | "premium") => void;
   allowComments: boolean;
   setAllowComments: (val: boolean) => void;
   isFeatured: boolean;

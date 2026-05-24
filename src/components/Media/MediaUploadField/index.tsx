@@ -93,16 +93,16 @@ export const MediaUploadField: React.FC<
         if (onUploadApi) {
           try {
             const result = await onUploadApi(file, (p) => {
-              onChange(valueRef.current.map((f) => f.uid === uid ? { ...f, percent: p } : f));
+              onChange(valueRef.current.map((f) => (f.uid === uid || f.url === objectUrl) ? { ...f, percent: p } : f));
             });
-            onChange(valueRef.current.map((f) => f.uid === uid ? {
+            onChange(valueRef.current.map((f) => (f.uid === uid || f.url === objectUrl) ? {
               ...f, status: "done", percent: 100,
               url: result?.url || result?.data?.url || objectUrl,
               thumbnailUrl: result?.thumbnailUrl || result?.data?.thumbnailUrl || initialThumbnailUrl,
               assetId: result?.id || result?.data?.id,
             } : f));
           } catch { 
-            onChange(valueRef.current.map((f) => f.uid === uid ? { ...f, status: "error" } : f)); 
+            onChange(valueRef.current.map((f) => (f.uid === uid || f.url === objectUrl) ? { ...f, status: "error" } : f)); 
           }
         }
       }

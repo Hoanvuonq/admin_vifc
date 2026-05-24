@@ -12,19 +12,14 @@ export interface NewsItem {
   status: "PUBLISHED" | "DRAFT" | "PENDING_REVIEW" | "ARCHIVED";
   createdDate: string;
   views: number;
-  
-  // SEO fields
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
-
-  // Settings
   allowComments?: boolean;
   isFeatured?: boolean;
   scheduledDate?: string;
-
-  // PDF Attachment
   pdfUrl?: string;
   pdfCover?: string;
   pdfName?: string;
+  pdfRole?: "free" | "base" | "standard" | "premium";
 }

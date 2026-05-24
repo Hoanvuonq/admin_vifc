@@ -1,7 +1,7 @@
 import React from "react";
 import { Checkbox, DateTimeInput } from "@/components";
 import { History, Settings } from "lucide-react";
-import { NewsItem } from "@/app/(main)/cms/articles/_pages/types";
+import { NewsItem } from "@/app/(main)/cms/articles/(articles)/_pages/types";
 
 interface PublishSettingsSectionProps {
   allowComments: boolean;

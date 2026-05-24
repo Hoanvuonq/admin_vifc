@@ -1,23 +1,18 @@
 "use client";
 
 import { PremiumButton } from "@/components";
-import { FileText, ArrowLeft, X, Check, Save } from "lucide-react";
+import { ArrowLeft, Check, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
-import { NewsItem } from "../../_pages/types";
-import { LeftPanel, NewsPreview, RightPanel } from "./_components";
-import { ContentBlock } from "./_components/NewsPreview/type";
+import { NewsItem } from "../../(articles)/_pages/types";
+import { LeftPanel, NewsPreview, RightPanel } from "../_components";
+import { ContentBlock } from "../_components/NewsPreview/type";
 
-interface CMSDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  newsToEdit: NewsItem | null;
-  onSave: (newsData: Omit<NewsItem, "id" | "createdDate" | "views" | "authorName" | "authorAvatar">) => void;
-}
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type SectionType = "section-basic" | "section-media" | "section-content" | "section-seo" | "section-pdf" | "section-settings";
 
-// Compiles content blocks into clean static HTML markup
 const compileBlocksToHTML = (blocks: ContentBlock[]): string => {
   return blocks.map((block) => {
     const styleAttr = block.align !== "left" ? ` style="text-align: ${block.align};"` : "";
@@ -28,6 +23,14 @@ const compileBlocksToHTML = (blocks: ContentBlock[]): string => {
       case "image": {
         return `<div${styleAttr} class="image-block-wrapper w-full"><img src="${block.content}" alt="${block.caption || ''}" class="rounded-2xl max-w-full my-4 inline-block w-full" />${block.caption ? `<p class="text-xs text-gray-500 italic mt-1 text-center">${block.caption}</p>` : ''}</div>`;
       }
+      case "pdf": {
+        return `<div class="pdf-block-wrapper w-full" data-pdf-url="${block.content || ''}" data-pdf-cover="${block.thumbnailUrl || ''}" data-pdf-name="${block.caption || ''}">
+          <a href="${block.content}" target="_blank" class="pdf-attachment-link p-4 border rounded-xl flex items-center gap-3 bg-slate-50 text-rose-600 font-bold hover:bg-rose-50 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            ${block.caption || 'Download PDF Document'}
+          </a>
+        </div>`;
+      }
       case "text":
       default:
         return `<p${styleAttr}>${block.content}</p>`;
@@ -35,69 +38,10 @@ const compileBlocksToHTML = (blocks: ContentBlock[]): string => {
   }).join("\n");
 };
 
-const parseHTMLToBlocks = (html: string): ContentBlock[] => {
-  if (!html) return [{ id: `block-${Date.now()}`, type: "text", align: "left", content: "" }];
 
-  try {
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = html.trim();
-    const blocks: ContentBlock[] = [];
 
-    Array.from(tempDiv.children).forEach((el, index) => {
-      const id = `block-${Date.now()}-${index}`;
-      const textAlign = (el as HTMLElement).style.textAlign as "left" | "center" | "right" || "left";
-
-      if (el.tagName === "H2" || el.tagName === "H3") {
-        blocks.push({
-          id,
-          type: "heading",
-          align: textAlign,
-          content: el.innerHTML,
-          level: el.tagName === "H2" ? "h2" : "h3"
-        });
-      } else if (el.tagName === "DIV" && el.classList.contains("image-block-wrapper")) {
-        const img = el.querySelector("img");
-        const captionEl = el.querySelector("p");
-        blocks.push({
-          id,
-          type: "image",
-          align: textAlign,
-          content: img?.getAttribute("src") || "",
-          caption: captionEl?.innerHTML || "",
-          imagePadding: el.getAttribute("data-image-padding") as "none" | "small" | "medium" | "large" || "medium",
-        });
-      } else if (el.tagName === "IMG") {
-        blocks.push({
-          id,
-          type: "image",
-          align: "center",
-          content: el.getAttribute("src") || ""
-        });
-      } else {
-        blocks.push({
-          id,
-          type: "text",
-          align: textAlign,
-          content: el.innerHTML
-        });
-      }
-    });
-
-    if (blocks.length === 0) {
-      return [{ id: `block-${Date.now()}`, type: "text", align: "left", content: html }];
-    }
-    return blocks;
-  } catch (e) {
-    return [{ id: `block-${Date.now()}`, type: "text", align: "left", content: html }];
-  }
-};
-
-export const CMSDrawer: React.FC<CMSDrawerProps> = ({
-  isOpen,
-  onClose,
-  newsToEdit,
-  onSave,
-}) => {
+export const AddArticlePage: React.FC = () => {
+  const router = useRouter();
   // Form states
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -125,6 +69,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
   const [pdfUrl, setPdfUrl] = useState("");
   const [pdfCover, setPdfCover] = useState("");
   const [pdfName, setPdfName] = useState("");
+  const [pdfRole, setPdfRole] = useState<"free" | "base" | "standard" | "premium">("free");
 
   // UI state
   const [activeSection, setActiveSection] = useState<string>("section-basic");
@@ -133,62 +78,36 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
   const rightPanelRef = useRef<HTMLDivElement>(null);
   const centerPanelRef = useRef<HTMLDivElement>(null);
 
-  // Sync state when modal opens or newsToEdit changes
+  // Initialize state on mount
   useEffect(() => {
-    if (isOpen) {
-      setActiveSection("section-basic");
-      setActiveInput(null);
-      if (newsToEdit) {
-        setTitle(newsToEdit.title);
-        setSlug(newsToEdit.slug);
-        setCategory(newsToEdit.category);
-        setTags(newsToEdit.tags || []);
-        setThumbnail(newsToEdit.thumbnail);
-        setSummary(newsToEdit.summary);
+    setActiveSection("section-basic");
+    setActiveInput(null);
+    setTitle("");
+    setSlug("");
+    setCategory(["Web3"]);
+    setTags([]);
+    setThumbnail("https://api.dicebear.com/7.x/shapes/svg?seed=" + Math.random().toString());
+    setSummary("");
 
-        const parsed = parseHTMLToBlocks(newsToEdit.content);
-        setBlocks(parsed);
-        setContent(newsToEdit.content);
+    const initialBlocks: ContentBlock[] = [
+      { id: `block-${Date.now()}`, type: "text", align: "left", content: "" }
+    ];
+    setBlocks(initialBlocks);
+    setContent(compileBlocksToHTML(initialBlocks));
 
-        setSeoTitle(newsToEdit.seoTitle || "");
-        setSeoDescription(newsToEdit.seoDescription || "");
-        setSeoKeywords(newsToEdit.seoKeywords || "");
-        setAllowComments(newsToEdit.allowComments ?? true);
-        setIsFeatured(newsToEdit.isFeatured ?? false);
-        setScheduledDate(newsToEdit.scheduledDate || "");
-        setStatus(newsToEdit.status);
+    setSeoTitle("");
+    setSeoDescription("");
+    setSeoKeywords("");
+    setAllowComments(true);
+    setIsFeatured(false);
+    setScheduledDate("");
+    setStatus("DRAFT");
 
-        setPdfUrl(newsToEdit.pdfUrl || "");
-        setPdfCover(newsToEdit.pdfCover || "");
-        setPdfName(newsToEdit.pdfName || "");
-      } else {
-        setTitle("");
-        setSlug("");
-        setCategory(["Web3"]);
-        setTags([]);
-        setThumbnail("https://api.dicebear.com/7.x/shapes/svg?seed=" + Math.random().toString());
-        setSummary("");
-
-        const initialBlocks: ContentBlock[] = [
-          { id: `block-${Date.now()}`, type: "text", align: "left", content: "" }
-        ];
-        setBlocks(initialBlocks);
-        setContent(compileBlocksToHTML(initialBlocks));
-
-        setSeoTitle("");
-        setSeoDescription("");
-        setSeoKeywords("");
-        setAllowComments(true);
-        setIsFeatured(false);
-        setScheduledDate("");
-        setStatus("DRAFT");
-
-        setPdfUrl("");
-        setPdfCover("");
-        setPdfName("");
-      }
-    }
-  }, [isOpen, newsToEdit]);
+    setPdfUrl("");
+    setPdfCover("");
+    setPdfName("");
+    setPdfRole("free");
+  }, []);
 
   // Scroll spy inside the right form panel
   useEffect(() => {
@@ -222,7 +141,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
 
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [isOpen]);
+  }, []);
 
   const handleTabClick = (sectionId: SectionType) => {
     const container = rightPanelRef.current;
@@ -277,7 +196,16 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
       ...(type === "heading" ? { level: "h2" } : {}),
       ...defaults
     };
-    const newBlocks = [...blocks, newBlock];
+
+    let newBlocks = [...blocks];
+    const activeIndex = blocks.findIndex(b => b.id === activeInput);
+
+    if (activeIndex !== -1) {
+      newBlocks.splice(activeIndex + 1, 0, newBlock);
+    } else {
+      newBlocks.push(newBlock);
+    }
+
     setBlocks(newBlocks);
     setContent(compileBlocksToHTML(newBlocks));
 
@@ -312,15 +240,13 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const val = e.target.value;
     setTitle(val);
-    if (!newsToEdit) {
-      const generatedSlug = val
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-")
-        .replace(/-+/g, "-")
-        .trim();
-      setSlug(generatedSlug);
-    }
+    const generatedSlug = val
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .trim();
+    setSlug(generatedSlug);
   };
 
   const handleImageUpload = () => {
@@ -336,25 +262,57 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
       return;
     }
 
-    onSave({
+    // Format blocks exactly according to article-schema.md
+    const formattedBlocks: any[] = blocks.map((b) => {
+      if (b.type === "heading") {
+        return {
+          type: "heading",
+          level: b.level === "h3" ? "3" : "2",
+          content: b.content,
+        };
+      }
+      if (b.type === "text") {
+        return { type: "text", content: b.content };
+      }
+      if (b.type === "image") {
+        return { type: "image", url: b.content };
+      }
+      return null;
+    }).filter(Boolean);
+
+    // Append PDF as a block if it exists
+    if (pdfUrl) {
+      formattedBlocks.push({
+        type: "pdf",
+        url: pdfUrl,
+        thumbnail: pdfCover || undefined,
+        activeRole: pdfRole || "free",
+        name: pdfName || undefined,
+      });
+    }
+
+    // Build the final JSON matching the schema
+    const articleJsonPayload = {
+      id: `post-uuid-${Date.now()}`,
       title,
-      slug,
-      category,
-      tags,
+      description: summary,
       thumbnail,
-      summary,
-      content,
+      slug,
+      layouts: "2",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      content: content,
+      blocks: formattedBlocks,
       seoTitle,
       seoDescription,
       seoKeywords,
-      allowComments,
-      isFeatured,
-      scheduledDate,
-      status: finalStatus || status,
-      pdfUrl,
-      pdfCover,
-      pdfName,
-    });
+    };
+
+    console.log("=== DUMP ARTICLE JSON PAYLOAD ===");
+    console.log(JSON.stringify(articleJsonPayload, null, 2));
+
+    toast.success("Article saved successfully!");
+    router.push("/cms/articles");
   };
 
   const tagOptions = [
@@ -490,7 +448,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
         <div className="flex items-center gap-3.5">
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => router.push("/cms/articles")}
             className="p-2.5 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors"
             title="Back to List"
           >
@@ -498,7 +456,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
           </button>
           <div>
             <h1 className="text-sm font-extrabold text-slate-900 leading-tight">
-              {newsToEdit ? "Edit Article" : "Create New Article"}
+              {"Create New Article"}
             </h1>
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
               Article Status:{" "}
@@ -527,7 +485,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
             label="Cancel"
             variant="rose"
             size="md"
-            onClick={onClose}
+            onClick={() => router.push("/cms/articles")}
             className="rounded-xl font-bold px-4 py-2 text-xs"
           />
           {/* {status !== "PUBLISHED" && (
@@ -541,7 +499,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
             />
           )} */}
           <PremiumButton
-            label={newsToEdit ? "Update" : "Publish"}
+            label={"Publish"}
             variant="emerald"
             icon={Check}
             size="md"
@@ -630,7 +588,7 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
           setIsFeatured={setIsFeatured}
           scheduledDate={scheduledDate}
           setScheduledDate={setScheduledDate}
-          newsToEdit={newsToEdit}
+          newsToEdit={null}
           sectionBasicCompleted={sectionBasicCompleted}
           sectionMediaCompleted={sectionMediaCompleted}
           sectionContentCompleted={sectionContentCompleted}
@@ -641,6 +599,8 @@ export const CMSDrawer: React.FC<CMSDrawerProps> = ({
           setPdfCover={setPdfCover}
           pdfName={pdfName}
           setPdfName={setPdfName}
+          pdfRole={pdfRole}
+          setPdfRole={setPdfRole}
         />
       </div>
     </div>

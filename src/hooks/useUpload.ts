@@ -36,6 +36,7 @@ export const useUpload = () => {
             xhr.onload = () => {
               if (xhr.status === 200) {
                 const response = JSON.parse(xhr.responseText);
+                toast.success("PDF uploaded successfully!");
                 resolve({
                   url: response.fileUrl,
                   thumbnailUrl: response.thumbnailUrl,
@@ -46,6 +47,7 @@ export const useUpload = () => {
                   const errorRes = JSON.parse(xhr.responseText);
                   if (errorRes.error) errorMsg = errorRes.error;
                 } catch (e) {}
+                toast.error("Upload failed", { description: errorMsg });
                 reject(new Error(errorMsg));
               }
             };
@@ -74,6 +76,7 @@ export const useUpload = () => {
           xhr.onload = () => {
             if (xhr.status === 200) {
               const response = JSON.parse(xhr.responseText);
+              toast.success("Image uploaded successfully!");
               resolve({ url: response.fileUrl });
             } else {
               let errorMsg = "Failed to upload image";
@@ -81,6 +84,7 @@ export const useUpload = () => {
                 const errorRes = JSON.parse(xhr.responseText);
                 if (errorRes.error) errorMsg = errorRes.error;
               } catch (e) {}
+              toast.error("Upload failed", { description: errorMsg });
               reject(new Error(errorMsg));
             }
           };

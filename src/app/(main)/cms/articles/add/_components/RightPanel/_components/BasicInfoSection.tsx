@@ -1,7 +1,7 @@
 import React from "react";
 import { FormInput, SelectComponent } from "@/components";
 import { FileText } from "lucide-react";
-import { CATEGORY_OPTIONS } from "../../../../../_constants/cms.constants";
+import { CATEGORY_OPTIONS } from "../../../../(articles)/_constants/cms.constants";
 
 interface BasicInfoSectionProps {
   activeInput: string | null;

@@ -10,14 +10,14 @@ export const Layout2: React.FC<NewsPreviewProps> = ({
   handleMoveBlock, handleDeleteBlock, handleBlockChange,
 }) => (
   <div className="max-w-190 mx-auto bg-white min-h-screen shadow-xs">
-    <div className="p-8 md:p-12 pb-8 space-y-8">
+    <div className="p-8 md:p-12 pb-6 space-y-8">
       <ArticleHeader title={title} category={category} getReadingTime={getReadingTime} />
-      <SummaryBlock summary={summary} />
     </div>
-    <div className="px-8 md:px-12 py-4">
+    <div className="px-8 md:px-12 pb-6">
       <BannerImage thumbnail={thumbnail} title={title} isRounded />
     </div>
-    <div className="p-8 md:p-12 pt-8 space-y-12">
+    <div className="p-8 md:p-12 pt-0 space-y-12">
+      <SummaryBlock summary={summary} />
       <BlockList
         blocks={blocks} activeInput={activeInput} onBlockSelect={onBlockSelect}
         onMoveBlock={handleMoveBlock} onDeleteBlock={handleDeleteBlock} onBlockChange={handleBlockChange}

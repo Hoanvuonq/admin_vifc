@@ -67,13 +67,13 @@ export const MediaSummarySection: React.FC<MediaSummarySectionProps> = ({
 
         <div onFocusCapture={() => setActiveInput("summary")}>
           <FormInput
-            label="Short Article Summary"
+            label="Description (Mô tả)"
             required
             isTextArea
             value={summary}
             onChange={(e) => setSummary(e.target.value)}
             onFocus={() => setActiveInput("summary")}
-            placeholder="Enter general introductory summary of the article..."
+            placeholder="Enter article description..."
             maxLength={500}
             showCount
             className="min-h-30 text-xs"

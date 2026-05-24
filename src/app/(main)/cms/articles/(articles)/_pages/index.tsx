@@ -1,19 +1,17 @@
 "use client";
 
-import { AdminPageHeader, PremiumButton } from "@/components";
+import { AdminPageHeader } from "@/components";
 import { DataTable } from "@/components/DataTable";
-import { BookOpen, Newspaper, Plus, Sparkles, MessageSquare, Flame } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
-import { CMSFilters, CMSDrawer } from "../_components";
-import { getColumns } from "./columns";
+import { BookOpen, Flame, MessageSquare, Newspaper, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { CMSFilters } from "../_components";
 import { useCMSArticles } from "../_hooks/useCMSArticles";
+import { getColumns } from "./columns";
 import { NewsItem } from "./types";
-import _ from "lodash";
 
 export const ManagerCMSScreen = () => {
   const { articles: newsList, saveArticle, deleteArticle } = useCMSArticles();
   const [toast, setToast] = useState<{ message: string; type: "success" | "info" | "warning" } | null>(null);
-
 
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
@@ -134,19 +132,7 @@ export const ManagerCMSScreen = () => {
 
   const columns = useMemo(() => getColumns(handleEditNews, handleDeleteNews), [newsList]);
 
-  if (isDrawerOpen) {
-    return (
-      <CMSDrawer
-        isOpen={isDrawerOpen}
-        onClose={() => {
-          setIsDrawerOpen(false);
-          setSelectedNewsToEdit(null);
-        }}
-        newsToEdit={selectedNewsToEdit}
-        onSave={handleSaveNews}
-      />
-    );
-  }
+
 
   return (
     <div className="min-h-screen space-y-6 animate-in fade-in duration-700 relative">
@@ -193,7 +179,6 @@ export const ManagerCMSScreen = () => {
         ]}
       />
 
-      {/* Data Table */}
       <DataTable
         data={paginatedNews}
         columns={columns}

@@ -7,6 +7,7 @@ export const PDFSection: React.FC<RightPanelProps> = ({
   pdfUrl, setPdfUrl,
   pdfCover, setPdfCover,
   pdfName, setPdfName,
+  pdfRole, setPdfRole,
 }) => {
   const { uploadFile } = useUpload();
 
@@ -67,6 +68,26 @@ export const PDFSection: React.FC<RightPanelProps> = ({
             placeholder="e.g. Wealth and asset management outlook.pdf"
             className="h-10 text-xs"
           />
+        </div>
+
+        <div className="space-y-2 pb-2">
+          <label className="text-[9px] uppercase text-gray-500 tracking-wider font-semibold">Minimum Required Role</label>
+          <select
+            value={pdfRole}
+            onChange={(e) => setPdfRole(e.target.value as "free" | "base" | "standard" | "premium")}
+            className="w-full h-10 px-3 text-xs bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all text-slate-700"
+          >
+            <option value="free">Free (All users can view)</option>
+            <option value="base">Base (Base tier and above)</option>
+            <option value="standard">Standard (Standard tier and above)</option>
+            <option value="premium">Premium (Only Premium users)</option>
+          </select>
+          <p className="text-[9.5px] text-gray-450 italic mt-1 leading-snug">
+            {pdfRole === "free" && "Users from Free level and up can view the PDF."}
+            {pdfRole === "base" && "Only users from Base level, Standard, and Premium can view."}
+            {pdfRole === "standard" && "Only users from Standard level and Premium can view."}
+            {pdfRole === "premium" && "Exclusive to Premium users only."}
+          </p>
         </div>
       </div>
     </div>

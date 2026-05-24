@@ -18,7 +18,6 @@ import { CATEGORY_OPTIONS } from "../../_constants/cms.constants";
 import { CMSFiltersProps } from "./type";
 
 
-
 export const CMSFilters: React.FC<CMSFiltersProps> = ({
   searchText,
   setSearchText,
