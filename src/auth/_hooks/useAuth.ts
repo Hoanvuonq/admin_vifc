@@ -57,7 +57,36 @@ interface VerifyOptions {
   autoVerify?: boolean;
 }
 
-export function useAuthVerification({ redirectOnFailure = true, autoVerify = true }: VerifyOptions = {}) {
+export const doRefreshToken = async () => {
+  try {
+    const res = await fetch("/api/auth/refresh", {
+      method: "POST",
+    });
+    const json = await res.json();
+    if (res.ok && json.success) {
+      localStorage.setItem("access_token", json.data.access_token);
+      const userInfoStr = localStorage.getItem("user_info");
+      if (userInfoStr) {
+        const userInfo = JSON.parse(userInfoStr);
+        userInfo.access_token = json.data.access_token;
+        userInfo.expires_at = json.data.expires_at;
+        localStorage.setItem("user_info", JSON.stringify(userInfo));
+      }
+      return json.data;
+    }
+    throw new Error("Refresh failed");
+  } catch (err) {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user_info");
+    window.location.href = "/login";
+    throw err;
+  }
+};
+
+export function useAuthVerification({
+  redirectOnFailure = true,
+  autoVerify = true,
+}: VerifyOptions = {}) {
   const router = useRouter();
   const [state, setState] = useState<AuthState>({
     authenticated: false,
@@ -69,15 +98,37 @@ export function useAuthVerification({ redirectOnFailure = true, autoVerify = tru
   useEffect(() => {
     if (!autoVerify) return;
 
-    const verify = () => {
+    let timeoutId: NodeJS.Timeout;
+
+    const verify = async () => {
       const token = localStorage.getItem("access_token");
       if (token) {
         const userInfoStr = localStorage.getItem("user_info");
+        const user = userInfoStr ? JSON.parse(userInfoStr) : null;
+
+        if (user && user.expires_at) {
+          const expiresInMs = user.expires_at * 1000 - Date.now();
+          if (expiresInMs < 60000) {
+            try {
+              await doRefreshToken();
+              // Re-run verify after refresh to get updated token and schedule next refresh
+              verify();
+              return;
+            } catch (err) {
+              return; // doRefreshToken already handles redirection
+            }
+          } else {
+            timeoutId = setTimeout(() => {
+              verify();
+            }, expiresInMs - 60000);
+          }
+        }
+
         setState({
           authenticated: true,
           loading: false,
           error: null,
-          user: userInfoStr ? JSON.parse(userInfoStr) : null,
+          user,
         });
       } else {
         setState({
@@ -93,6 +144,10 @@ export function useAuthVerification({ redirectOnFailure = true, autoVerify = tru
     };
 
     verify();
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [autoVerify, redirectOnFailure, router]);
 
   return state;

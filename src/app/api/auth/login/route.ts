@@ -29,7 +29,7 @@ export async function POST(request: Request) {
             message: "Username (email) and password are required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -58,13 +58,13 @@ export async function POST(request: Request) {
             message: "Invalid username or password",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Check if the user has the 'admin' role
     const isAdmin = user.user_roles.some(
-      (ur) => ur.role.name.toLowerCase() === "admin"
+      (ur) => ur.role.name.toLowerCase() === "admin",
     );
 
     if (!isAdmin) {
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
             message: "Access denied. Only administrators are allowed to login.",
           },
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
             message: "Invalid username or password",
           },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -127,7 +127,7 @@ export async function POST(request: Request) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Admin login API failed:", error);
@@ -140,7 +140,7 @@ export async function POST(request: Request) {
           details: error instanceof Error ? error.message : String(error),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
