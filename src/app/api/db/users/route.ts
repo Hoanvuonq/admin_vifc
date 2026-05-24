@@ -28,11 +28,25 @@ export async function GET(request: Request) {
 
     const skip = (page - 1) * limit;
 
+    const emailSearch = searchParams.get("email");
+
+    // Build the where clause
+    const whereClause: any = {};
+    if (emailSearch) {
+      whereClause.email = {
+        contains: emailSearch,
+        mode: "insensitive",
+      };
+    }
+
     // Get total count
-    const total = await prisma.user.count();
+    const total = await prisma.user.count({
+      where: whereClause,
+    });
 
     // Get paginated results
     const users = await prisma.user.findMany({
+      where: whereClause,
       skip,
       take: limit,
       orderBy: {

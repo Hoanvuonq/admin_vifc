@@ -1,42 +1,48 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import prisma from "../../../../lib/prisma";
-import bcrypt from "bcryptjs";
-import { generateTokenPair } from "../../../../lib/jwt";
+import { generateTokenPair, verifyRefreshToken } from "../../../../lib/jwt";
 
-// Helper function to compare unhashed password with the bcrypt hash in database
-function CompareHashAndPassword(password: string, hash: string): boolean {
-  try {
-    return bcrypt.compareSync(password, hash);
-  } catch (error) {
-    console.error("Password comparison failed:", error);
-    return false;
-  }
-}
-
-// POST /api/auth/login - Login for Admin role only
+// POST /api/auth/refresh - Refresh access token using a refresh token
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { username, password } = body;
+    const cookieStore = await cookies();
+    const refresh_token = cookieStore.get("refresh_token")?.value;
 
-    if (!username || !password) {
+    if (!refresh_token) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: "INVALID_REQUEST",
-            message: "Username (email) and password are required",
+            code: "UNAUTHORIZED",
+            message: "refresh_token cookie is missing",
           },
         },
-        { status: 400 }
+        { status: 401 }
       );
     }
 
-    // Find user by email including their roles
+    // Verify the refresh token
+    let decoded;
+    try {
+      decoded = verifyRefreshToken(refresh_token);
+    } catch (err: any) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "UNAUTHORIZED",
+            message: err.name === "TokenExpiredError" ? "Refresh token expired" : "Invalid refresh token",
+          },
+        },
+        { status: 401 }
+      );
+    }
+
+    // Check if the user still exists and is active
     const user = await prisma.user.findFirst({
       where: {
-        email: username,
+        id: decoded.id,
         status: "active",
         deleted_at: null,
       },
@@ -54,15 +60,15 @@ export async function POST(request: Request) {
         {
           success: false,
           error: {
-            code: "INVALID_CREDENTIALS",
-            message: "Invalid username or password",
+            code: "USER_NOT_FOUND",
+            message: "User not found or inactive",
           },
         },
         { status: 401 }
       );
     }
 
-    // Check if the user has the 'admin' role
+    // Check if the user still has the 'admin' role
     const isAdmin = user.user_roles.some(
       (ur) => ur.role.name.toLowerCase() === "admin"
     );
@@ -73,35 +79,20 @@ export async function POST(request: Request) {
           success: false,
           error: {
             code: "ACCESS_DENIED",
-            message: "Access denied. Only administrators are allowed to login.",
+            message: "Access denied. Only administrators are allowed.",
           },
         },
         { status: 403 }
       );
     }
 
-    // Compare the unhashed password from payload with the hashed password from the DB
-    if (!user.password || !CompareHashAndPassword(password, user.password)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "INVALID_CREDENTIALS",
-            message: "Invalid username or password",
-          },
-        },
-        { status: 401 }
-      );
-    }
-
-    // Login successful
+    // Generate a new token pair
     const tokens = generateTokenPair({
       id: user.id,
       email: user.email,
       role: "admin",
     });
 
-    const cookieStore = await cookies();
     cookieStore.set("refresh_token", tokens.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -113,13 +104,8 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: true,
-        message: "Login successful",
+        message: "Token refreshed successfully",
         data: {
-          id: user.id,
-          email: user.email,
-          full_name: user.full_name,
-          status: user.status,
-          role: "admin",
           access_token: tokens.accessToken,
           expires_at: tokens.expiresAt,
         },
@@ -130,13 +116,13 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Admin login API failed:", error);
+    console.error("Admin refresh token API failed:", error);
     return NextResponse.json(
       {
         success: false,
         error: {
           code: "INTERNAL_SERVER_ERROR",
-          message: "An error occurred during authentication",
+          message: "An error occurred during token refresh",
           details: error instanceof Error ? error.message : String(error),
         },
       },

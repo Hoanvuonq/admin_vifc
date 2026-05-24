@@ -22,6 +22,8 @@ if (process.env.NODE_ENV !== "production") {
 
 export default pool;
 
-export async function query<T = any>(text: string, params?: unknown[]) {
+import { QueryResultRow } from 'pg';
+
+export async function query<T extends QueryResultRow = any>(text: string, params?: unknown[]) {
   return pool.query<T>(text, params);
 }
