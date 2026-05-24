@@ -65,6 +65,7 @@ export async function GET(request: Request) {
         id: art.id,
         title: art.title,
         slug: art.slug,
+        status: art.status,
         layouts: parsedLayouts,
         summary: art.description || "",
         description: art.description || "",
