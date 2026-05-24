@@ -74,15 +74,20 @@ export const SidebarItem = ({
       data-active={isActive}
       className={cn(
         "flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 cursor-pointer group select-none relative mb-1",
-        isActive
+        item.disabled && "opacity-40 pointer-events-none grayscale",
+        !item.disabled && isActive
           ? "bg-white shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] border border-gray-100"
-          : highlightParent
+          : !item.disabled && highlightParent
             ? "bg-orange-50/20"
-            : "hover:bg-orange-50/50 text-gray-600",
+            : !item.disabled && "hover:bg-orange-50/50 text-gray-600",
         isClickLoading && "animate-pulse opacity-70 scale-95",
         item.className
       )}
-      onClick={() => {
+      onClick={(e) => {
+        if (item.disabled) {
+          e.preventDefault();
+          return;
+        }
         if (hasChildren) {
           onToggle(item.key);
         } else {

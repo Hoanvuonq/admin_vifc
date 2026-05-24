@@ -2,7 +2,7 @@
 
 import { cn } from "@/utils/cn";
 import { motion, AnimatePresence } from "framer-motion";
-import { Briefcase, ShieldCheck, Store, User, Truck, Tag } from "lucide-react";
+import { Briefcase, Crown, ShieldCheck, Star, Store, User, Truck, Tag } from "lucide-react";
 import React from "react";
 
 export type UserRole = "ADMIN" | "SHOP" | "BUYER" | "BUSINESS" | "EMPLOYEE" | "LOGISTICS" | "SALE" | string;
@@ -81,6 +81,33 @@ const ROLE_CONFIGS: Record<string, RoleConfig> = {
     icon: Tag,
     glowColor: "rgba(244, 63, 94, 0.2)",
   },
+  FREE: {
+    label: "Free Tier",
+    symbol: "FREE",
+    className: "bg-gray-50/80 text-gray-500 border-gray-200/60 shadow-[0_0_10px_rgba(156,163,175,0.1)] hover:bg-gray-100/80",
+    iconBg: "bg-gray-100/80 border-gray-200/50",
+    iconColor: "text-gray-400",
+    icon: User,
+    glowColor: "rgba(156,163,175,0.2)",
+  },
+  "ANNUAL PREMIUM": {
+    label: "Annual Premium",
+    symbol: "PRO",
+    className: "bg-amber-50/80 text-amber-700 border-amber-300/60 shadow-[0_0_12px_rgba(245,158,11,0.15)] hover:bg-amber-100/80",
+    iconBg: "bg-amber-100/80 border-amber-300/50",
+    iconColor: "text-amber-600",
+    icon: Crown,
+    glowColor: "rgba(245, 158, 11, 0.25)",
+  },
+  PREMIUM: {
+    label: "Premium",
+    symbol: "PRM",
+    className: "bg-amber-50/80 text-amber-700 border-amber-300/60 shadow-[0_0_12px_rgba(245,158,11,0.15)] hover:bg-amber-100/80",
+    iconBg: "bg-amber-100/80 border-amber-300/50",
+    iconColor: "text-amber-600",
+    icon: Star,
+    glowColor: "rgba(245, 158, 11, 0.25)",
+  },
 };
 
 export const RoleBadge: React.FC<{
@@ -89,7 +116,7 @@ export const RoleBadge: React.FC<{
 }> = ({ role, className }) => {
   const [isHovered, setIsHovered] = React.useState(false);
   const roleKey = role?.toUpperCase() || "BUYER";
-  
+
   const config = ROLE_CONFIGS[roleKey] || {
     label: roleKey,
     symbol: roleKey.substring(0, 3),
@@ -103,7 +130,7 @@ export const RoleBadge: React.FC<{
   const Icon = config.icon;
 
   return (
-    <div 
+    <div
       className="relative inline-block select-none"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -125,8 +152,8 @@ export const RoleBadge: React.FC<{
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 5 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        whileHover={{ 
-          scale: 1.05, 
+        whileHover={{
+          scale: 1.05,
           y: -1,
           boxShadow: `0 0 15px ${config.glowColor}`,
         }}
@@ -151,14 +178,14 @@ export const RoleBadge: React.FC<{
         />
 
         {/* Circular mini coin symbol with spin animation on hover */}
-        <motion.span 
+        <motion.span
           animate={isHovered ? { rotate: 360 } : {}}
           transition={{ duration: 0.8, ease: "easeInOut" }}
           className={cn("shrink-0 relative z-20 flex items-center justify-center p-0.5 rounded-full border shadow-xs", config.iconBg)}
         >
           <Icon size={9} strokeWidth={3} className={config.iconColor} />
         </motion.span>
-        
+
         <span className="leading-none relative z-20 font-extrabold uppercase tracking-wider text-[9px]">
           {config.symbol}
         </span>

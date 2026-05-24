@@ -8,6 +8,7 @@ export interface MenuItemSidebar {
   count?: number;
   type?: "divider" | "item";
   className?: string;
+  disabled?: boolean;
   children?: MenuItemSidebar[];
 }
 
@@ -26,8 +27,6 @@ export interface BaseSidebarProps {
   activeKey?: string;
   parentKey?: string;
   onToggle?: (key: string) => void;
-  logoFull?: string;
-  logoIcon?: string;
   dashboardHref?: string;
   className?: string;
 }

@@ -1,25 +1,10 @@
 "use client";
 
-import { LucideIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/utils/cn";
-import { motion, AnimatePresence } from "framer-motion";
-import { useRef, useState, useEffect, useCallback } from "react";
-
-export interface StatusTabItem<T extends string> {
-  key: T;
-  label: string;
-  icon: LucideIcon;
-  count?: number;
-  isImportant?: boolean;
-}
-interface StatusTabsProps<T extends string> {
-  tabs: StatusTabItem<T>[];
-  current: T;
-  onChange: (key: T) => void;
-  className?: string;
-  layoutId?: string;
-  disabled?: boolean;
-}
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { StatusTabsProps } from "./type";
 
 export const StatusTabs = <T extends string>({
   tabs,

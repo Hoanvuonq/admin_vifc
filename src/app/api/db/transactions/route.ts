@@ -6,6 +6,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
+    const status = searchParams.get("status");
+    const search = searchParams.get("search");
 
     // Validate pagination parameters
     if (page < 1 || limit < 1 || limit > 100) {
@@ -27,47 +29,73 @@ export async function GET(request: Request) {
 
     const skip = (page - 1) * limit;
 
+    // Build where clause
+    const whereClause: any = {};
+    if (status && status !== "ALL") {
+      whereClause.status = status;
+    }
+    
+    if (search) {
+      whereClause.OR = [
+        { transaction_id: { contains: search, mode: 'insensitive' } },
+        { users: { email: { contains: search, mode: 'insensitive' } } },
+        { users: { full_name: { contains: search, mode: 'insensitive' } } },
+      ];
+    }
+
     // Get total count
-    const total = await prisma.userSubscription.count();
+    const total = await prisma.payments.count({ where: whereClause });
 
     // Get paginated results
-    const transactions = await prisma.userSubscription.findMany({
+    const transactions = await prisma.payments.findMany({
       skip,
       take: limit,
+      where: whereClause,
       orderBy: [
-        { status: "desc" },
         { created_at: "desc" }
       ],
       select: {
         id: true,
         user_id: true,
-        subscription_plan_id: true,
-        start_date: true,
-        end_date: true,
+        gateway: true,
+        amount: true,
+        currency: true,
+        transaction_id: true,
         status: true,
         created_at: true,
-        updated_at: true,
         users: {
           select: {
+            full_name: true,
             email: true,
             avatar_url: true,
           },
         },
+        user_subscriptions: {
+          select: {
+            subscription_plans: {
+              select: {
+                name: true,
+              }
+            }
+          }
+        }
       },
     });
 
-    // Transform data to conform to SubscriptionTransaction interface
+    // Transform data to conform to frontend TransactionItem interface
     const transformedTransactions = transactions.map((t: any) => ({
       id: t.id,
-      user_id: t.user_id,
-      user_email: t.users?.email || null,
-      user_avatar: t.users?.avatar_url || null,
-      subscription_plan_id: t.subscription_plan_id,
-      start_date: t.start_date ? t.start_date.toISOString() : null,
-      end_date: t.end_date ? t.end_date.toISOString() : null,
-      status: t.status,
-      created_at: t.created_at.toISOString(),
-      updated_at: t.updated_at.toISOString(),
+      userId: t.user_id,
+      userName: t.users?.full_name || "Unknown User",
+      userEmail: t.users?.email || "",
+      userAvatar: t.users?.avatar_url || "",
+      planName: t.user_subscriptions?.subscription_plans?.name || "Unknown Plan",
+      amount: Number(t.amount) || 0,
+      currency: t.currency || "VND",
+      status: t.status ? t.status.toUpperCase() : "PENDING",
+      paymentMethod: t.gateway || "Unknown",
+      transactionDate: t.created_at.toISOString(),
+      description: t.transaction_id ? `Txn Ref: ${t.transaction_id}` : undefined,
     }));
 
     const totalPages = Math.ceil(total / limit);

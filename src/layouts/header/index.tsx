@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Bell, ChevronDown, ChevronRight, LayoutGrid, Menu, Search as SearchIcon, User, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import { MOCK_SIDEBAR_ITEMS } from "../sidebar/mockItems";
+import { MOCK_SIDEBAR_ITEMS } from "../sidebar/sidebar.menu.constanst";
 import { BaseHeaderProps } from "../types";
 
 const getSearchableText = (str: string) => {

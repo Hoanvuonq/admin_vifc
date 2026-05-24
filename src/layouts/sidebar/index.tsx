@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { BaseSidebarProps } from "../types";
 import { SidebarItem } from "./SidebarItem";
-import { MOCK_SIDEBAR_ITEMS } from "./mockItems";
+import { MOCK_SIDEBAR_ITEMS } from "./sidebar.menu.constanst";
 
 export const Sidebar = ({
   collapsed = false,
@@ -14,8 +14,6 @@ export const Sidebar = ({
   activeKey = "dashboard",
   parentKey,
   onToggle = () => { },
-  logoFull = "/icon/cano-v7.png",
-  logoIcon = "/icon/cano-v5.png",
   dashboardHref = "/dashboard",
   className,
 }: BaseSidebarProps) => {

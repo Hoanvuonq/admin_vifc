@@ -1,16 +1,17 @@
 import { LucideIcon } from "lucide-react";
 
-export interface StatusTabItem {
-  key: string;
+export interface StatusTabItem<T extends string> {
+  key: T;
   label: string;
   icon: LucideIcon;
   count?: number;
-  color?: string; 
+  isImportant?: boolean;
 }
-
-export interface StatusTabsProps {
-  tabs: StatusTabItem[]; 
-  current: string;
-  onChange: (key: string) => void;
+export interface StatusTabsProps<T extends string> {
+  tabs: StatusTabItem<T>[];
+  current: T;
+  onChange: (key: T) => void;
   className?: string;
+  layoutId?: string;
+  disabled?: boolean;
 }
