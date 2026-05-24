@@ -8,11 +8,11 @@ import { toast as sonnerToast, Toaster } from "sonner";
 import { toastConfig } from "@/types/toast";
 
 export const toast = {
-  success: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.success} />),
-  error: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.error} />),
-  warning: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.warning} />),
-  info: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.info} />),
-  loading: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.loading} />),
+  success: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.success} />, { id: options?.id }),
+  error: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.error} />, { id: options?.id }),
+  warning: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.warning} />, { id: options?.id }),
+  info: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.info} />, { id: options?.id }),
+  loading: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.loading} />, { id: options?.id }),
   dismiss: (t: string | number) => sonnerToast.dismiss(t),
 };
 

@@ -11,6 +11,7 @@ export interface ContentBlock {
   imagePadding?: "none" | "small" | "medium" | "large";
   thumbnailUrl?: string;
   activeRole?: "free" | "base" | "standard" | "premium";
+  file?: File;
 }
 
 export interface LayoutProps {

@@ -21,6 +21,8 @@ interface ArticleEditorState {
   setTags: (val: string[]) => void;
   thumbnail: string;
   setThumbnail: (val: string) => void;
+  thumbnailFile: File | null;
+  setThumbnailFile: (val: File | null) => void;
   summary: string;
   setSummary: (val: string) => void;
   content: string;
@@ -112,6 +114,8 @@ export const useArticleEditorStore = create<ArticleEditorState>((set, get) => ({
   setTags: (tags) => set({ tags }),
   thumbnail: "",
   setThumbnail: (thumbnail) => set({ thumbnail }),
+  thumbnailFile: null,
+  setThumbnailFile: (thumbnailFile) => set({ thumbnailFile }),
   summary: "",
   setSummary: (summary) => set({ summary }),
   content: "",

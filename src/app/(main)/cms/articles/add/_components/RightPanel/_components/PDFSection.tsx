@@ -27,19 +27,19 @@ export const PDFSection: React.FC = () => {
           <label className="text-[9px] uppercase text-gray-500 tracking-wider font-semibold">Upload PDF File</label>
           <div className="flex justify-center p-3 bg-slate-50/60 rounded-xl border border-slate-100">
             <MediaUploadField
-              value={pdfBlock.content ? [{ uid: pdfBlock.id, url: pdfBlock.content, status: "done", name: pdfBlock.caption, thumbnailUrl: pdfBlock.thumbnailUrl }] : []}
+              value={pdfBlock.content ? [{ uid: pdfBlock.id, url: pdfBlock.content, status: "done", name: pdfBlock.caption, thumbnailUrl: pdfBlock.thumbnailUrl, originFileObj: pdfBlock.file || undefined }] : []}
               onChange={(files) => {
                 if (files.length > 0) {
                   handleBlockChange(pdfBlock.id, {
                     content: files[0].url || "",
                     thumbnailUrl: files[0].thumbnailUrl || pdfBlock.thumbnailUrl,
-                    caption: files[0].name || pdfBlock.caption
+                    caption: files[0].name || pdfBlock.caption,
+                    file: files[0].originFileObj
                   });
                 } else {
-                  handleBlockChange(pdfBlock.id, { content: "", thumbnailUrl: "", caption: "" });
+                  handleBlockChange(pdfBlock.id, { content: "", thumbnailUrl: "", caption: "", file: undefined });
                 }
               }}
-              onUploadApi={uploadFile}
               allowedTypes={["application/pdf"]}
               maxCount={1}
               size="md"

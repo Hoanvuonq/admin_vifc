@@ -6,7 +6,7 @@ import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
 export const MediaSummarySection: React.FC = () => {
   const { uploadFile } = useUpload();
-  const { thumbnail, setThumbnail, summary, setSummary, setActiveInput } = useArticleEditorStore();
+  const { thumbnail, setThumbnail, thumbnailFile, setThumbnailFile, summary, setSummary, setActiveInput } = useArticleEditorStore();
 
   const sectionMediaCompleted = !!thumbnail && !thumbnail.includes("api.dicebear.com/7.x/shapes/svg") && summary.trim().length >= 30;
 
@@ -34,13 +34,14 @@ export const MediaSummarySection: React.FC = () => {
           <label className="text-[11px] font-bold text-gray-700 ml-0.5">Article Cover Image</label>
           <div className="p-3 bg-slate-50/60 rounded-xl flex justify-center">
             <MediaUploadField
-              onUploadApi={uploadFile}
-              value={thumbnail && !thumbnail.includes("api.dicebear.com") ? [{ uid: "thumbnail", url: thumbnail, status: "done" }] : []}
+              value={thumbnail && !thumbnail.includes("api.dicebear.com") ? [{ uid: "thumbnail", url: thumbnail, status: "done", originFileObj: thumbnailFile || undefined }] : []}
               onChange={(files) => {
                 if (files.length > 0) {
                   setThumbnail(files[0].url || "");
+                  setThumbnailFile(files[0].originFileObj || null);
                 } else {
                   setThumbnail("");
+                  setThumbnailFile(null);
                 }
               }}
               maxCount={1}

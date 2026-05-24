@@ -108,7 +108,7 @@ export function useAuthVerification({
 
         if (user && user.expires_at) {
           const expiresInMs = user.expires_at * 1000 - Date.now();
-          if (expiresInMs < 60000) {
+          if (expiresInMs < 30000) {
             try {
               await doRefreshToken();
               // Re-run verify after refresh to get updated token and schedule next refresh
@@ -120,7 +120,7 @@ export function useAuthVerification({
           } else {
             timeoutId = setTimeout(() => {
               verify();
-            }, expiresInMs - 60000);
+            }, expiresInMs - 30000);
           }
         }
 

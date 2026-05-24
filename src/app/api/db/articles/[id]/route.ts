@@ -202,6 +202,27 @@ export async function PUT(
           ? String(layouts)
           : undefined;
 
+    let finalCategoryId: string | null | undefined = undefined;
+    if (category_id !== undefined) {
+      if (category_id) {
+        if (category_id.length === 36 && category_id.includes("-")) {
+          finalCategoryId = category_id;
+        } else {
+          let cat = await prisma.categories.findFirst({
+            where: { name: { equals: category_id, mode: "insensitive" } },
+          });
+          if (!cat) {
+            cat = await prisma.categories.create({
+              data: { name: category_id },
+            });
+          }
+          finalCategoryId = cat.id;
+        }
+      } else {
+        finalCategoryId = null;
+      }
+    }
+
     const updatedArticle = await prisma.articles.update({
       where: { id },
       data: {
@@ -219,8 +240,7 @@ export async function PUT(
           seoDescription !== undefined ? seoDescription || null : undefined,
         seo_keywords:
           seoKeywords !== undefined ? seoKeywords || null : undefined,
-        category_id:
-          category_id !== undefined ? category_id || null : undefined,
+        category_id: finalCategoryId,
         created_by: created_by !== undefined ? created_by || null : undefined,
         updated_at: new Date(),
       },

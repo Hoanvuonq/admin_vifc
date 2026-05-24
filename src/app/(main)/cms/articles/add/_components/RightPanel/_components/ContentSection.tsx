@@ -129,18 +129,20 @@ export const ContentSection: React.FC<{ formContainerRef?: React.RefObject<HTMLD
                     <label className="text-[9px] uppercase text-gray-500 tracking-wider font-semibold">Image File</label>
                     <div className="flex justify-center p-3 bg-slate-50/60 rounded-xl">
                       <MediaUploadField
-                        value={block.content ? [{ uid: block.id, url: block.content, status: "done" }] : []}
+                        value={block.content ? [{ uid: block.id, url: block.content, status: "done", originFileObj: block.file || undefined }] : []}
                         onChange={(files) => {
                           if (files.length > 0) {
-                            handleBlockChange(block.id, { content: files[0].url || "" });
+                            handleBlockChange(block.id, { 
+                              content: files[0].url || "",
+                              file: files[0].originFileObj
+                            });
                           } else {
-                            handleBlockChange(block.id, { content: "" });
+                            handleBlockChange(block.id, { content: "", file: undefined });
                           }
                         }}
                         maxCount={1}
                         size="md"
                         isBanner={true}
-                        onUploadApi={uploadFile}
                         className="w-full"
                       />
                     </div>

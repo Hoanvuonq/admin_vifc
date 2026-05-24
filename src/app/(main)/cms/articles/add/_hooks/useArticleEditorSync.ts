@@ -3,9 +3,12 @@ import { useRouter } from "next/navigation";
 import { useArticle, useArticles } from "@/hooks/useArticles";
 import { useArticleEditorStore } from "../_store/useArticleEditorStore";
 import { ContentBlock } from "../_components/NewsPreview/type";
+import { useUpload } from "@/hooks/useUpload";
+import { toast } from "@/providers/ToastProvider";
 
 export const useArticleEditorSync = (articleId?: string) => {
   const router = useRouter();
+  const { uploadFile } = useUpload();
   const { createArticle, updateArticle } = useArticles();
   const { data: articleData } = useArticle(articleId);
 
@@ -25,6 +28,7 @@ export const useArticleEditorSync = (articleId?: string) => {
     setCategory,
     setTags,
     setThumbnail,
+    setThumbnailFile,
     setSummary,
     setBlocks,
     setSeoTitle,
@@ -60,6 +64,7 @@ export const useArticleEditorSync = (articleId?: string) => {
           "https://api.dicebear.com/7.x/shapes/svg?seed=" +
             Math.random().toString(),
       );
+      setThumbnailFile(null);
       setSummary(art.description || "");
 
       let initialBlocks: ContentBlock[] = [];
@@ -122,6 +127,7 @@ export const useArticleEditorSync = (articleId?: string) => {
         "https://api.dicebear.com/7.x/shapes/svg?seed=" +
           Math.random().toString(),
       );
+      setThumbnailFile(null);
       setSummary("");
 
       const initialBlocks: ContentBlock[] = [
@@ -160,11 +166,42 @@ export const useArticleEditorSync = (articleId?: string) => {
 
   const handleSave = async (finalStatus?: string) => {
     if (!title || !slug || !category) {
-      alert("Please fill in all required fields (*)");
+      toast.error("Validation Error", { description: "Please fill in all required fields (*)" });
       return;
     }
 
-    const formattedBlocks: any[] = blocks
+    const { thumbnailFile, blocks } = useArticleEditorStore.getState();
+    let finalThumbnail = thumbnail;
+    const finalBlocks = [...blocks];
+
+    try {
+      if (thumbnailFile) {
+        toast.loading("Uploading thumbnail...", { id: "article-save" });
+        const res = await uploadFile(thumbnailFile);
+        finalThumbnail = res.url;
+      }
+
+      for (let i = 0; i < finalBlocks.length; i++) {
+        const b = finalBlocks[i];
+        if (b.file) {
+          toast.loading(`Uploading file for block ${i + 1}...`, { id: "article-save" });
+          const res = await uploadFile(b.file);
+          finalBlocks[i] = {
+            ...b,
+            content: res.url,
+            thumbnailUrl: res.thumbnailUrl || b.thumbnailUrl,
+          };
+          delete finalBlocks[i].file;
+        }
+      }
+    } catch (error: any) {
+      toast.error("Upload failed", { id: "article-save", description: error.message || "Failed to upload media files." });
+      return;
+    }
+
+    toast.loading("Saving article data...", { id: "article-save" });
+
+    const formattedBlocks: any[] = finalBlocks
       .map((b) => {
         if (b.type === "heading") {
           return {
@@ -196,7 +233,7 @@ export const useArticleEditorSync = (articleId?: string) => {
       id: articleId || `post-uuid-${Date.now()}`,
       title,
       description: summary,
-      thumbnail,
+      thumbnail: finalThumbnail,
       slug,
       layouts: "2",
       createdAt: new Date().toISOString(),
@@ -215,8 +252,10 @@ export const useArticleEditorSync = (articleId?: string) => {
       } else {
         await createArticle(articleJsonPayload);
       }
+      toast.success("Saved successfully!", { id: "article-save" });
       router.push("/cms/articles");
     } catch (e: any) {
+      toast.error("Save failed", { id: "article-save", description: "Failed to save article" });
       console.error(e);
     }
   };

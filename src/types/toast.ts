@@ -3,6 +3,7 @@ import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
 export type ToastType = "success" | "error" | "warning" | "info" | "loading";
 
 export interface ToastOptions {
+  id?: string | number;
   duration?: number;
   description?: string;
   position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
