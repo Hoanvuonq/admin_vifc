@@ -1,4 +1,4 @@
-import s3Client from "@/config";
+import { getS3Client } from "@/config";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
     const safeFilename = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "");
     const key = `image/${Date.now()}-${safeFilename}`;
 
+    const s3Client = getS3Client();
     await s3Client.send(
       new PutObjectCommand({
         Bucket: process.env.AWS_BUCKET_NAME!,

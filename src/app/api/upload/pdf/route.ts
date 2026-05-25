@@ -1,4 +1,4 @@
-import s3Client from "@/config";
+import { getS3Client } from "@/config";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     const pdfKey = `pdfs/${Date.now()}-${safeFilename}`;
     const thumbKey = `pdfs/thumbnails/${Date.now()}-thumb.jpg`;
 
+    const s3Client = getS3Client();
     // Upload PDF
     await s3Client.send(
       new PutObjectCommand({
