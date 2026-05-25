@@ -75,3 +75,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+// Configure route to handle large file uploads (up to 50MB)
+export const maxDuration = 60; // 60 second timeout for large file uploads
