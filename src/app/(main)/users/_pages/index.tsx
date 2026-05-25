@@ -15,6 +15,7 @@ import {
     UserX,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { PaymentHistoryModal, UserDetailModal, UserFilters, UserModal } from "../_components";
 import { getColumns } from "./columns";
 import { UserItem } from "./types";
@@ -58,6 +59,7 @@ export const ManagerUsersScreen = () => {
         debouncedSearch
     );
 
+    const queryClient = useQueryClient();
     const { uploadFile } = useUpload();
 
     // Client-side role filter (API doesn't support role filtering yet)
@@ -145,6 +147,7 @@ export const ManagerUsersScreen = () => {
 
                 if (res.ok) {
                     showToast(`Updated user: ${userData.name}`, "success");
+                    queryClient.invalidateQueries({ queryKey: ["users"] });
                     setIsAddUserModalOpen(false);
                     setSelectedUserToEdit(null);
                 } else {

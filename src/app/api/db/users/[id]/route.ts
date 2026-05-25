@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../../../lib/prisma";
 import { User } from "@/types/user";
+import { redis } from "../../../../../lib/redis";
 
 export async function GET(
   _req: Request,
@@ -220,6 +221,15 @@ export async function PATCH(
         }
       }
     });
+
+    try {
+      const keys = await redis.keys("users:list:*");
+      if (keys.length > 0) {
+        await redis.del(...keys);
+      }
+    } catch (redisError) {
+      console.warn("Redis cache invalidation failed for users list:", redisError);
+    }
 
     return NextResponse.json(
       {
