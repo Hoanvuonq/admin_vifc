@@ -19,12 +19,13 @@ export const BasicInfoSection: React.FC = () => {
   const {
     title, handleTitleChange,
     slug, setSlug,
+    summary, setSummary,
     category, setCategory,
     tags, setTags,
     setActiveInput
   } = useArticleEditorStore();
 
-  const sectionBasicCompleted = title.trim().length >= 10 && slug.trim().length > 0 && !!category && tags.length >= 1;
+  const sectionBasicCompleted = title.trim().length >= 10 && slug.trim().length > 0 && !!category && tags.length >= 1 && summary.trim().length > 0;
 
   return (
     <div
@@ -66,6 +67,18 @@ export const BasicInfoSection: React.FC = () => {
           maxLength={255}
           showCount
         />
+
+        <div className="space-y-2" onFocusCapture={() => setActiveInput("summary")}>
+          <label className="text-[11px] font-bold text-gray-700 ml-0.5">Article Description <span className="text-red-500">*</span></label>
+          <textarea
+            value={summary}
+            onChange={(e) => setSummary(e.target.value)}
+            onFocus={() => setActiveInput("summary")}
+            placeholder="Brief description or summary..."
+            className="w-full h-24 p-3 text-xs bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all text-slate-700 resize-none custom-scrollbar"
+          />
+        </div>
+
         <div onFocusCapture={() => setActiveInput("category")}>
           <SelectComponent
             label="News Category"

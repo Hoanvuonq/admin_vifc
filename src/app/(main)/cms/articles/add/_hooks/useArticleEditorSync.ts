@@ -40,6 +40,7 @@ export const useArticleEditorSync = (articleId?: string) => {
     setScheduledDate,
     setActiveSection,
     setActiveInput,
+    setContent,
   } = useArticleEditorStore();
 
   useEffect(() => {
@@ -68,50 +69,35 @@ export const useArticleEditorSync = (articleId?: string) => {
       setSummary(art.description || "");
 
       let initialBlocks: ContentBlock[] = [];
+      let combinedHtml = "";
+
       if (art.blocks && Array.isArray(art.blocks)) {
-        initialBlocks = art.blocks.map((b: any, index: number) => {
-          let content = b.content || "";
-          let caption = undefined;
-          let thumbnailUrl = undefined;
-          let activeRole: any = undefined;
-          let level: "h2" | "h3" | undefined = undefined;
-
-          if (b.type === "image") {
-            content = b.url || "";
-            caption = b.caption || undefined;
-          } else if (b.type === "pdf") {
-            content = b.url || "";
-            caption = b.name || undefined;
-            thumbnailUrl = b.thumbnail || undefined;
-            activeRole = b.activeRole || "free";
+        art.blocks.forEach((b: any, index: number) => {
+          if (b.type === "pdf") {
+            initialBlocks.push({
+              id: `block-${Date.now()}-${index}`,
+              type: "pdf",
+              align: "left",
+              content: b.url || "",
+              caption: b.name || undefined,
+              thumbnailUrl: b.thumbnail || undefined,
+              activeRole: b.activeRole || "free",
+            } as ContentBlock);
+          } else if (b.type === "html") {
+            combinedHtml += b.content || "";
           } else if (b.type === "heading") {
-            level = b.level === "3" ? "h3" : "h2";
+            const level = b.level || "2";
+            combinedHtml += `<h${level}>${b.content || ""}</h${level}>`;
+          } else if (b.type === "text") {
+            combinedHtml += `<p>${b.content || ""}</p>`;
+          } else if (b.type === "image") {
+            combinedHtml += `<img src="${b.url || ""}" alt="${b.caption || ""}" />`;
           }
-
-          return {
-            id: `block-${Date.now()}-${index}`,
-            type: b.type || "text",
-            align: "left",
-            content,
-            caption,
-            thumbnailUrl,
-            activeRole,
-            level,
-          } as ContentBlock;
         });
       }
 
-      if (initialBlocks.length === 0) {
-        initialBlocks = [
-          {
-            id: `block-${Date.now()}`,
-            type: "text",
-            align: "left",
-            content: "",
-          },
-        ];
-      }
       setBlocks(initialBlocks);
+      setContent(combinedHtml);
 
       setSeoTitle(art.seoTitle || "");
       setSeoDescription(art.seoDescription || "");
@@ -228,6 +214,41 @@ export const useArticleEditorSync = (articleId?: string) => {
         return null;
       })
       .filter(Boolean);
+
+    const { content } = useArticleEditorStore.getState();
+    if (content) {
+      try {
+        const blocknoteBlocks = JSON.parse(content);
+        blocknoteBlocks.forEach((b: any) => {
+          let textContent = "";
+          if (Array.isArray(b.content)) {
+            textContent = b.content.map((c: any) => c.text || "").join("");
+          }
+
+          if (b.type === "paragraph") {
+            if (textContent.trim() !== "") {
+              formattedBlocks.push({
+                type: "text",
+                content: textContent,
+              });
+            }
+          } else if (b.type === "heading") {
+            formattedBlocks.push({
+              type: "heading",
+              level: b.props?.level?.toString() || "2",
+              content: textContent,
+            });
+          } else if (b.type === "image") {
+            formattedBlocks.push({
+              type: "image",
+              url: b.props?.url || "",
+            });
+          }
+        });
+      } catch (e) {
+        console.error("Failed to parse BlockNote content", e);
+      }
+    }
 
     const articleJsonPayload = {
       id: articleId || `post-uuid-${Date.now()}`,

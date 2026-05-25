@@ -29,7 +29,8 @@ export const MOCK_SIDEBAR_ITEMS: MenuItemSidebar[] = [
     label: "Articles",
     icon: <BookOpen size={20} />,
     children: [
-      { key: "cms-add-article", label: "Add Article", href: "/cms/articles/add", icon: <FolderOpen size={14} /> },
+      { key: "cms-add-article-blocknote", label: "Add Article (Blocknote)", href: "/cms/articles/create", icon: <FolderOpen size={14} /> },
+      { key: "cms-add-article", label: "Add Article (Old)", href: "/cms/articles/add", icon: <FolderOpen size={14} /> },
       { key: "cms-articles", label: "List Articles", href: "/cms/articles", icon: <FileText size={14} /> },
     ]
   },
