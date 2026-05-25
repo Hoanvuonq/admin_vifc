@@ -13,7 +13,11 @@ export interface UserItem {
     | "BUSINESS"
     | "EMPLOYEE"
     | "LOGISTICS"
-    | "SALE";
+    | "SALE"
+    | "FREE"
+    | "PREMIUM"
+    | "ANNUAL PREMIUM"
+    | string;
   status: "ACTIVE" | "INACTIVE" | "BANNED";
   phone: string;
   joinedDate: string;

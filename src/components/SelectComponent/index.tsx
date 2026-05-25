@@ -15,6 +15,7 @@ export interface AttributeOption {
   disabled?: boolean;
   image?: string;
   icon?: any;
+  color?: string;
 }
 interface ExtendedSelectProps extends SelectProps {
   label?: string;
@@ -239,18 +240,35 @@ export const SelectComponent = ({
                 </div>
               )
             ) : (
-              <div className="flex items-center gap-2 overflow-hidden">
-                <span
-                  className={cn(
-                    "text-xs font-bold truncate transition-colors",
-                    !value || (Array.isArray(value) && value.length === 0)
-                      ? "text-gray-600"
-                      : "text-gray-900",
-                    error && "text-red-600",
-                  )}
-                >
-                  {getDisplayLabel()}
-                </span>
+              <div className="flex items-center gap-2.5 overflow-hidden flex-1">
+                {(() => {
+                  const selectedOpt = !Array.isArray(value) ? allOptions.find((opt) => opt.value === value) : null;
+                  return selectedOpt ? (
+                    <>
+                      {selectedOpt.icon && (
+                        <selectedOpt.icon className={cn("shrink-0", selectedOpt.color ? selectedOpt.color : "text-gray-700")} size={14} />
+                      )}
+                      <span
+                        className={cn(
+                          "truncate text-xs font-bold",
+                          selectedOpt.color ? selectedOpt.color : "text-gray-900",
+                          error && "text-red-600",
+                        )}
+                      >
+                        {selectedOpt.label}
+                      </span>
+                    </>
+                  ) : (
+                    <span
+                      className={cn(
+                        "text-xs font-bold truncate transition-colors text-gray-600",
+                        error && "text-red-600",
+                      )}
+                    >
+                      {getDisplayLabel()}
+                    </span>
+                  );
+                })()}
               </div>
             )}
           </div>
@@ -364,14 +382,14 @@ export const SelectComponent = ({
                             )}
                             <div className="flex items-center gap-2.5 overflow-hidden flex-1">
                               {opt.icon && (
-                                <opt.icon className="shrink-0 text-gray-600 group-hover:text-orange-500 transition-colors" size={14} />
+                                <opt.icon className={cn("shrink-0 transition-colors", opt.color ? opt.color : "text-gray-600 group-hover:text-orange-500")} size={14} />
                               )}
                               <span
                                 className={cn(
                                   "truncate transition-colors text-xs font-bold",
                                   isSelected
                                     ? "text-orange-600 "
-                                    : opt.disabled ? "text-gray-500 font-bold pointer-events-none" : "text-gray-600 group-hover:text-orange-500 group-hover:font-bold",
+                                    : opt.disabled ? "text-gray-500 font-bold pointer-events-none" : cn("text-gray-600 group-hover:font-bold", opt.color ? `group-hover:${opt.color}` : "group-hover:text-orange-500"),
                                 )}
                               >
                                 {opt.label}
