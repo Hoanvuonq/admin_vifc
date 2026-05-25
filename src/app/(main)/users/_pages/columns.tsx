@@ -5,6 +5,7 @@ import { RoleBadge } from "../_components/RoleBadge";
 
 export const getColumns = (
     handleCycleRole: (id: string) => void,
+    handleEditUser: (user: UserItem) => void,
     handleToggleBlock: (id: string, status: "ACTIVE" | "BANNED") => void,
     handleDeleteUser: (id: string) => void,
     handleViewPaymentHistory: (id: string) => void,
@@ -87,11 +88,7 @@ export const getColumns = (
                         tooltip="View Profile"
                     />
                     <ActionTooltipBtn
-                        onClick={() => {
-                            // This should open the edit modal, but for now we'll leave it as handleCycleRole 
-                            // or pass handleEditUser. The user previously bound this to handleCycleRole.
-                            handleCycleRole(user.id);
-                        }}
+                        onClick={() => handleEditUser(user)}
                         icon={<Pencil size={14} />}
                         color="emerald"
                         tooltip="Edit User"

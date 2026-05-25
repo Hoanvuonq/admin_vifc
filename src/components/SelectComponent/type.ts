@@ -4,6 +4,7 @@ export interface Option {
   image?: string;
   icon?: any;
   disabled?: boolean;
+  color?: string;
 }
 
 export interface SelectProps {
@@ -16,4 +17,5 @@ export interface SelectProps {
   className?: string;
   isMulti?: boolean;
   onSearchChange?: (val: string) => void;
+  color?: string;
 }

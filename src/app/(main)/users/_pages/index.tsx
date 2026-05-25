@@ -17,9 +17,10 @@ import { useEffect, useMemo, useState } from "react";
 import { PaymentHistoryModal, UserDetailModal, UserFilters, UserModal } from "../_components";
 import { getColumns } from "./columns";
 import { UserItem } from "./types";
-
+import { useUpload } from "@/hooks/useUpload";
 
 export const ManagerUsersScreen = () => {
+    const { uploadFile } = useUpload();
     const [toast, setToast] = useState<{ message: string; type: "success" | "info" | "warning" } | null>(null);
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -81,6 +82,11 @@ export const ManagerUsersScreen = () => {
         showToast(`Role cycling is not yet supported via API (id: ${id})`, "info");
     };
 
+    const handleEditUser = (user: UserItem) => {
+        setSelectedUserToEdit(user);
+        setIsAddUserModalOpen(true);
+    };
+
     const handleToggleBlock = (id: string, nextStatus: "ACTIVE" | "BANNED") => {
         showToast(
             nextStatus === "BANNED"
@@ -96,21 +102,50 @@ export const ManagerUsersScreen = () => {
         }
     };
 
-    const handleSaveUser = (userData: {
+    const handleSaveUser = async (userData: {
         name: string;
         email: string;
         phone: string;
         role: UserItem["role"];
         status: UserItem["status"];
+        avatarFile: File | null;
+        avatarUrl: string;
     }) => {
-        showToast(
-            selectedUserToEdit
-                ? `Updated user: ${userData.name}`
-                : `Created user: ${userData.name}`,
-            "success"
-        );
-        setIsAddUserModalOpen(false);
-        setSelectedUserToEdit(null);
+        if (selectedUserToEdit) {
+            try {
+                let finalAvatarUrl = userData.avatarUrl;
+                if (userData.avatarFile) {
+                    const result = await uploadFile(userData.avatarFile);
+                    if (result?.url) {
+                        finalAvatarUrl = result.url;
+                    }
+                }
+
+                const res = await fetch(`/api/db/users/${selectedUserToEdit.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        full_name: userData.name,
+                        status: userData.status,
+                        role_name: userData.role,
+                        avatar_url: finalAvatarUrl
+                    })
+                });
+
+                if (res.ok) {
+                    showToast(`Updated user: ${userData.name}`, "success");
+                    setIsAddUserModalOpen(false);
+                    setSelectedUserToEdit(null);
+                } else {
+                    showToast("Failed to update user", "warning");
+                }
+            } catch (error) {
+                showToast("An error occurred during update", "warning");
+            }
+        } else {
+            showToast(`Created user: ${userData.name}`, "success");
+            setIsAddUserModalOpen(false);
+        }
     };
 
     const handleViewPaymentHistory = (id: string) => {
@@ -125,7 +160,7 @@ export const ManagerUsersScreen = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const columns = useMemo(
-        () => getColumns(handleCycleRole, handleToggleBlock, handleDeleteUser, handleViewPaymentHistory, handleViewUserDetail),
+        () => getColumns(handleCycleRole, handleEditUser, handleToggleBlock, handleDeleteUser, handleViewPaymentHistory, handleViewUserDetail),
         []
     );
 
