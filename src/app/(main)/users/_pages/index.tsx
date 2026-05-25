@@ -3,6 +3,7 @@
 import { AdminPageHeader, ItemImage } from "@/components";
 import { DataTable } from "@/components/DataTable";
 import { useUsers } from "@/hooks/useUsers";
+import { useUpload } from "@/hooks/useUpload";
 import {
     Calendar,
     Clock,
@@ -17,11 +18,9 @@ import { useEffect, useMemo, useState } from "react";
 import { PaymentHistoryModal, UserDetailModal, UserFilters, UserModal } from "../_components";
 import { getColumns } from "./columns";
 import { UserItem } from "./types";
-import { useUpload } from "@/hooks/useUpload";
+import { toast } from "@/providers/ToastProvider";
 
 export const ManagerUsersScreen = () => {
-    const { uploadFile } = useUpload();
-    const [toast, setToast] = useState<{ message: string; type: "success" | "info" | "warning" } | null>(null);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -59,6 +58,8 @@ export const ManagerUsersScreen = () => {
         debouncedSearch
     );
 
+    const { uploadFile } = useUpload();
+
     // Client-side role filter (API doesn't support role filtering yet)
     const filteredUsers = useMemo(() => {
         if (selectedRole === "ALL") return apiUsers;
@@ -66,8 +67,7 @@ export const ManagerUsersScreen = () => {
     }, [apiUsers, selectedRole]);
 
     const showToast = (message: string, type: "success" | "info" | "warning" = "success") => {
-        setToast({ message, type });
-        setTimeout(() => setToast(null), 3000);
+        toast[type](message)
     };
 
     const stats = useMemo(() => {
@@ -106,10 +106,10 @@ export const ManagerUsersScreen = () => {
         name: string;
         email: string;
         phone: string;
-        role: UserItem["role"];
         status: UserItem["status"];
         avatarFile: File | null;
         avatarUrl: string;
+        subscriptionPlanId?: string;
     }) => {
         if (selectedUserToEdit) {
             try {
@@ -121,15 +121,26 @@ export const ManagerUsersScreen = () => {
                     }
                 }
 
+                const payload: Record<string, unknown> = {};
+                const hasActiveSubscription = Boolean(selectedUserToEdit.subscription?.plan?.id);
+
+                if (!hasActiveSubscription) {
+                    payload.full_name = userData.name;
+                    payload.status = userData.status;
+                    payload.avatar_url = finalAvatarUrl;
+                }
+
+                if (
+                    userData.subscriptionPlanId &&
+                    userData.subscriptionPlanId !== selectedUserToEdit.subscription?.plan?.id
+                ) {
+                    payload.subscription_plan_id = userData.subscriptionPlanId;
+                }
+
                 const res = await fetch(`/api/db/users/${selectedUserToEdit.id}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        full_name: userData.name,
-                        status: userData.status,
-                        role_name: userData.role,
-                        avatar_url: finalAvatarUrl
-                    })
+                    body: JSON.stringify(payload),
                 });
 
                 if (res.ok) {

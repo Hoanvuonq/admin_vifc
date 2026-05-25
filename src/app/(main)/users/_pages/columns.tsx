@@ -45,10 +45,10 @@ export const getColumns = (
             )
         },
         {
-            header: "Role",
+            header: "Subscription Plan",
             accessor: "role" as keyof UserItem,
             render: (user: UserItem) => (
-                <RoleBadge role={user.role} />
+                <RoleBadge role={user.subscription?.plan?.name || user.role || "FREE"} />
             )
         },
 

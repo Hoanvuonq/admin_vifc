@@ -393,7 +393,6 @@ export const SelectComponent = ({
                                 )}
                               >
                                 {opt.label}
-                                {opt.disabled && <span className="ml-2 text-[10px] font-bold text-orange-400 bg-orange-50 px-1.5 py-0.5 rounded-full">(Đã tồn tại)</span>}
                               </span>
                             </div>
                           </div>

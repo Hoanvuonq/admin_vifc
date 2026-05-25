@@ -6,14 +6,6 @@ export interface UserItem {
   email: string;
   role:
     | "ADMIN"
-    | "STAFF"
-    | "CUSTOMER"
-    | "SHOP"
-    | "BUYER"
-    | "BUSINESS"
-    | "EMPLOYEE"
-    | "LOGISTICS"
-    | "SALE"
     | "FREE"
     | "PREMIUM"
     | "ANNUAL PREMIUM"
