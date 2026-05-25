@@ -45,6 +45,7 @@ export const PDFSection: React.FC = () => {
               size="md"
               isBanner={true}
               isPDF={true}
+              maxSizeMB={20}
               className="w-full"
             />
           </div>
