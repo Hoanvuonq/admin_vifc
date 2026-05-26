@@ -10,7 +10,7 @@ import { useEffect, useRef } from "react";
 export default function BlockNoteEditor({ initialContent, onChange }: { initialContent?: string, onChange?: (content: string) => void }) {
     const editor = useCreateBlockNote();
 
-    // const initialized = useRef(false);
+    const initialized = useRef(false);
 
     useEffect(() => {
         if (initialContent && !initialized.current) {
@@ -22,7 +22,7 @@ export default function BlockNoteEditor({ initialContent, onChange }: { initialC
                 } catch (e) {
                     console.error(e);
                 }
-                // } else {
+            } else {
                 try {
                     const blocks = JSON.parse(initialContent);
                     editor.replaceBlocks(editor.document, blocks);
@@ -44,7 +44,7 @@ export default function BlockNoteEditor({ initialContent, onChange }: { initialC
                         let html = await editor.blocksToHTMLLossy(editor.document);
                         html = html.replace(/<p><\/p>/g, "<p><br></p>");
                         onChange(html);
-                    }, 300);
+                    }, 100);
                 }
             }} />
         </div>

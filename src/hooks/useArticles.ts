@@ -56,6 +56,7 @@ export const useArticles = (page = 1, limit = 10, status?: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["articles"] });
+      queryClient.invalidateQueries({ queryKey: ["article"] });
       toast.success("Article created successfully!");
     },
     onError: (error) => {
@@ -79,8 +80,10 @@ export const useArticles = (page = 1, limit = 10, status?: string) => {
       }
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["articles"] });
+      queryClient.setQueryData(["article", variables.id], data);
+      queryClient.invalidateQueries({ queryKey: ["article", variables.id] });
     },
     onError: (error) => {
       toast.error("Failed to update article", { description: error.message });
@@ -99,8 +102,9 @@ export const useArticles = (page = 1, limit = 10, status?: string) => {
       }
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["articles"] });
+      queryClient.invalidateQueries({ queryKey: ["article", variables] });
     },
     onError: (error) => {
       toast.error("Failed to delete article", { description: error.message });
