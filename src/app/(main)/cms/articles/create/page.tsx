@@ -1,7 +1,7 @@
 "use client";
-import { ArticleEditor } from "./_pages";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { ArticleEditor } from "./_pages";
 
 function EditorWrapper() {
     const searchParams = useSearchParams();

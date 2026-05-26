@@ -1,26 +1,13 @@
 "use client";
 
+import { FormInput, MediaUploadField, PortalModal, PremiumButton, SelectComponent } from "@/components";
+import type { SubscriptionPlan } from "@/types/user";
+import { CheckCircle2, Clock, Crown, Save, Star, User, UserPlus, XCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { FormInput, PortalModal, PremiumButton, SelectComponent, MediaUploadField } from "@/components";
-import { UserPlus, Crown, Star, User, CheckCircle2, Clock, XCircle, Save } from "lucide-react";
 import { UserItem } from "../../_pages/types";
 import { RoleBadge } from "../RoleBadge";
-import type { SubscriptionPlan } from "@/types/user";
+import { UserModalProps } from "./type";
 
-interface UserModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    userToEdit: UserItem | null;
-    onSave: (userData: {
-        name: string;
-        email: string;
-        phone: string;
-        status: UserItem["status"];
-        avatarFile: File | null;
-        avatarUrl: string;
-        subscriptionPlanId?: string;
-    }) => void;
-}
 
 export const UserModal: React.FC<UserModalProps> = ({
     isOpen,

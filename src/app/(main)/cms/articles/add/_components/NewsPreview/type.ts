@@ -1,6 +1,6 @@
 export interface ContentBlock {
   id: string;
-  type: "text" | "heading" | "image" | "pdf";
+  type: "text" | "html" | "heading" | "image" | "pdf";
   align: "left" | "center" | "right";
   content: string;
   caption?: string;

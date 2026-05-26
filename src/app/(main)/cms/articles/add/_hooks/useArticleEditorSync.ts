@@ -69,8 +69,6 @@ export const useArticleEditorSync = (articleId?: string) => {
       setSummary(art.description || "");
 
       let initialBlocks: ContentBlock[] = [];
-      let combinedHtml = "";
-
       if (art.blocks && Array.isArray(art.blocks)) {
         art.blocks.forEach((b: any, index: number) => {
           if (b.type === "pdf") {
@@ -83,25 +81,44 @@ export const useArticleEditorSync = (articleId?: string) => {
               thumbnailUrl: b.thumbnail || undefined,
               activeRole: b.activeRole || "free",
             } as ContentBlock);
-          } else if (b.type === "html") {
-            combinedHtml += b.content || "";
-          } else if (b.type === "heading") {
-            const level = b.level || "2";
-            combinedHtml += `<h${level}>${b.content || ""}</h${level}>`;
-          } else if (b.type === "text") {
-            combinedHtml += `<p>${b.content || ""}</p>`;
           } else if (b.type === "image") {
             initialBlocks.push({
               id: `block-${Date.now()}-${index}`,
               type: "image",
               content: b.url || "",
             } as ContentBlock);
+          } else if (
+            b.type === "html" ||
+            b.type === "heading" ||
+            b.type === "text"
+          ) {
+            let htmlContent = "";
+            if (b.type === "html") {
+              htmlContent = b.content || "";
+            } else if (b.type === "heading") {
+              const level = b.level || "2";
+              htmlContent = `<h${level}>${b.content || ""}</h${level}>`;
+            } else if (b.type === "text") {
+              htmlContent = `<p>${b.content || ""}</p>`;
+            }
+
+            const lastBlock = initialBlocks[initialBlocks.length - 1];
+            if (lastBlock && lastBlock.type === "text") {
+              lastBlock.content += htmlContent;
+            } else {
+              initialBlocks.push({
+                id: `block-${Date.now()}-${index}`,
+                type: "text",
+                align: "left",
+                content: htmlContent,
+              } as ContentBlock);
+            }
           }
         });
       }
 
       setBlocks(initialBlocks);
-      setContent(combinedHtml);
+      setContent("");
 
       setSeoTitle(art.seoTitle || "");
       setSeoDescription(art.seoDescription || "");
@@ -121,7 +138,24 @@ export const useArticleEditorSync = (articleId?: string) => {
       setSummary("");
 
       const initialBlocks: ContentBlock[] = [
-        { id: `block-${Date.now()}`, type: "text", align: "left", content: "" },
+        {
+          id: `block-${Date.now()}-1`,
+          type: "text",
+          align: "left",
+          content: "",
+        },
+        {
+          id: `block-${Date.now()}-2`,
+          type: "image",
+          align: "left",
+          content: "",
+        },
+        {
+          id: `block-${Date.now()}-3`,
+          type: "pdf",
+          align: "left",
+          content: "",
+        },
       ];
       setBlocks(initialBlocks);
 
@@ -154,7 +188,10 @@ export const useArticleEditorSync = (articleId?: string) => {
     setActiveInput,
   ]);
 
-  const handleSave = async (finalStatus?: string) => {
+  const handleSave = async (
+    finalStatus?: string,
+    layoutOrder: string[] = [],
+  ) => {
     if (!title || !slug || !category) {
       toast.error("Validation Error", {
         description: "Please fill in all required fields (*)",
@@ -198,50 +235,54 @@ export const useArticleEditorSync = (articleId?: string) => {
 
     toast.loading("Saving article data...", { id: "article-save" });
 
-    const formattedBlocks: any[] = finalBlocks
-      .map((b) => {
-        if (b.type === "image") {
-          return { type: "image", url: b.content };
-        }
-        if (b.type === "pdf") {
-          return {
-            type: "pdf",
-            url: b.content,
-            thumbnail: b.thumbnailUrl || undefined,
-            activeRole: b.activeRole || "free",
-            name: b.caption || undefined,
-          };
-        }
-        return null;
-      })
-      .filter(Boolean);
+    const formattedBlocks: any[] = [];
 
-    const { content } = useArticleEditorStore.getState();
-    if (content) {
-      let finalHtml = content;
-      if (content.trim().startsWith("[")) {
-        try {
-          const parsed = JSON.parse(content);
-          finalHtml = parsed
-            .map((b: any) => {
-              let txt = Array.isArray(b.content)
-                ? b.content.map((c: any) => c.text || "").join("")
-                : "";
-              if (b.type === "heading")
-                return `<h${b.props?.level || 2}>${txt}</h${b.props?.level || 2}>`;
-              if (b.type === "paragraph" && txt.trim() !== "")
-                return `<p>${txt}</p>`;
-              if (b.type === "image")
-                return `<img src="${b.props?.url || ""}" />`;
-              return "";
-            })
-            .join("");
-        } catch (e) {}
+    // Build blocks strictly according to layoutOrder (skipping title, banner, summary)
+    for (const id of layoutOrder) {
+      if (["title", "banner", "summary"].includes(id)) continue;
+
+      const b = finalBlocks.find((block) => block.id === id);
+      if (!b) continue;
+
+      if (b.type === "image" && b.content) {
+        formattedBlocks.push({ type: "image", url: b.content });
+      } else if (b.type === "pdf" && b.content) {
+        formattedBlocks.push({
+          type: "pdf",
+          url: b.content,
+          thumbnail: b.thumbnailUrl || undefined,
+          activeRole: b.activeRole || "free",
+          name: b.caption || undefined,
+        });
+      } else if ((b.type === "text" || b.type === "html") && b.content) {
+        let finalHtml = b.content;
+
+        // Handle legacy JSON content format if necessary
+        if (b.content.trim().startsWith("[")) {
+          try {
+            const parsed = JSON.parse(b.content);
+            finalHtml = parsed
+              .map((pb: any) => {
+                let txt = Array.isArray(pb.content)
+                  ? pb.content.map((c: any) => c.text || "").join("")
+                  : "";
+                if (pb.type === "heading")
+                  return `<h${pb.props?.level || 2}>${txt}</h${pb.props?.level || 2}>`;
+                if (pb.type === "paragraph" && txt.trim() !== "")
+                  return `<p>${txt}</p>`;
+                if (pb.type === "image")
+                  return `<img src="${pb.props?.url || ""}" />`;
+                return "";
+              })
+              .join("");
+          } catch (e) {}
+        }
+
+        formattedBlocks.push({
+          type: "html",
+          content: finalHtml,
+        });
       }
-      formattedBlocks.push({
-        type: "html",
-        content: finalHtml,
-      });
     }
 
     const articleJsonPayload = {

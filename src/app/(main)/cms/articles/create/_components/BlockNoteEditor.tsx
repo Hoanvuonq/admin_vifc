@@ -10,7 +10,7 @@ import { useEffect, useRef } from "react";
 export default function BlockNoteEditor({ initialContent, onChange }: { initialContent?: string, onChange?: (content: string) => void }) {
     const editor = useCreateBlockNote();
 
-    const initialized = useRef(false);
+    // const initialized = useRef(false);
 
     useEffect(() => {
         if (initialContent && !initialized.current) {
@@ -22,7 +22,7 @@ export default function BlockNoteEditor({ initialContent, onChange }: { initialC
                 } catch (e) {
                     console.error(e);
                 }
-            } else {
+                // } else {
                 try {
                     const blocks = JSON.parse(initialContent);
                     editor.replaceBlocks(editor.document, blocks);
@@ -36,7 +36,7 @@ export default function BlockNoteEditor({ initialContent, onChange }: { initialC
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     return (
-        <div className="w-full h-full min-h-[70vh]">
+        <div className="w-full min-h-[80px] [&_.bn-editor]:px-1! [&_.bn-editor]:py-2!">
             <BlockNoteView theme="light" editor={editor} onChange={() => {
                 if (onChange) {
                     if (timeoutRef.current) clearTimeout(timeoutRef.current);
