@@ -21,14 +21,13 @@ export const ArticleEditor: React.FC<{ articleId?: string }> = ({ articleId }) =
     <div className="fixed inset-0 z-50 bg-slate-100 flex flex-col animate-in fade-in duration-300">
       <div className="bg-white px-6 py-4.5 flex items-center justify-between shrink-0 select-none shadow-3xs">
         <div className="flex items-center gap-3.5">
-          <button
-            type="button"
+          <PremiumButton
+            icon={ArrowLeft}
+            variant="orange"
+            size="md"
             onClick={() => router.push("/cms/articles")}
-            className="p-2.5 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors"
-            title="Back to List"
-          >
-            <ArrowLeft size={16} />
-          </button>
+            className="rounded-xl w-10! h-10! font-bold px-4 py-2 text-xs"
+          />
           <div>
             <h1 className="text-sm font-extrabold text-slate-900 leading-tight">
               {articleId ? "Edit Article" : "Create New Article"}

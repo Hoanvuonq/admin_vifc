@@ -74,6 +74,10 @@ export const ManagerCMSScreen = () => {
     router.push(`/cms/articles/${news.id}`);
   };
 
+  const handleEditNewsBlockNote = (news: NewsItem) => {
+    router.push(`/cms/articles/create?id=${news.id}`);
+  };
+
   const handleDeleteNews = async (id: string) => {
     const itemToDelete = newsList.find((n) => n.id === id);
     if (itemToDelete) {
@@ -84,7 +88,7 @@ export const ManagerCMSScreen = () => {
     }
   };
 
-  const columns = useMemo(() => getColumns(handleEditNews, handleDeleteNews), [newsList]);
+  const columns = useMemo(() => getColumns(handleEditNews, handleDeleteNews, handleEditNewsBlockNote), [newsList]);
 
 
 

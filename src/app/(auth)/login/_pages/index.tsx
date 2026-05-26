@@ -1,5 +1,7 @@
 "use client";
 
+import { useAuth } from "@/auth/_hooks/useAuth";
+import { FormInput, PremiumButton } from "@/components";
 import { toast } from "@/providers/ToastProvider";
 import { cn } from "@/utils/cn";
 import { motion } from "framer-motion";
@@ -8,10 +10,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import { FormInput, PremiumButton } from "@/components";
 import { LeftSideForm, SocialButton } from "../_components";
 import { LoginRequest } from "../_constants/formSchema";
-import { useAuth } from "@/auth/_hooks/useAuth";
 
 const CONFIG = {
   storageKeyUser: "user_username",
@@ -123,7 +123,6 @@ export const LoginScreen = () => {
     }
   };
 
-  // --- RENDER ---
   return (
     <div className="min-h-screen w-full relative   bg-linear-to-br from-orange-50 via-white to-amber-50">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -224,8 +223,8 @@ export const LoginScreen = () => {
                     type="submit"
                     disabled={loading || submitting}
                     isLoading={loading || submitting}
-                    className="w-full h-14 rounded-2xl text-[13px] font-bold uppercase tracking-[0.2em] shadow-xl shadow-orange-600/20 active:scale-[0.98] transition-all mt-6"
-                    variant="orange"
+                    className="w-full h-12 rounded-full text-[13px] font-bold uppercase tracking-[0.2em] shadow-xl shadow-orange-600/20 active:scale-[0.98] transition-all mt-6"
+                    variant="isLogin"
                     block
                   >
                     Login

@@ -1,26 +1,24 @@
 import React from "react";
-import { FormInput, MediaUploadField } from "@/components";
+import { FormInput, MediaUploadField, SectionHeader, SelectComponent } from "@/components";
+import { User, Shield, Star, Crown, File } from "lucide-react";
 import { useUpload } from "@/hooks/useUpload";
 import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
 export const PDFSection: React.FC = () => {
-  const { uploadFile } = useUpload();
   const { blocks, handleBlockChange } = useArticleEditorStore();
 
   const pdfBlock = blocks.find((b) => b.type === "pdf");
   if (!pdfBlock) return null;
 
   return (
-    <div id="section-pdf" className="space-y-4">
-      <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-        <div>
-          <h2 className="text-[13px] font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
-            <span className="w-5 h-5 rounded-md bg-rose-100 flex items-center justify-center text-rose-600 text-[10px] shadow-3xs">5</span>
-            PDF Attachment Settings
-          </h2>
-          <p className="text-[10px] text-gray-400 font-bold mt-0.5">Attach a PDF document to this article</p>
-        </div>
-      </div>
+    <div id="section-pdf" className="space-y-4 pb-10">
+      <SectionHeader
+        icon={File}
+        title="PDF Attachment Settings"
+        description="Attach a PDF document to this article"
+        size="sm"
+        className="pb-2 border-b border-gray-100"
+      />
 
       <div className="space-y-4 pt-1 bg-white">
         <div className="space-y-2">
@@ -57,36 +55,34 @@ export const PDFSection: React.FC = () => {
           />
         </div>
 
-        <div className="space-y-2 pb-2">
-          <label className="text-[9px] uppercase text-gray-500 tracking-wider font-semibold">PDF Document Name</label>
-          <FormInput
-            value={pdfBlock.caption || ""}
-            onChange={(e) => handleBlockChange(pdfBlock.id, { caption: e.target.value })}
-            placeholder="e.g. Wealth and asset management outlook.pdf"
-            className="h-10 text-xs"
-          />
-        </div>
+        <FormInput
+          value={pdfBlock.caption || ""}
+          label="PDF Document Name"
+          onChange={(e) => handleBlockChange(pdfBlock.id, { caption: e.target.value })}
+          placeholder="e.g. Wealth and asset management outlook.pdf"
+          className="h-10 text-xs"
+        />
 
-        <div className="space-y-2 pb-2">
-          <label className="text-[9px] uppercase text-gray-500 tracking-wider font-semibold">Minimum Required Role</label>
-          <select
-            value={pdfBlock.activeRole || "free"}
-            onChange={(e) => handleBlockChange(pdfBlock.id, { activeRole: e.target.value as any })}
-            className="w-full h-10 px-3 text-xs bg-white border border-gray-200 rounded-xl outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all text-slate-700"
-          >
-            <option value="free">Free (All users can view)</option>
-            <option value="base">Base (Base tier and above)</option>
-            <option value="standard">Standard (Standard tier and above)</option>
-            <option value="premium">Premium (Only Premium users)</option>
-          </select>
-          <p className="text-[9.5px] text-gray-450 italic mt-1 leading-snug">
-            {(pdfBlock.activeRole || "free") === "free" && "Users from Free level and up can view the PDF."}
-            {pdfBlock.activeRole === "base" && "Only users from Base level, Standard, and Premium can view."}
-            {pdfBlock.activeRole === "standard" && "Only users from Standard level and Premium can view."}
-            {pdfBlock.activeRole === "premium" && "Exclusive to Premium users only."}
-          </p>
+        <div className="p-4 bg-linear-to-br from-slate-50 to-orange-50/40 border border-orange-200/60 rounded-2xl relative overflow-hidden shadow-sm group">
+          <div className="absolute -right-4 -bottom-4 text-orange-500/5 pointer-events-none transition-transform group-hover:scale-110 duration-500">
+            <Shield size={100} strokeWidth={1} />
+          </div>
+          <div className="relative z-10 space-y-3">
+            <p className="text-sm text-orange-600 font-bold leading-relaxed pt-0.5 itim-regular">Minimum Required Role</p>
+            <SelectComponent
+              value={pdfBlock.activeRole || "free"}
+              onChange={(val: string | string[]) => handleBlockChange(pdfBlock.id, { activeRole: val as any })}
+              options={[
+                { label: "Free (All users can view)", value: "free", icon: User, color: "text-slate-500" },
+                { label: "Base (Base tier and above)", value: "base", icon: Shield, color: "text-blue-500" },
+                { label: "Standard (Standard tier and above)", value: "standard", icon: Star, color: "text-sky-500" },
+                { label: "Premium (Only Premium users)", value: "premium", icon: Crown, color: "text-amber-500" }
+              ]}
+            />
+
+          </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };

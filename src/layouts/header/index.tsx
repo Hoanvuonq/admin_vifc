@@ -3,7 +3,7 @@
 import { AccountDropdown, LanguageSwitcher, MetricItem, SearchComponent, ThemeSwitcher, TitlePageHeader } from "@/components";
 import { cn } from "@/utils/cn";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bell, ChevronDown, ChevronRight, LayoutGrid, Menu, Search as SearchIcon, User, Zap } from "lucide-react";
+import { Bell, ChevronRight, LayoutGrid, Menu, Search as SearchIcon, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { MOCK_SIDEBAR_ITEMS } from "../sidebar/sidebar.menu.constanst";
@@ -107,7 +107,7 @@ export const Header = ({
       <div className="flex items-center gap-3 md:gap-6 flex-1 min-w-0">
         <button
           onClick={onToggleSidebar}
-          className="group relative p-2 md:p-2.5 rounded-2xl text-gray-500 hover:text-orange-600 hover:bg-orange-50 transition-all duration-300 active:scale-90 border border-transparent hover:border-orange-100 shadow-sm hover:shadow-orange-200/20 shrink-0"
+          className="group relative cursor-pointer p-2 md:p-2.5 rounded-2xl text-gray-500 hover:text-orange-600 hover:bg-orange-50 transition-all duration-300 active:scale-90 border border-transparent hover:border-orange-100 shadow-sm hover:shadow-orange-200/20 shrink-0"
           aria-label="Toggle Sidebar"
         >
           <Menu

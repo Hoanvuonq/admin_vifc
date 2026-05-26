@@ -5,7 +5,6 @@ import { DateTimeInput, PremiumButton, SearchComponent, SelectComponent } from "
 import {
   BookOpen,
   CheckCircle2,
-  Clock,
   Download,
   FileText,
   Filter,
@@ -13,11 +12,11 @@ import {
   RefreshCw,
   Trash2
 } from "lucide-react";
-import React, { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import React, { useMemo } from "react";
 import { CATEGORY_OPTIONS } from "../../_constants/cms.constants";
-import { CMSFiltersProps } from "./type";
 import { useArticleListStore } from "../../_store/useArticleListStore";
+import { CMSFiltersProps } from "./type";
 
 export const CMSFilters: React.FC<CMSFiltersProps> = ({ counts }) => {
   const router = useRouter();
@@ -63,20 +62,22 @@ export const CMSFilters: React.FC<CMSFiltersProps> = ({ counts }) => {
         </div>
 
         <div className="flex items-center gap-2 w-full lg:w-auto justify-end">
-          <button
-            onClick={resetFilters}
-            className="h-10 px-4 rounded-2xl bg-white border border-gray-200 text-gray-600 hover:text-orange-500 hover:border-orange-200 text-[11px] font-bold uppercase tracking-wider transition-all shadow-xs flex items-center gap-1.5"
-            title="Clear Filters"
-          >
-            <Filter size={12} /> Filters
-          </button>
 
-          <button
+          <PremiumButton
+            label="Filter"
+            variant="blue"
+            icon={Filter}
+            onClick={() => resetFilters()}
+            className="rounded-2xl px-5 h-10 text-[11px] font-extrabold uppercase tracking-wider"
+          />
+
+          <PremiumButton
+            label="Export Excel"
+            variant="indigo"
+            icon={Download}
             onClick={() => alert("Exporting to Excel...")}
-            className="h-10 px-4 rounded-2xl bg-white border border-gray-200 text-gray-600 hover:text-orange-500 hover:border-orange-200 text-[11px] font-bold uppercase tracking-wider transition-all shadow-xs flex items-center gap-1.5"
-          >
-            <Download size={12} /> Export Excel
-          </button>
+            className="rounded-2xl px-5 h-10 text-[11px] font-extrabold uppercase tracking-wider"
+          />
 
           <PremiumButton
             label="Add Article"

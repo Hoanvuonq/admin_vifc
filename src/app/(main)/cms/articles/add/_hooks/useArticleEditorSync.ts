@@ -91,7 +91,11 @@ export const useArticleEditorSync = (articleId?: string) => {
           } else if (b.type === "text") {
             combinedHtml += `<p>${b.content || ""}</p>`;
           } else if (b.type === "image") {
-            combinedHtml += `<img src="${b.url || ""}" alt="${b.caption || ""}" />`;
+            initialBlocks.push({
+              id: `block-${Date.now()}-${index}`,
+              type: "image",
+              content: b.url || "",
+            } as ContentBlock);
           }
         });
       }
@@ -152,7 +156,9 @@ export const useArticleEditorSync = (articleId?: string) => {
 
   const handleSave = async (finalStatus?: string) => {
     if (!title || !slug || !category) {
-      toast.error("Validation Error", { description: "Please fill in all required fields (*)" });
+      toast.error("Validation Error", {
+        description: "Please fill in all required fields (*)",
+      });
       return;
     }
 
@@ -170,7 +176,9 @@ export const useArticleEditorSync = (articleId?: string) => {
       for (let i = 0; i < finalBlocks.length; i++) {
         const b = finalBlocks[i];
         if (b.file) {
-          toast.loading(`Uploading file for block ${i + 1}...`, { id: "article-save" });
+          toast.loading(`Uploading file for block ${i + 1}...`, {
+            id: "article-save",
+          });
           const res = await uploadFile(b.file);
           finalBlocks[i] = {
             ...b,
@@ -181,7 +189,10 @@ export const useArticleEditorSync = (articleId?: string) => {
         }
       }
     } catch (error: any) {
-      toast.error("Upload failed", { id: "article-save", description: error.message || "Failed to upload media files." });
+      toast.error("Upload failed", {
+        id: "article-save",
+        description: error.message || "Failed to upload media files.",
+      });
       return;
     }
 
@@ -189,16 +200,6 @@ export const useArticleEditorSync = (articleId?: string) => {
 
     const formattedBlocks: any[] = finalBlocks
       .map((b) => {
-        if (b.type === "heading") {
-          return {
-            type: "heading",
-            level: b.level === "h3" ? "3" : "2",
-            content: b.content,
-          };
-        }
-        if (b.type === "text") {
-          return { type: "text", content: b.content };
-        }
         if (b.type === "image") {
           return { type: "image", url: b.content };
         }
@@ -217,37 +218,30 @@ export const useArticleEditorSync = (articleId?: string) => {
 
     const { content } = useArticleEditorStore.getState();
     if (content) {
-      try {
-        const blocknoteBlocks = JSON.parse(content);
-        blocknoteBlocks.forEach((b: any) => {
-          let textContent = "";
-          if (Array.isArray(b.content)) {
-            textContent = b.content.map((c: any) => c.text || "").join("");
-          }
-
-          if (b.type === "paragraph") {
-            if (textContent.trim() !== "") {
-              formattedBlocks.push({
-                type: "text",
-                content: textContent,
-              });
-            }
-          } else if (b.type === "heading") {
-            formattedBlocks.push({
-              type: "heading",
-              level: b.props?.level?.toString() || "2",
-              content: textContent,
-            });
-          } else if (b.type === "image") {
-            formattedBlocks.push({
-              type: "image",
-              url: b.props?.url || "",
-            });
-          }
-        });
-      } catch (e) {
-        console.error("Failed to parse BlockNote content", e);
+      let finalHtml = content;
+      if (content.trim().startsWith("[")) {
+        try {
+          const parsed = JSON.parse(content);
+          finalHtml = parsed
+            .map((b: any) => {
+              let txt = Array.isArray(b.content)
+                ? b.content.map((c: any) => c.text || "").join("")
+                : "";
+              if (b.type === "heading")
+                return `<h${b.props?.level || 2}>${txt}</h${b.props?.level || 2}>`;
+              if (b.type === "paragraph" && txt.trim() !== "")
+                return `<p>${txt}</p>`;
+              if (b.type === "image")
+                return `<img src="${b.props?.url || ""}" />`;
+              return "";
+            })
+            .join("");
+        } catch (e) {}
       }
+      formattedBlocks.push({
+        type: "html",
+        content: finalHtml,
+      });
     }
 
     const articleJsonPayload = {
@@ -267,6 +261,11 @@ export const useArticleEditorSync = (articleId?: string) => {
       category_id: category[0] || "WEB3",
     };
 
+    console.log(
+      "=== ARTICLE PAYLOAD TO SAVE ===",
+      JSON.stringify(articleJsonPayload, null, 2),
+    );
+
     try {
       if (articleId) {
         await updateArticle(articleJsonPayload);
@@ -276,7 +275,10 @@ export const useArticleEditorSync = (articleId?: string) => {
       toast.success("Saved successfully!", { id: "article-save" });
       router.push("/cms/articles");
     } catch (e: any) {
-      toast.error("Save failed", { id: "article-save", description: "Failed to save article" });
+      toast.error("Save failed", {
+        id: "article-save",
+        description: "Failed to save article",
+      });
       console.error(e);
     }
   };

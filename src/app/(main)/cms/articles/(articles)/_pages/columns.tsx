@@ -35,7 +35,8 @@ const ThumbnailImage = ({ src, alt }: { src: string; alt: string }) => {
 
 export const getColumns = (
   handleEditNews: (news: NewsItem) => void,
-  handleDeleteNews: (id: string) => void
+  handleDeleteNews: (id: string) => void,
+  handleEditNewsBlockNote: (news: NewsItem) => void
 ) => [
     {
       header: "Article",
@@ -91,7 +92,13 @@ export const getColumns = (
             onClick={() => handleEditNews(news)}
             icon={<Edit size={13} />}
             color="orange"
-            tooltip="Edit article"
+            tooltip="Edit article Old"
+          />
+          <ActionTooltipBtn
+            onClick={() => handleEditNewsBlockNote(news)}
+            icon={<Edit size={13} />}
+            color="orange"
+            tooltip="Edit article Block Note"
           />
           <ActionTooltipBtn
             onClick={() => handleDeleteNews(news.id)}

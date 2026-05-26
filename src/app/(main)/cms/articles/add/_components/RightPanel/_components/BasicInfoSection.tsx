@@ -1,5 +1,5 @@
 import React from "react";
-import { FormInput, SelectComponent } from "@/components";
+import { FormInput, SectionHeader, SelectComponent, MediaUploadField } from "@/components";
 import { FileText } from "lucide-react";
 import { CATEGORY_OPTIONS } from "../../../../(articles)/_constants/cms.constants";
 import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
@@ -22,6 +22,7 @@ export const BasicInfoSection: React.FC = () => {
     summary, setSummary,
     category, setCategory,
     tags, setTags,
+    thumbnail, setThumbnail, setThumbnailFile,
     setActiveInput
   } = useArticleEditorStore();
 
@@ -33,18 +34,13 @@ export const BasicInfoSection: React.FC = () => {
       className="bg-white rounded-2xl p-4 shadow-3xs space-y-3"
       onFocusCapture={() => setActiveInput("title")}
     >
-      <div className="flex items-center justify-between pb-2 border-b border-slate-50">
-        <div className="flex items-center gap-1.5">
-          <FileText size={14} className="text-orange-500" />
-          <span className="text-[11px] font-extrabold uppercase text-gray-700 tracking-wider">1. Basic Info</span>
-        </div>
-        <span
-          className={`text-[8.5px] font-extrabold px-2 py-0.5 rounded-full ${sectionBasicCompleted ? "bg-emerald-50 text-emerald-600" : "bg-red-50/50 text-red-500"
-            }`}
-        >
-          {sectionBasicCompleted ? "Completed" : "Incomplete"}
-        </span>
-      </div>
+      <SectionHeader
+        icon={FileText}
+        title="Basic Info"
+        description="Basic information about the article"
+        size="sm"
+        className="pb-2 border-b border-gray-100"
+      />
 
       <div className="space-y-3">
         <FormInput
@@ -99,6 +95,24 @@ export const BasicInfoSection: React.FC = () => {
             isMulti
           />
         </div>
+
+        <div className="space-y-2 pb-2">
+          <label className="text-[11px] font-bold text-gray-700 ml-0.5">Article Cover Image (Banner)</label>
+          <div className="flex justify-center p-3 bg-slate-50/60 rounded-xl border border-slate-100">
+            <MediaUploadField
+              value={thumbnail ? [{ uid: "thumb", url: thumbnail, status: "done" }] : []}
+              onChange={(files) => {
+                  setThumbnail(files.length > 0 ? files[0].url || "" : "");
+                  setThumbnailFile(files.length > 0 ? files[0].originFileObj || null : null);
+              }}
+              maxCount={1}
+              size="md"
+              isBanner={true}
+              className="w-full"
+            />
+          </div>
+        </div>
+
       </div>
     </div>
   );

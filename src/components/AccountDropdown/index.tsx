@@ -1,32 +1,32 @@
 "use client";
 
+import { useAuth } from "@/auth/_hooks/useAuth";
 import { AppPopover, LanguageSwitcher } from "@/components";
-import { formatNumber } from "@/utils/format";
 import { cn } from "@/utils/cn";
+import { formatNumber } from "@/utils/format";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import {
   ChevronDown,
   ChevronRight,
   Gem,
-  LogOut,
-  ShieldCheck,
-  Store,
-  Wallet,
   Heart,
   LayoutDashboard,
   LogIn,
+  LogOut,
   Package,
   Settings,
+  ShieldCheck,
+  Store,
   User,
-  UserPlus
+  UserPlus,
+  Wallet
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import { MenuItem } from "./type";
-import { useAuth } from "@/auth/_hooks/useAuth";
 
 export const GUEST_MENU_ITEMS: MenuItem[] = [
   { key: "login", label: "Login", href: "/login", icon: <LogIn size={16} /> },
@@ -56,11 +56,9 @@ export const ADMIN_MENU_ITEMS: MenuItem[] = [
 
 export const AccountDropdown = () => {
   const pathname = usePathname();
-  const router = useRouter();
   const { logout } = useAuth();
 
   const isActuallyAuthenticated = true;
-  const isManagementRoute = true;
   const canShowLoyalty = true;
   const loyaltyData: any = { totalPointsAllShops: 0 };
 
@@ -97,7 +95,6 @@ export const AccountDropdown = () => {
   };
 
   const hasRole = (role: string) => userRole === role;
-  const shouldShowBlackText = true;
 
   const currentMenuItems = useMemo((): MenuItem[] => {
     if (!isActuallyAuthenticated) {

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { FormInput, PortalModal, PremiumButton, SelectComponent, MediaUploadField } from "@/components";
-import { UserPlus, Crown, Star, User, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { UserPlus, Crown, Star, User, CheckCircle2, Clock, XCircle, Save } from "lucide-react";
 import { UserItem } from "../../_pages/types";
 import { RoleBadge } from "../RoleBadge";
 import type { SubscriptionPlan } from "@/types/user";
@@ -78,9 +78,20 @@ export const UserModal: React.FC<UserModalProps> = ({
 
     const currentSubscriptionPlanId = userToEdit?.subscription?.plan?.id || "";
     const hasActiveSubscription = Boolean(userToEdit?.subscription?.plan?.id);
-    const isCurrentPlanSelected = hasActiveSubscription && subscriptionPlanId === currentSubscriptionPlanId;
     const shouldDisableFields = hasActiveSubscription;
-    const shouldDisableSave = Boolean(userToEdit && isCurrentPlanSelected);
+
+    const isMissingRequiredFields = !name.trim() || !email.trim() || !phone.trim();
+    const hasChanges = userToEdit ? (
+        name.trim() !== userToEdit.name ||
+        email.trim() !== userToEdit.email ||
+        phone.trim() !== userToEdit.phone ||
+        status !== userToEdit.status ||
+        avatarUrl !== (userToEdit.avatar || "") ||
+        avatarFile !== null ||
+        subscriptionPlanId !== currentSubscriptionPlanId
+    ) : true;
+
+    const shouldDisableSave = isMissingRequiredFields || (!!userToEdit && !hasChanges);
     const selectedPlan = subscriptionPlans.find((plan) => plan.id === subscriptionPlanId);
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -107,32 +118,22 @@ export const UserModal: React.FC<UserModalProps> = ({
             icon={UserPlus}
             width="max-w-lg"
             footer={
-                <>
-                    <PremiumButton
-                        label="Cancel"
-                        variant="gray"
-                        size="md"
-                        onClick={onClose}
-                    />
-                    <PremiumButton
-                        type="submit"
-                        form="user-form"
-                        label={userToEdit ? "Save Changes" : "Create Account"}
-                        variant="orange"
-                        size="md"
-                        disabled={shouldDisableSave}
-                    />
-                </>
+                <PremiumButton
+                    type="submit"
+                    icon={userToEdit ? Save : UserPlus}
+                    form="user-form"
+                    label={userToEdit ? "Save Changes" : "Create Account"}
+                    variant="orange"
+                    size="md"
+                    disabled={shouldDisableSave}
+                />
             }
         >
             <form id="user-form" onSubmit={handleSubmit} className="space-y-6 py-4 relative">
                 <div className="absolute inset-0 bg-linear-to-b from-orange-500/5 via-transparent to-transparent pointer-events-none -z-10 rounded-3xl" />
 
                 <div className="relative w-full mb-14 pt-2">
-                    {/* Gradient Banner */}
                     <div className="w-full h-40 rounded-4xl bg-linear-to-tr from-orange-400 via-amber-400 to-rose-400 shadow-inner opacity-90" />
-
-                    {/* Overlapping Avatar */}
                     <div className="absolute -bottom-10 left-8 z-50 flex items-end gap-4">
                         <div className="p-1.5 bg-white rounded-4xl shadow-2xl border border-gray-100 group hover:scale-105 transition-all">
                             <div className={hasActiveSubscription ? "pointer-events-none opacity-60" : ""}>

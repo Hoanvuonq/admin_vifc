@@ -10,7 +10,6 @@ type SectionType =
   | "section-settings";
 
 interface ArticleEditorState {
-  // Form states
   title: string;
   setTitle: (val: string) => void;
   slug: string;
@@ -28,11 +27,9 @@ interface ArticleEditorState {
   content: string;
   setContent: (val: string) => void;
 
-  // Blocks
   blocks: ContentBlock[];
   setBlocks: (val: ContentBlock[]) => void;
 
-  // SEO
   seoTitle: string;
   setSeoTitle: (val: string) => void;
   seoDescription: string;
@@ -40,7 +37,6 @@ interface ArticleEditorState {
   seoKeywords: string;
   setSeoKeywords: (val: string) => void;
 
-  // Settings
   allowComments: boolean;
   setAllowComments: (val: boolean) => void;
   isFeatured: boolean;
@@ -50,13 +46,11 @@ interface ArticleEditorState {
   status: string;
   setStatus: (val: string) => void;
 
-  // UI State
   activeSection: SectionType;
   setActiveSection: (val: SectionType) => void;
   activeInput: string | null;
   setActiveInput: (val: string | null) => void;
 
-  // Complex Actions
   handleTitleChange: (val: string) => void;
   handleBlockChange: (id: string, updatedBlock: Partial<ContentBlock>) => void;
   handleMoveBlock: (index: number, direction: "up" | "down") => void;
@@ -71,7 +65,6 @@ interface ArticleEditorState {
     previewContainer: HTMLDivElement | null,
   ) => void;
 
-  // Computed state getters (can be used where needed)
   getReadingTime: () => number;
 }
 
@@ -124,7 +117,6 @@ export const useArticleEditorStore = create<ArticleEditorState>((set, get) => ({
   blocks: [],
   setBlocks: (blocks) => {
     set({ blocks });
-    set({ content: compileBlocksToHTML(blocks) });
   },
 
   seoTitle: "",
@@ -163,7 +155,7 @@ export const useArticleEditorStore = create<ArticleEditorState>((set, get) => ({
     const newBlocks = blocks.map((b) =>
       b.id === id ? { ...b, ...updatedBlock } : b,
     );
-    set({ blocks: newBlocks, content: compileBlocksToHTML(newBlocks) });
+    set({ blocks: newBlocks });
   },
 
   handleMoveBlock: (index: number, direction: "up" | "down") => {
@@ -178,7 +170,6 @@ export const useArticleEditorStore = create<ArticleEditorState>((set, get) => ({
 
     set({
       blocks: newBlocks,
-      content: compileBlocksToHTML(newBlocks),
       activeInput: temp.id,
     });
   },
@@ -188,13 +179,13 @@ export const useArticleEditorStore = create<ArticleEditorState>((set, get) => ({
     const newBlocks = blocks.filter((b) => b.id !== id);
     if (newBlocks.length === 0) {
       newBlocks.push({
-        id: `block-${Date.now()}`,
+        id: `block-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
         type: "text",
         align: "left",
         content: "",
       });
     }
-    set({ blocks: newBlocks, content: compileBlocksToHTML(newBlocks) });
+    set({ blocks: newBlocks });
   },
 
   handleAddBlock: (
@@ -203,7 +194,7 @@ export const useArticleEditorStore = create<ArticleEditorState>((set, get) => ({
   ) => {
     const { blocks, activeInput } = get();
     const newBlock: ContentBlock = {
-      id: `block-${Date.now()}`,
+      id: `block-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       type,
       align: "left",
       content: "",
@@ -222,7 +213,6 @@ export const useArticleEditorStore = create<ArticleEditorState>((set, get) => ({
 
     set({
       blocks: newBlocks,
-      content: compileBlocksToHTML(newBlocks),
       activeInput: newBlock.id,
     });
   },
@@ -234,7 +224,6 @@ export const useArticleEditorStore = create<ArticleEditorState>((set, get) => ({
   ) => {
     set({ activeInput: id });
 
-    // 1. Scroll Right Panel (Form) to block card
     const formEl = document.getElementById(`form-${id}`);
     if (formEl && formContainer) {
       formContainer.scrollTo({
@@ -243,7 +232,6 @@ export const useArticleEditorStore = create<ArticleEditorState>((set, get) => ({
       });
     }
 
-    // 2. Scroll Center Panel (UI Preview) to corresponding preview element
     const previewEl = document.getElementById(`preview-${id}`);
     if (previewEl && previewContainer) {
       previewContainer.scrollTo({

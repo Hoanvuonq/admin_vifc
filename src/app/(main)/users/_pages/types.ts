@@ -4,12 +4,7 @@ export interface UserItem {
   id: string;
   name: string;
   email: string;
-  role:
-    | "ADMIN"
-    | "FREE"
-    | "PREMIUM"
-    | "ANNUAL PREMIUM"
-    | string;
+  role: "ADMIN" | "FREE" | "PREMIUM" | "ANNUAL PREMIUM" | string;
   status: "ACTIVE" | "INACTIVE" | "BANNED";
   phone: string;
   joinedDate: string;

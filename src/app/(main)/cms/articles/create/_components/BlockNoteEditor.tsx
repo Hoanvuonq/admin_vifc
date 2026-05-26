@@ -5,16 +5,17 @@ import "@blocknote/mantine/style.css";
 import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function BlockNoteEditor({ initialContent, onChange }: { initialContent?: string, onChange?: (content: string) => void }) {
-    // Creates a new editor instance.
     const editor = useCreateBlockNote();
 
+    const initialized = useRef(false);
+
     useEffect(() => {
-        if (initialContent) {
+        if (initialContent && !initialized.current) {
+            initialized.current = true;
             if (initialContent.trim().startsWith("<")) {
-                // Parse HTML string back to blocks
                 try {
                     const parsedBlocks = editor.tryParseHTMLToBlocks(initialContent);
                     editor.replaceBlocks(editor.document, parsedBlocks);
@@ -30,15 +31,20 @@ export default function BlockNoteEditor({ initialContent, onChange }: { initialC
                 }
             }
         }
-    }, [editor, initialContent]); // Run once when editor is ready
+    }, [editor, initialContent]);
 
-    // Renders the editor instance using a React component.
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
     return (
-        <div className="w-full h-full min-h-screen">
+        <div className="w-full h-full min-h-[70vh]">
             <BlockNoteView theme="light" editor={editor} onChange={() => {
                 if (onChange) {
-                    const json = JSON.stringify(editor.document);
-                    onChange(json);
+                    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                    timeoutRef.current = setTimeout(async () => {
+                        let html = await editor.blocksToHTMLLossy(editor.document);
+                        html = html.replace(/<p><\/p>/g, "<p><br></p>");
+                        onChange(html);
+                    }, 300);
                 }
             }} />
         </div>

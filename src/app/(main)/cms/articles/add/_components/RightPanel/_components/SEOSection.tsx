@@ -1,5 +1,6 @@
+"use client"
 import React from "react";
-import { FormInput } from "@/components";
+import { FormInput, SectionHeader } from "@/components";
 import { Globe } from "lucide-react";
 import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
@@ -12,7 +13,6 @@ export const SEOSection: React.FC = () => {
     setActiveInput
   } = useArticleEditorStore();
 
-  const sectionSEOCompleted = seoTitle.trim().length >= 10 && seoDescription.trim().length >= 30 && seoKeywords.trim().length >= 3;
 
   return (
     <div
@@ -20,19 +20,13 @@ export const SEOSection: React.FC = () => {
       className="bg-white rounded-2xl p-4 shadow-3xs space-y-3"
       onFocusCapture={() => setActiveInput("seoTitle")}
     >
-      <div className="flex items-center justify-between pb-2 border-b border-slate-50">
-        <div className="flex items-center gap-1.5">
-          <Globe size={14} className="text-orange-500" />
-          <span className="text-[11px] font-extrabold uppercase text-gray-700 tracking-wider">4. SEO Optimization</span>
-        </div>
-        <span
-          className={`text-[8.5px] font-extrabold px-2 py-0.5 rounded-full ${
-            sectionSEOCompleted ? "bg-emerald-50 text-emerald-600" : "bg-red-50/50 text-red-500"
-          }`}
-        >
-          {sectionSEOCompleted ? "Completed" : "Incomplete"}
-        </span>
-      </div>
+      <SectionHeader
+        icon={Globe}
+        title="SEO Optimization"
+        description="SEO Optimization"
+        size="sm"
+        className="pb-2 border-b border-gray-100"
+      />
 
       <div className="space-y-3">
         <FormInput
