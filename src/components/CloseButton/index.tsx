@@ -14,7 +14,7 @@ export const CloseButton: React.FC<CloseButtonProps> = ({ onClick, className }) 
         <button
             onClick={onClick}
             className={cn(
-                "group relative size-10 flex items-center justify-center rounded-2xl transition-all duration-300",
+                "group relative cursor-pointer size-10 flex items-center justify-center rounded-2xl transition-all duration-300",
                 "bg-white/50 backdrop-blur-md border border-orange-100/50 shadow-sm",
                 "hover:bg-orange-500 hover:border-orange-500 hover:shadow-[0_0_15px_rgba(249,115,22,0.4)]",
                 "active:scale-90",
