@@ -203,6 +203,10 @@ export const convertBlockNoteHTMLToTailwindAndClean = (html: string): string => 
         return addClassToTag(`<${tagName} ${attrs}>`, "italic");
     });
 
+    processed = processed.replace(/<a\b([^>]*)>/gi, (match, attrs) => {
+        return addClassToTag(match, "text-blue-600 hover:text-blue-800 underline decoration-blue-300 hover:decoration-blue-600 underline-offset-2 transition-colors");
+    });
+
     processed = processed.replace(/\s+style=""/g, "").replace(/\s+style="\s*"/g, "");
 
     return processed;
