@@ -5,8 +5,6 @@
 
 
 @import "tailwindcss";
-/* @import "@blocknote/core/fonts/inter.css";
-@import "@blocknote/mantine/style.css"; */
 
 :root {
   --background: #ffffff;

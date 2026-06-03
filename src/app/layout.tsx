@@ -4,6 +4,9 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 import "react-loading-skeleton/dist/skeleton.css";
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/mantine/style.css";
+
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

@@ -237,8 +237,10 @@ export const useArticleEditorSync = (articleId?: string) => {
 
     const formattedBlocks: any[] = [];
 
-    // Build blocks strictly according to layoutOrder (skipping title, banner, summary)
-    for (const id of layoutOrder) {
+    const orderToUse = layoutOrder && layoutOrder.length > 0 ? layoutOrder : finalBlocks.map(b => b.id);
+
+    // Build blocks strictly according to orderToUse (skipping title, banner, summary)
+    for (const id of orderToUse) {
       if (["title", "banner", "summary"].includes(id)) continue;
 
       const b = finalBlocks.find((block) => block.id === id);
