@@ -223,11 +223,24 @@ export async function PUT(
       }
     }
 
+    let uniqueSlug = slug;
+    if (slug) {
+      let counter = 1;
+      while (true) {
+        const existing = await prisma.articles.findFirst({
+          where: { slug: uniqueSlug, NOT: { id }, deleted_at: null },
+        });
+        if (!existing) break;
+        uniqueSlug = `${slug}-${counter}`;
+        counter++;
+      }
+    }
+
     const updatedArticle = await prisma.articles.update({
       where: { id },
       data: {
         title,
-        slug,
+        slug: uniqueSlug,
         description:
           description !== undefined ? description || null : undefined,
         thumbnail: thumbnail !== undefined ? thumbnail || null : undefined,

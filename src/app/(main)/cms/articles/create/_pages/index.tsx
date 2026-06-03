@@ -30,7 +30,6 @@ export const ArticleEditor: React.FC<{ articleId?: string }> = ({ articleId }) =
 
     const rightPanelRef = useRef<HTMLDivElement>(null);
 
-    // Initial layout order combining fixed sections and dynamic blocks
     const [layoutOrder, setLayoutOrder] = useState<string[]>([]);
 
     useEffect(() => {
@@ -62,6 +61,7 @@ export const ArticleEditor: React.FC<{ articleId?: string }> = ({ articleId }) =
     const renderBlock = (type: string, index: number) => {
         const renderWrapper = (children: React.ReactNode, className = "") => (
             <div
+                key={type}
                 id={`block-${type}`}
                 className="w-full"
                 onClickCapture={() => {
@@ -73,7 +73,6 @@ export const ArticleEditor: React.FC<{ articleId?: string }> = ({ articleId }) =
                 }}
             >
                 <DraggableBlock
-                    key={type}
                     type={type}
                     className={className}
                     onRemove={() => {

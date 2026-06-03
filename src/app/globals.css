@@ -5,6 +5,8 @@
 
 
 @import "tailwindcss";
+/* @import "@blocknote/core/fonts/inter.css";
+@import "@blocknote/mantine/style.css"; */
 
 :root {
   --background: #ffffff;
@@ -103,4 +105,16 @@ body {
 
 .cherry-bomb-one-regular {
   font-family: "Cherry Bomb One", system-ui;
+}
+
+/* BlockNote UI Z-Index Overrides for fixed overlays */
+.bn-toolbar,
+.bn-suggestion-menu,
+.bn-side-menu,
+.bn-drag-handle-menu,
+.bn-emoji-picker,
+.bn-file-panel,
+.bn-table-handles,
+.bn-comments {
+  z-index: 999999 !important;
 }

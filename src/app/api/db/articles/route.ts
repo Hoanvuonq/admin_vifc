@@ -187,6 +187,18 @@ export async function POST(request: Request) {
       }
     }
 
+    // Ensure unique slug
+    let uniqueSlug = slug;
+    let counter = 1;
+    while (true) {
+      const existing = await prisma.articles.findFirst({
+        where: { slug: uniqueSlug, deleted_at: null },
+      });
+      if (!existing) break;
+      uniqueSlug = `${slug}-${counter}`;
+      counter++;
+    }
+
     // Create new article
     const articleId = id || `post-uuid-${Date.now()}`;
 
@@ -194,7 +206,7 @@ export async function POST(request: Request) {
       data: {
         id: articleId,
         title,
-        slug,
+        slug: uniqueSlug,
         description: description || null,
         thumbnail: thumbnail || null,
         layouts: formattedLayouts,
