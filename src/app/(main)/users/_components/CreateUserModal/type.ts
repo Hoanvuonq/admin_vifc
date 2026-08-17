@@ -1,11 +1,10 @@
 import { UserItem } from "../../_pages/types";
-import { UserFormData } from "./userSchema";
+import { CreateUserFormData } from "./createUserSchema";
 
-export interface UserModalProps {
-  isOpen: boolean;
+export interface CreateUserModalProps {
+  open: boolean;
   onClose: () => void;
-  userToEdit: UserItem | null;
-  onSave: (userData: {
+  onSave?: (userData: {
     name: string;
     email: string;
     phone: string;
@@ -17,6 +16,7 @@ export interface UserModalProps {
     company?: string;
     country?: string;
   }) => void;
+  onSuccess?: () => void;
 }
 
-export type { UserFormData };
+export type { CreateUserFormData };

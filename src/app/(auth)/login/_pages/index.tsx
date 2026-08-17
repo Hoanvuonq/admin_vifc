@@ -9,9 +9,10 @@ import { Home } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { LeftSideForm, SocialButton } from "../_components";
-import { LoginRequest } from "../_constants/formSchema";
+import { LoginRequest } from "../_constants";
+import { useLoginForm } from "../_hooks";
 
 const CONFIG = {
   storageKeyUser: "user_username",
@@ -26,27 +27,22 @@ const CONFIG = {
   homeText: "Back to Home",
 };
 
-const validateForm = (values: LoginRequest): Partial<LoginRequest> | null => {
-  let errors: Partial<LoginRequest> = {};
-  if (!values.username || values.username.trim() === "") {
-    errors.username = "Username is required.";
-  }
-  if (!values.password || values.password.trim() === "") {
-    errors.password = "Password is required.";
-  }
-  return Object.keys(errors).length > 0 ? errors : null;
-};
-
 export const LoginScreen = () => {
   const router = useRouter();
   const { login, loading } = useAuth();
 
-  const [formData, setFormData] = useState<LoginRequest>({ username: "", password: "" });
-  const [formErrors, setFormErrors] = useState<Partial<LoginRequest>>({});
-  const [submitting, setSubmitting] = useState(false);
-  const [socialLoginLoading, setSocialLoginLoading] = useState({ GOOGLE: false, FACEBOOK: false });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    setFocus,
+    formState: { errors, isSubmitting },
+  } = useLoginForm();
 
-  const usernameRef = useRef<HTMLInputElement>(null);
+  const [socialLoginLoading, setSocialLoginLoading] = useState({
+    GOOGLE: false,
+    FACEBOOK: false,
+  });
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
@@ -54,48 +50,27 @@ export const LoginScreen = () => {
       return;
     }
 
-    usernameRef.current?.focus();
+    setFocus("username");
 
     const pendingUsername = localStorage.getItem(CONFIG.storageKeyUser);
     const pendingEmail = localStorage.getItem(CONFIG.storageKeyEmail);
     const pendingPassword = localStorage.getItem(CONFIG.storageKeyPass);
 
-    const formValues: Partial<LoginRequest> = {};
     if (pendingUsername) {
-      formValues.username = pendingUsername;
+      setValue("username", pendingUsername);
       localStorage.removeItem(CONFIG.storageKeyUser);
     } else if (pendingEmail) {
-      formValues.username = pendingEmail;
+      setValue("username", pendingEmail);
       localStorage.removeItem(CONFIG.storageKeyEmail);
     }
     if (pendingPassword) {
-      formValues.password = pendingPassword;
+      setValue("password", pendingPassword);
       localStorage.removeItem(CONFIG.storageKeyPass);
     }
+  }, [router, setValue, setFocus]);
 
-    if (Object.keys(formValues).length > 0) {
-      setFormData((prev) => ({ ...prev, ...formValues }));
-    }
-  }, [router]);
-
-  const handleInputChange = (e: React.ChangeEvent<any>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (formErrors[name as keyof LoginRequest]) {
-      setFormErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  };
-
-  const onFinish = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const errors = validateForm(formData);
-    if (errors) {
-      setFormErrors(errors);
-      toast.error("Please fill in all fields.");
-      return;
-    }
-
-    setSubmitting(true);
+  const onFinish = handleSubmit(async (formData: LoginRequest) => {
+    /* ORIGINAL LOGIN LOGIC - COMMENTED OUT FOR TEMPORARY BYPASS
     try {
       await login({
         username: formData.username,
@@ -106,16 +81,55 @@ export const LoginScreen = () => {
       router.push("/");
     } catch (err: any) {
       toast.error(err?.message || "Login failed.");
-    } finally {
-      setSubmitting(false);
     }
-  };
+    */
+
+    // --- BYPASS LOGIN VÀO UI ADMIN ---
+    try {
+      const mockUser = {
+        id: "admin-bypass-id",
+        email: formData.username || "admin@vifc.vn",
+        full_name: "Admin VIFC",
+        status: "active",
+        role: "admin",
+        access_token: "mock_bypass_token_" + Date.now(),
+        expires_at: Math.floor(Date.now() / 1000) + 86400 * 30, // 30 ngày
+      };
+
+      localStorage.setItem("access_token", mockUser.access_token);
+      localStorage.setItem("user_info", JSON.stringify(mockUser));
+
+      toast.success("Bypass Login thành công!");
+      router.push("/");
+    } catch (err: any) {
+      toast.error(err?.message || "Bypass login failed");
+    }
+  });
 
   const handleSocialLogin = async (loginType: "GOOGLE" | "FACEBOOK") => {
     setSocialLoginLoading((prev) => ({ ...prev, [loginType]: true }));
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      /* ORIGINAL SOCIAL LOGIN LOGIC
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       toast.success(`Initiated login with ${loginType}`);
+      */
+
+      // --- BYPASS SOCIAL LOGIN ---
+      const mockUser = {
+        id: "admin-bypass-id",
+        email: `admin_${loginType.toLowerCase()}@vifc.vn`,
+        full_name: `Admin VIFC (${loginType})`,
+        status: "active",
+        role: "admin",
+        access_token: "mock_bypass_token_" + Date.now(),
+        expires_at: Math.floor(Date.now() / 1000) + 86400 * 30,
+      };
+
+      localStorage.setItem("access_token", mockUser.access_token);
+      localStorage.setItem("user_info", JSON.stringify(mockUser));
+
+      toast.success(`Bypass Login (${loginType}) thành công!`);
+      router.push("/");
     } catch (err: any) {
       toast.error(err?.message || "Connection error");
     } finally {
@@ -151,78 +165,54 @@ export const LoginScreen = () => {
                       className="relative w-28 h-28 object-contain transform group-hover:scale-110 transition-transform duration-700 ease-out"
                     />
                   </div>
-                  <h2 className="text-3xl font-bold text-zinc-900 tracking-tighter italic uppercase leading-none">
-                    {CONFIG.welcomeTitle}
-                  </h2>
-                  <p className="text-zinc-500 text-sm font-medium mt-3 tracking-wide">
-                    {CONFIG.welcomeDesc}
-                  </p>
+                  <h2 className="text-3xl font-bold text-zinc-900 tracking-tighter italic uppercase leading-none">{CONFIG.welcomeTitle}</h2>
+                  <p className="text-zinc-500 text-sm font-medium mt-3 tracking-wide">{CONFIG.welcomeDesc}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
-                  <SocialButton
-                    provider="GOOGLE"
-                    variant="orange"
-                    onClick={() => handleSocialLogin("GOOGLE")}
-                    loading={socialLoginLoading.GOOGLE}
-                  />
-                  <SocialButton
-                    provider="FACEBOOK"
-                    variant="blue"
-                    onClick={() => handleSocialLogin("FACEBOOK")}
-                    loading={socialLoginLoading.FACEBOOK}
-                  />
+                  <SocialButton provider="GOOGLE" variant="orange" onClick={() => handleSocialLogin("GOOGLE")} loading={socialLoginLoading.GOOGLE} />
+                  <SocialButton provider="FACEBOOK" variant="blue" onClick={() => handleSocialLogin("FACEBOOK")} loading={socialLoginLoading.FACEBOOK} />
                 </div>
 
                 <div className="flex items-center my-4">
                   <div className="grow h-px bg-zinc-100 " />
-                  <span className="px-5 text-[10px] font-bold tracking-widest uppercase text-zinc-400">
-                    Or Login With
-                  </span>
+                  <span className="px-5 text-[10px] font-bold tracking-widest uppercase text-zinc-400">Or Login With</span>
                   <div className="grow h-px bg-zinc-100 " />
                 </div>
 
                 <form onSubmit={onFinish} className="space-y-5">
                   <FormInput
                     label="Username or Email"
-                    name="username"
                     placeholder="Enter your username or email"
-                    ref={usernameRef as any}
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    error={formErrors.username as string}
+                    {...register("username")}
+                    error={errors.username?.message}
                     className="mb-0"
                   />
 
                   <div className="space-y-3">
                     <FormInput
                       label="Password"
-                      name="password"
                       placeholder="Enter your password"
                       type="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      error={formErrors.password as string}
+                      {...register("password")}
+                      error={errors.password?.message}
                       className="mb-0"
                     />
                     <div className="flex justify-end pr-1">
                       <Link
                         href={CONFIG.forgotPassLink}
-                        className={cn(
-                          "relative text-[11px] font-bold uppercase text-orange-600 hover:text-orange-500 transition-colors",
-                          "group inline-block"
-                        )}
+                        className={cn("relative text-[11px] font-bold uppercase text-orange-600 hover:text-orange-500 transition-colors", "group inline-block")}
                       >
                         Forgot Password?
-                        <span className="absolute left-0 bottom-[-2px] w-0 h-[1.5px] bg-orange-500 transition-all duration-300 ease-out group-hover:w-full" />
+                        <span className="absolute left-0 -bottom-0.5 w-0 h-[1.5px] bg-orange-500 transition-all duration-300 ease-out group-hover:w-full" />
                       </Link>
                     </div>
                   </div>
 
                   <PremiumButton
                     type="submit"
-                    disabled={loading || submitting}
-                    isLoading={loading || submitting}
+                    disabled={loading || isSubmitting}
+                    isLoading={loading || isSubmitting}
                     className="w-full h-12 rounded-full text-[13px] font-bold uppercase tracking-[0.2em] shadow-xl shadow-orange-600/20 active:scale-[0.98] transition-all mt-6"
                     variant="isLogin"
                     block
@@ -234,10 +224,7 @@ export const LoginScreen = () => {
                 <div className="mt-8 pt-6 border-t border-zinc-100 text-center space-y-5">
                   <p className="text-zinc-400 dark:text-zinc-500 text-[12px] font-medium tracking-wide">
                     Don't have an account?
-                    <Link
-                      className="text-orange-600 font-bold uppercase ml-2 hover:text-orange-500 transition-colors"
-                      href={CONFIG.registerLink}
-                    >
+                    <Link className="text-orange-600 font-bold uppercase ml-2 hover:text-orange-500 transition-colors" href={CONFIG.registerLink}>
                       Register Now
                     </Link>
                   </p>
@@ -247,19 +234,23 @@ export const LoginScreen = () => {
                     className={cn(
                       "group inline-flex items-center gap-2.5 transition-all duration-300",
                       "text-zinc-400 hover:text-orange-500",
-                      "text-[11px] font-bold uppercase tracking-widest"
+                      "text-[11px] font-bold uppercase tracking-widest",
                     )}
                   >
                     <motion.div
                       whileHover={{ y: -2 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 10,
+                      }}
                     >
                       <Home size={16} strokeWidth={2.5} />
                     </motion.div>
 
                     <span className="relative">
                       {CONFIG.homeText}
-                      <span className="absolute left-0 bottom-[-4px] w-0 h-[1.5px] bg-orange-500 transition-all duration-300 ease-out group-hover:w-full" />
+                      <span className="absolute left-0 -bottom-1 w-0 h-[1.5px] bg-orange-500 transition-all duration-300 ease-out group-hover:w-full" />
                     </span>
                   </Link>
                 </div>

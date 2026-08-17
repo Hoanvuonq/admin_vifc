@@ -189,3 +189,136 @@ export async function GET(request: Request) {
     );
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const {
+      full_name,
+      email,
+      password,
+      role = "user",
+      status = "active",
+      company,
+    } = body;
+
+    if (!email || !full_name) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "INVALID_REQUEST",
+            message: "Họ tên và email là bắt buộc",
+          },
+        },
+        { status: 400 }
+      );
+    }
+
+    // Check if email already exists
+    const existing = await prisma.user.findUnique({
+      where: { email: email.toLowerCase().trim() },
+    });
+
+    if (existing) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "EMAIL_EXISTS",
+            message: "Email này đã tồn tại trong hệ thống",
+          },
+        },
+        { status: 409 }
+      );
+    }
+
+    const bcrypt = await import("bcryptjs");
+    const hashedPassword = password
+      ? bcrypt.hashSync(password, 10)
+      : null;
+
+    // Create user in DB
+    const newUser = await prisma.user.create({
+      data: {
+        full_name: full_name.trim(),
+        email: email.toLowerCase().trim(),
+        password: hashedPassword,
+        status: status.toLowerCase(),
+        company: company?.trim() || null,
+      },
+    });
+
+    // Check or find role
+    const targetRoleName = role.toLowerCase();
+    let roleRecord = await prisma.role.findFirst({
+      where: {
+        name: {
+          equals: targetRoleName,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    if (!roleRecord) {
+      roleRecord = await prisma.role.create({
+        data: {
+          name: targetRoleName,
+          description: `${role.toUpperCase()} role`,
+        },
+      });
+    }
+
+    // Assign role
+    if (roleRecord) {
+      await prisma.userRole.create({
+        data: {
+          user_id: newUser.id,
+          role_id: roleRecord.id,
+        },
+      });
+    }
+
+    // Invalidate Redis cache if available
+    try {
+      const keys = await redis.keys("users:list:*");
+      if (keys && keys.length > 0) {
+        await redis.del(...keys);
+      }
+    } catch (e) {
+      // Redis is optional
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Tạo người dùng thành công",
+        data: {
+          id: newUser.id,
+          email: newUser.email,
+          full_name: newUser.full_name,
+          status: newUser.status,
+          role: targetRoleName,
+        },
+        meta: {
+          timestamp: new Date().toISOString(),
+        },
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Create user API failed:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Lỗi hệ thống khi tạo người dùng",
+          details: error instanceof Error ? error.message : String(error),
+        },
+      },
+      { status: 500 }
+    );
+  }
+}
+

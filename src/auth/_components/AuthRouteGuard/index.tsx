@@ -24,4 +24,4 @@ export const AuthRouteGuard = ({ children }: AuthRouteGuardProps) => {
   }
 
   return <PrivateRoute>{children}</PrivateRoute>;
-}
+};
