@@ -56,7 +56,7 @@ export const SelectComponent = ({
     }
 
     if (isMulti) {
-      const vals = Array.isArray(value) ? value : [];
+      const vals = Array.isArray(value) ? (value as (string | boolean)[]) : [];
       if (vals.length === 0) return placeholder;
       if (vals.length <= 2) {
         return combinedOptions
@@ -131,12 +131,12 @@ export const SelectComponent = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  const handleSelect = (val: string) => {
+  const handleSelect = (val: string | boolean) => {
     const option = options.find((opt) => opt.value === val);
     if (option?.disabled) return;
 
     if (isMulti) {
-      const currentValues = Array.isArray(value) ? value : [];
+      const currentValues = (Array.isArray(value) ? value : []) as (string | boolean)[];
       const newValue = currentValues.includes(val)
         ? currentValues.filter((v) => v !== val)
         : [...currentValues, val];
@@ -147,10 +147,10 @@ export const SelectComponent = ({
     }
   };
 
-  const handleRemoveValue = (e: React.MouseEvent, val: string) => {
+  const handleRemoveValue = (e: React.MouseEvent, val: string | boolean) => {
     e.stopPropagation();
     if (isMulti && Array.isArray(value)) {
-      onChange(value.filter((v) => v !== val));
+      onChange((value as (string | boolean)[]).filter((v) => v !== val));
     }
   };
 
@@ -321,12 +321,12 @@ export const SelectComponent = ({
               {finalOptions.length > 0 ? (
                 finalOptions.map((opt) => {
                   const isSelected = isMulti
-                    ? Array.isArray(value) && value.includes(opt.value)
+                    ? Array.isArray(value) && (value as (string | boolean)[]).includes(opt.value)
                     : value === opt.value;
 
                   return (
                     <div
-                      key={opt.value}
+                      key={String(opt.value)}
                       className={cn(
                         "px-4 py-3 text-sm rounded-xl transition-all duration-200 flex items-center mb-2 group",
                         isSelected

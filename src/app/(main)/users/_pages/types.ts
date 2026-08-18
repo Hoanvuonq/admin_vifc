@@ -6,7 +6,7 @@ export interface UserItem {
   email: string;
   role: "ADMIN" | "FREE" | "PREMIUM" | "ANNUAL PREMIUM" | string;
   status: "ACTIVE" | "INACTIVE" | "BANNED";
-  isVIFCPass: boolean;
+  isVIFCPass?: boolean;
   phone: string;
   joinedDate: string;
   lastActive: string;
