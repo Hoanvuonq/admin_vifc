@@ -351,7 +351,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                     <Building2 size={14} className="text-orange-500 shrink-0" />
                     <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Công ty</span>
                   </div>
-                  <span className="text-[11px] font-semibold text-gray-800 truncate max-w-[130px]" title={formValues.company}>
+                  <span className="text-[11px] font-semibold text-gray-800 truncate max-w-32.5" title={formValues.company}>
                     {formValues.company || "—"}
                   </span>
                 </div>
