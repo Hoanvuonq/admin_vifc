@@ -27,7 +27,7 @@ const CONFIG = {
 };
 
 const validateForm = (values: LoginRequest): Partial<LoginRequest> | null => {
-  let errors: Partial<LoginRequest> = {};
+  const errors: Partial<LoginRequest> = {};
   if (!values.username || values.username.trim() === "") {
     errors.username = "Username is required.";
   }
