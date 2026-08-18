@@ -160,8 +160,8 @@ export const UserFormFields: React.FC<UserFormFieldsProps> = ({
             <SelectComponent
               label="Trạng thái tài khoản"
               value={formValues.status}
-              onChange={(val: string | string[]) =>
-                setValue("status", val as UserItem["status"], {
+              onChange={(val: boolean) =>
+                setValue("isVIFCPass", val, {
                   shouldValidate: true,
                 })
               }
@@ -183,6 +183,25 @@ export const UserFormFields: React.FC<UserFormFieldsProps> = ({
                   value: "BANNED",
                   icon: XCircle,
                   color: "text-rose-500",
+                },
+              ]}
+            />
+            <SelectComponent
+              label="Trạng thái VIFC-Pass"
+              value={formValues.isVIFCPass || false}
+              onChange={(val: boolean) => setValue("isVIFCPass", val)}
+              options={[
+                {
+                  label: "Không tích hợp VIFC-Pass (Inactive)",
+                  value: false,
+                  icon: XCircle,
+                  color: "text-amber-500",
+                },
+                {
+                  label: "Tích hợp VIFC-Pass (Active)",
+                  value: true,
+                  icon: CheckCircle2,
+                  color: "text-emerald-500",
                 },
               ]}
             />

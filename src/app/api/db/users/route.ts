@@ -23,7 +23,7 @@ export async function GET(request: Request) {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -109,7 +109,7 @@ export async function GET(request: Request) {
     // Transform data to conform to User interface
     const transformedUsers: User[] = users.map((user) => {
       const [activeSub] = user.user_subscriptions;
-      
+
       return {
         id: user.id,
         email: user.email,
@@ -124,24 +124,26 @@ export async function GET(request: Request) {
         created_at: user.created_at.toISOString(),
         updated_at: user.updated_at.toISOString(),
         deleted_at: user.deleted_at ? user.deleted_at.toISOString() : null,
-        subscription: activeSub ? {
-          id: activeSub.id,
-          user_id: activeSub.user_id,
-          subscription_plan_id: activeSub.subscription_plan_id,
-          status: activeSub.status,
-          start_date: activeSub.start_date ? activeSub.start_date.toISOString() : null,
-          end_date: activeSub.end_date ? activeSub.end_date.toISOString() : null,
-          created_at: activeSub.created_at.toISOString(),
-          updated_at: activeSub.updated_at.toISOString(),
-          plan: {
-            id: activeSub.subscription_plans.id,
-            name: activeSub.subscription_plans.name,
-            price: Number(activeSub.subscription_plans.price),
-            duration_days: activeSub.subscription_plans.duration_days,
-            description: activeSub.subscription_plans.description,
-            is_active: activeSub.subscription_plans.is_active,
-          },
-        } : null,
+        subscription: activeSub
+          ? {
+              id: activeSub.id,
+              user_id: activeSub.user_id,
+              subscription_plan_id: activeSub.subscription_plan_id,
+              status: activeSub.status,
+              start_date: activeSub.start_date ? activeSub.start_date.toISOString() : null,
+              end_date: activeSub.end_date ? activeSub.end_date.toISOString() : null,
+              created_at: activeSub.created_at.toISOString(),
+              updated_at: activeSub.updated_at.toISOString(),
+              plan: {
+                id: activeSub.subscription_plans.id,
+                name: activeSub.subscription_plans.name,
+                price: Number(activeSub.subscription_plans.price),
+                duration_days: activeSub.subscription_plans.duration_days,
+                description: activeSub.subscription_plans.description,
+                is_active: activeSub.subscription_plans.is_active,
+              },
+            }
+          : null,
       };
     });
 
@@ -185,7 +187,7 @@ export async function GET(request: Request) {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -193,25 +195,18 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const {
-      full_name,
-      email,
-      password,
-      role = "user",
-      status = "active",
-      company,
-    } = body;
+    const { full_name, email, password, subscription_plan_id, status = "active", company, isVIFCPass = false } = body;
 
-    if (!email || !full_name) {
+    if (!email || !full_name || !password) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: "INVALID_REQUEST",
-            message: "Họ tên và email là bắt buộc",
+            message: "Missing required fields: email, full_name, password are required",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -229,55 +224,56 @@ export async function POST(request: Request) {
             message: "Email này đã tồn tại trong hệ thống",
           },
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
     const bcrypt = await import("bcryptjs");
-    const hashedPassword = password
-      ? bcrypt.hashSync(password, 10)
-      : null;
+    const hashedPassword = bcrypt.hashSync(password, 10);
 
-    // Create user in DB
-    const newUser = await prisma.user.create({
-      data: {
-        full_name: full_name.trim(),
-        email: email.toLowerCase().trim(),
-        password: hashedPassword,
-        status: status.toLowerCase(),
-        company: company?.trim() || null,
-      },
-    });
-
-    // Check or find role
-    const targetRoleName = role.toLowerCase();
-    let roleRecord = await prisma.role.findFirst({
-      where: {
-        name: {
-          equals: targetRoleName,
-          mode: "insensitive",
-        },
-      },
-    });
-
-    if (!roleRecord) {
-      roleRecord = await prisma.role.create({
+    await prisma.$transaction(async (tx) => {
+      // Create user in DB
+      const user = await tx.user.create({
         data: {
-          name: targetRoleName,
-          description: `${role.toUpperCase()} role`,
+          full_name: full_name.trim(),
+          email: email.toLowerCase().trim(),
+          password: hashedPassword,
+          status: status.toLowerCase(),
+          company: company?.trim() || null,
         },
       });
-    }
 
-    // Assign role
-    if (roleRecord) {
-      await prisma.userRole.create({
-        data: {
-          user_id: newUser.id,
-          role_id: roleRecord.id,
-        },
-      });
-    }
+      if (!!subscription_plan_id) {
+        await tx.userSubscription.create({
+          data: {
+            user_id: user.id,
+            subscription_plan_id,
+            status: "active",
+            start_date: new Date(),
+          },
+        });
+      }
+
+      if (isVIFCPass) {
+        // Find the latest card number and increment
+        const latestCard = await tx.userCard.findFirst({
+          orderBy: { so_the: "desc" },
+          select: { so_the: true },
+        });
+
+        const nextNumber = latestCard ? parseInt(latestCard.so_the, 10) + 1 : 1;
+        const so_the = String(nextNumber).padStart(5, "0");
+
+        await tx.userCard.create({
+          data: {
+            user_id: user.id,
+            username: full_name.trim(),
+            so_the,
+            loai_the: subscription_plan_id,
+          },
+        });
+      }
+    });
 
     // Invalidate Redis cache if available
     try {
@@ -292,19 +288,12 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         success: true,
-        message: "Tạo người dùng thành công",
-        data: {
-          id: newUser.id,
-          email: newUser.email,
-          full_name: newUser.full_name,
-          status: newUser.status,
-          role: targetRoleName,
-        },
+        message: "Created user successfully",
         meta: {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Create user API failed:", error);
@@ -313,12 +302,11 @@ export async function POST(request: Request) {
         success: false,
         error: {
           code: "INTERNAL_SERVER_ERROR",
-          message: "Lỗi hệ thống khi tạo người dùng",
+          message: "Failed to create user",
           details: error instanceof Error ? error.message : String(error),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

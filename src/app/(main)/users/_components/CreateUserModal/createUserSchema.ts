@@ -9,6 +9,7 @@ export interface CreateUserFormData {
   phone?: string;
   password?: string;
   confirmPassword?: string;
+  isVIFCPass?: boolean;
   status: UserItem["status"];
   subscriptionPlanId?: string;
   company?: string;
@@ -37,6 +38,7 @@ export const createUserSchema = Yup.object().shape({
       const { password } = this.parent;
       return password === value;
     }),
+  isVIFCPass: Yup.boolean().optional().default(false),
   status: Yup.string()
     .oneOf(["ACTIVE", "INACTIVE", "BANNED"])
     .required("Vui lòng chọn trạng thái"),

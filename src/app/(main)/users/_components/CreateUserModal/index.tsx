@@ -109,43 +109,31 @@ export const CreateUserModal: React.FC<CreateUserModalProps> = ({ open, onClose,
   }, [formValues.name, formValues.email]);
 
   const onSubmit = async (data: CreateUserFormData) => {
+    const payload = {
+      name: data.name.trim(),
+      email: data.email.trim(),
+      phone: data.phone?.trim() || "",
+      password: data.password || undefined,
+      status: data.status,
+      isVIFCPass: data.isVIFCPass || false,
+      avatarFile: data.avatarFile || null,
+      avatarUrl: data.avatarUrl || "",
+      subscriptionPlanId: data.subscriptionPlanId || undefined,
+      company: data.company?.trim() || undefined,
+      country: data.country?.trim() || undefined,
+    }
+    if (onSave) return await onSave(payload);
     try {
-      if (onSave) {
-        await onSave({
-          name: data.name.trim(),
-          email: data.email.trim(),
-          phone: data.phone?.trim() || "",
-          password: data.password || undefined,
-          status: data.status,
-          avatarFile: data.avatarFile || null,
-          avatarUrl: data.avatarUrl || "",
-          subscriptionPlanId: data.subscriptionPlanId || undefined,
-          company: data.company?.trim() || undefined,
-          country: data.country?.trim() || undefined,
-        });
-      } else {
-        const payload = {
-          full_name: data.name.trim(),
-          email: data.email.trim().toLowerCase(),
-          phone: data.phone?.trim() || undefined,
-          company: data.company?.trim() || undefined,
-          country: data.country?.trim() || undefined,
-          password: data.password || undefined,
-          status: data.status.toLowerCase(),
-          avatar_url: data.avatarUrl || undefined,
-          subscription_plan_id: data.subscriptionPlanId || undefined,
-        };
 
-        const res = await fetch("/api/db/users", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+      const res = await fetch("/api/db/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-        if (!res.ok) {
-          const errorJson = await res.json().catch(() => null);
-          throw new Error(errorJson?.error?.message || "Không thể tạo người dùng mới");
-        }
+      if (!res.ok) {
+        const errorJson = await res.json().catch(() => null);
+        throw new Error(errorJson?.error?.message || "Không thể tạo người dùng mới");
       }
 
       toast.success(`Đã tạo tài khoản ${data.name} thành công!`);

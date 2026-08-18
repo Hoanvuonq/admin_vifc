@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("POSTGRES_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -26,11 +27,27 @@ model User {
   payments           payments[]
   user_roles         UserRole[]
   user_subscriptions UserSubscription[]
+  user_cards         UserCard[]
 
   @@index([deleted_at], map: "idx_users_deleted_at")
   @@index([email], map: "idx_users_email")
   @@index([status], map: "idx_users_status")
   @@map("users")
+}
+
+model UserCard {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String   @db.Uuid
+  username   String   @db.VarChar(255)
+  so_the     String   @db.VarChar(100)
+  loai_the   String   @db.VarChar(100)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_user_cards_user_id")
+  @@index([username], map: "idx_user_cards_username")
+  @@map("user_cards")
 }
 
 model Role {

@@ -1,6 +1,6 @@
 export interface Option {
   label: string;
-  value: string;
+  value: string | boolean;
   image?: string;
   icon?: any;
   disabled?: boolean;
@@ -9,7 +9,7 @@ export interface Option {
 
 export interface SelectProps {
   options: Option[];
-  value?: string | string[];
+  value?: string | string[] | boolean;
   onChange: (value: any) => void;
   placeholder?: string;
   disabled?: boolean;
