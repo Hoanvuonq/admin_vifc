@@ -209,12 +209,16 @@ export async function PATCH(
               data: { subscription_plan_id },
             });
           } else {
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate() + 300); // Assuming a default duration of 300 days for new subscriptions
+
             await tx.userSubscription.create({
               data: {
                 user_id: id,
                 subscription_plan_id,
                 status: "active",
                 start_date: new Date(),
+                end_date: endDate,
               },
             });
           }

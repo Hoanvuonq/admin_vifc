@@ -126,23 +126,23 @@ export async function GET(request: Request) {
         deleted_at: user.deleted_at ? user.deleted_at.toISOString() : null,
         subscription: activeSub
           ? {
-              id: activeSub.id,
-              user_id: activeSub.user_id,
-              subscription_plan_id: activeSub.subscription_plan_id,
-              status: activeSub.status,
-              start_date: activeSub.start_date ? activeSub.start_date.toISOString() : null,
-              end_date: activeSub.end_date ? activeSub.end_date.toISOString() : null,
-              created_at: activeSub.created_at.toISOString(),
-              updated_at: activeSub.updated_at.toISOString(),
-              plan: {
-                id: activeSub.subscription_plans.id,
-                name: activeSub.subscription_plans.name,
-                price: Number(activeSub.subscription_plans.price),
-                duration_days: activeSub.subscription_plans.duration_days,
-                description: activeSub.subscription_plans.description,
-                is_active: activeSub.subscription_plans.is_active,
-              },
-            }
+            id: activeSub.id,
+            user_id: activeSub.user_id,
+            subscription_plan_id: activeSub.subscription_plan_id,
+            status: activeSub.status,
+            start_date: activeSub.start_date ? activeSub.start_date.toISOString() : null,
+            end_date: activeSub.end_date ? activeSub.end_date.toISOString() : null,
+            created_at: activeSub.created_at.toISOString(),
+            updated_at: activeSub.updated_at.toISOString(),
+            plan: {
+              id: activeSub.subscription_plans.id,
+              name: activeSub.subscription_plans.name,
+              price: Number(activeSub.subscription_plans.price),
+              duration_days: activeSub.subscription_plans.duration_days,
+              description: activeSub.subscription_plans.description,
+              is_active: activeSub.subscription_plans.is_active,
+            },
+          }
           : null,
       };
     });
@@ -244,12 +244,16 @@ export async function POST(request: Request) {
       });
 
       if (!!subscription_plan_id) {
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + 300); // Assuming a default duration of 300 days for new subscriptions
+        
         await tx.userSubscription.create({
           data: {
             user_id: user.id,
             subscription_plan_id,
             status: "active",
             start_date: new Date(),
+            end_date: endDate,
           },
         });
       }
