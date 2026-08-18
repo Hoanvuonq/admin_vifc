@@ -269,7 +269,7 @@ export async function POST(request: Request) {
             user_id: user.id,
             username: full_name.trim(),
             so_the,
-            loai_the: subscription_plan_id,
+            loai_the: subscription_plan_id || "DEFAULT", // Default card type if subscription_plan_id is not provided
           },
         });
       }
