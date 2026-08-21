@@ -1,8 +1,13 @@
 import axios from "axios";
-import { ApiResponse, BookingRequestItem, ReviewBookingPayload } from "@/types/course";
+import {
+  ApiResponse,
+  BookingRequestItem,
+  CreateBookingPayload,
+  ReviewBookingPayload,
+} from "@/types/course";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://quotation-m7c4.onrender.com";
+  process.env.NEXT_PUBLIC_API_URL || "";
 
 const getAuthHeaders = () => {
   if (typeof window === "undefined") return { "Content-Type": "application/json" };
@@ -13,181 +18,119 @@ const getAuthHeaders = () => {
   };
 };
 
-let fallbackBookings: BookingRequestItem[] = [
-  {
-    id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    user_id: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-    email: "hung.nguyen@vifc.vn",
-    full_name: "Nguyễn Văn Hùng",
-    booking_type: "course",
-    booking_title: "Solidity & Smart Contract Security Masterclass",
-    status: "pending",
-    source: "admin-dashboard",
-    note: "Học viên đăng ký học chuyên sâu về Audit Smart Contract và DeFi.",
-    created_at: new Date(Date.now() - 3600000 * 4).toISOString(),
-    updated_at: new Date(Date.now() - 3600000 * 4).toISOString(),
-    phone: "0912 345 678",
-    company: "VIFC Global Lab",
-    tuitionFee: 15000000,
-    deposit: 5000000,
-  },
-  {
-    id: "b2c3d4e5-f6a7-8901-bcde-f12345678902",
-    user_id: "c3d4e5f6-a7b8-9012-cdef-123456789012",
-    email: "maianh.tran@techvn.io",
-    full_name: "Trần Thị Mai Anh",
-    booking_type: "course",
-    booking_title: "DeFi Protocols & Liquidity Pool Mechanics",
-    status: "confirmed",
-    source: "web-dashboard",
-    note: "Đăng ký khóa học cuối tuần, yêu cầu xuất hóa đơn VAT công ty.",
-    created_at: new Date(Date.now() - 86400000).toISOString(),
-    updated_at: new Date(Date.now() - 86400000 + 3600000).toISOString(),
-    phone: "0987 654 321",
-    company: "FinTech Innovations",
-    tuitionFee: 12500000,
-    deposit: 12500000,
-  },
-  {
-    id: "c3d4e5f6-a7b8-9012-cdef-123456789033",
-    user_id: "d4e5f6a7-b8c9-0123-def0-123456789013",
-    email: "long.le@cryptoviet.com",
-    full_name: "Lê Hoàng Long",
-    booking_type: "workshop",
-    booking_title: "Crypto Trading & On-Chain Data Analytics",
-    status: "approved",
-    source: "mobile-app",
-    note: "Đã chuyển khoản đủ qua ngân hàng, cần link nhóm Zalo lớp.",
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-    updated_at: new Date(Date.now() - 86400000 * 2 + 7200000).toISOString(),
-    phone: "0903 112 233",
-    company: "CryptoViet Capital",
-    tuitionFee: 8500000,
-    deposit: 8500000,
-  },
-  {
-    id: "d4e5f6a7-b8c9-0123-def0-123456789044",
-    user_id: "e5f6a7b8-c9d0-1234-ef01-123456789014",
-    email: "tuan.pq@nexusblock.org",
-    full_name: "Phạm Quốc Tuấn",
-    booking_type: "meeting-room",
-    booking_title: "Phòng họp Blockchain Hub (Gói 4h)",
-    status: "pending",
-    source: "web-dashboard",
-    note: "Đặt phòng họp 8 người chiều thứ 6 tuần tới.",
-    created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
-    updated_at: new Date(Date.now() - 86400000 * 3).toISOString(),
-    phone: "0977 889 900",
-    company: "Nexus Block",
-    tuitionFee: 4000000,
-    deposit: 2000000,
-  },
-  {
-    id: "e5f6a7b8-c9d0-1234-ef01-123456789055",
-    user_id: "f6a7b8c9-d0e1-2345-f012-123456789015",
-    email: "hang.vu@gmail.com",
-    full_name: "Vũ Thanh Hằng",
-    booking_type: "workshop",
-    booking_title: "Web3 Design & Tokenomics Seminar",
-    status: "rejected",
-    source: "web-dashboard",
-    note: "Khách bận lịch công tác, xin hủy chuyển sang khóa sau.",
-    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-    updated_at: new Date(Date.now() - 86400000 * 5 + 3600000).toISOString(),
-    phone: "0918 223 344",
-    company: "Freelance",
-    tuitionFee: 6000000,
-    deposit: 0,
-  },
-];
-
 export const bookingAdminApi = {
-  // Lấy danh sách toàn bộ đơn booking
-  getAllBookings: async (): Promise<BookingRequestItem[]> => {
+  // 1. Lấy danh sách toàn bộ đơn đăng ký (Có phân trang, search, lọc status & bookingType)
+  getAllBookings: async (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    bookingType?: string;
+    search?: string;
+  }): Promise<{
+    items: BookingRequestItem[];
+    total: number;
+    totalPages: number;
+    stats?: any;
+  }> => {
     try {
-      const res = await axios.get<ApiResponse<BookingRequestItem[]>>(
-        `${API_BASE_URL}/admin/booking-requests`,
+      const searchParams = new URLSearchParams();
+      if (params?.page) searchParams.set("page", params.page.toString());
+      if (params?.limit) searchParams.set("limit", params.limit.toString());
+      if (params?.status && params.status !== "ALL") searchParams.set("status", params.status);
+      if (params?.bookingType && params.bookingType !== "ALL") searchParams.set("bookingType", params.bookingType);
+      if (params?.search) searchParams.set("search", params.search);
+
+      const url = `/api/db/courses/registrations?${searchParams.toString()}`;
+      const res = await axios.get<ApiResponse<BookingRequestItem[]>>(url, {
+        headers: getAuthHeaders(),
+        timeout: 10000,
+      });
+
+      if (res.data && res.data.success && Array.isArray(res.data.data)) {
+        return {
+          items: res.data.data,
+          total: res.data.meta?.pagination?.total ?? res.data.data.length,
+          totalPages: res.data.meta?.pagination?.totalPages ?? 1,
+          stats: res.data.meta?.stats,
+        };
+      }
+
+      return { items: [], total: 0, totalPages: 1 };
+    } catch (err: any) {
+      console.warn("API /api/db/courses/registrations failed:", err?.message);
+      return { items: [], total: 0, totalPages: 1 };
+    }
+  },
+
+  // 2. Lấy chi tiết 1 đơn
+  getBookingById: async (id: string): Promise<BookingRequestItem | null> => {
+    try {
+      const res = await axios.get<ApiResponse<BookingRequestItem>>(
+        `/api/db/courses/registrations/${id}`,
         {
           headers: getAuthHeaders(),
           timeout: 10000,
         }
       );
-      if (res.data && Array.isArray(res.data.data)) {
+      if (res.data && res.data.success) {
         return res.data.data;
       }
-      return fallbackBookings;
+      return null;
     } catch (err: any) {
-      console.warn("Backend API /admin/booking-requests failed, using synchronized store:", err?.message);
-      return fallbackBookings;
+      console.warn(`API /api/db/courses/registrations/${id} failed:`, err?.message);
+      return null;
     }
   },
 
-  // Duyệt / Cập nhật trạng thái booking (Confirm / Reject / Review)
+  // 3. Duyệt / Cập nhật trạng thái đơn (Confirm / Approve / Reject)
   reviewBooking: async (
     id: string,
     payload: ReviewBookingPayload
   ): Promise<BookingRequestItem> => {
-    try {
-      const res = await axios.patch<ApiResponse<BookingRequestItem>>(
-        `${API_BASE_URL}/admin/booking-requests/${id}/review`,
-        payload,
-        {
-          headers: getAuthHeaders(),
-          timeout: 10000,
-        }
-      );
-      if (res.data && res.data.data) {
-        return res.data.data;
+    const res = await axios.patch<ApiResponse<BookingRequestItem>>(
+      `/api/db/courses/registrations/${id}`,
+      payload,
+      {
+        headers: getAuthHeaders(),
+        timeout: 10000,
       }
-    } catch (err: any) {
-      console.warn("Backend PATCH /admin/booking-requests/:id/review failed, updating local state:", err?.message);
+    );
+    if (res.data && res.data.success && res.data.data) {
+      return res.data.data;
     }
-
-    // Fallback update
-    const index = fallbackBookings.findIndex((b) => b.id === id);
-    if (index !== -1) {
-      fallbackBookings[index] = {
-        ...fallbackBookings[index],
-        status: payload.status,
-        note: payload.note || fallbackBookings[index].note,
-        updated_at: new Date().toISOString(),
-      };
-      return fallbackBookings[index];
-    }
-
-    throw new Error("Không tìm thấy đơn booking");
+    throw new Error(res.data?.error?.message || "Cập nhật trạng thái thất bại");
   },
 
-  // Tạo đơn booking mới (nếu cần)
+  // 4. Tạo mới đơn đăng ký
   createBooking: async (
-    payload: Partial<BookingRequestItem>
+    payload: Partial<CreateBookingPayload>
   ): Promise<BookingRequestItem> => {
-    const randomSuffix = Math.random().toString(36).substring(2, 10);
-    const newBooking: BookingRequestItem = {
-      id: `bk-${Date.now()}-${randomSuffix}`,
-      user_id: `usr-${randomSuffix}`,
-      email: payload.email || "hocvien@example.com",
-      full_name: payload.full_name || "Học viên mới",
-      booking_type: payload.booking_type || "course",
-      booking_title: payload.booking_title || "Khóa học Blockchain",
-      status: "pending",
-      source: "admin-dashboard",
-      note: payload.note || "",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      phone: payload.phone,
-      company: payload.company,
-      tuitionFee: payload.tuitionFee,
-      deposit: payload.deposit,
-    };
-
-    fallbackBookings.unshift(newBooking);
-    return newBooking;
+    const res = await axios.post<ApiResponse<BookingRequestItem>>(
+      "/api/db/courses/registrations",
+      payload,
+      {
+        headers: getAuthHeaders(),
+        timeout: 10000,
+      }
+    );
+    if (res.data && res.data.success && res.data.data) {
+      return res.data.data;
+    }
+    throw new Error(res.data?.error?.message || "Tạo đơn đăng ký thất bại");
   },
 
-  // Xóa đơn booking
+  // 5. Xóa đơn đăng ký
   deleteBooking: async (id: string): Promise<boolean> => {
-    fallbackBookings = fallbackBookings.filter((b) => b.id !== id);
-    return true;
+    const res = await axios.delete<ApiResponse<null>>(
+      `/api/db/courses/registrations/${id}`,
+      {
+        headers: getAuthHeaders(),
+        timeout: 10000,
+      }
+    );
+    return !!res.data?.success;
   },
 };
+
+// Export alias for courseApi
+export const courseApi = bookingAdminApi;

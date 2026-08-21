@@ -2,7 +2,7 @@
 
 import { FormInput, PortalModal, PremiumButton, SectionHeader, SelectComponent } from "@/components";
 import { toast } from "@/providers/ToastProvider";
-import { BookingRequestItem } from "@/types/course";
+import { BookingRequestItem, CreateBookingPayload } from "@/types/course";
 import { FileText, GraduationCap, Plus, ShieldCheck, User } from "lucide-react";
 import React, { useState } from "react";
 export * from "./registrationSchema";
@@ -10,7 +10,7 @@ export * from "./registrationSchema";
 export interface CreateRegistrationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (payload: Partial<BookingRequestItem>) => Promise<void>;
+  onCreate: (payload: Partial<CreateBookingPayload>) => Promise<void>;
   isLoading?: boolean;
 }
 

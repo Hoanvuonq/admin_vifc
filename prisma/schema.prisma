@@ -28,6 +28,7 @@ model User {
   user_roles         UserRole[]
   user_subscriptions UserSubscription[]
   user_cards         UserCard[]
+  booking_requests   booking_requests[]
   course_registrations course_registrations[]
 
   @@index([deleted_at], map: "idx_users_deleted_at")
@@ -205,4 +206,27 @@ model course_registrations {
   @@index([booking_type], map: "idx_course_registrations_booking_type")
   @@map("course_registrations")
 }
+
+model booking_requests {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String    @db.Uuid
+  email         String    @db.VarChar(255)
+  full_name     String?   @db.VarChar(255)
+  booking_type  String    @db.VarChar(50)
+  booking_title String    @db.VarChar(500)
+  status        String?   @default("pending") @db.VarChar(50)
+  source        String?   @default("admin-dashboard") @db.VarChar(100)
+  note          String?
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime? @default(now()) @db.Timestamptz(6)
+  users         User?     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_booking_requests_user_id")
+  @@index([email], map: "idx_booking_requests_email")
+  @@index([booking_type], map: "idx_booking_requests_booking_type")
+  @@index([status], map: "idx_booking_requests_status")
+  @@map("booking_requests")
+}
+
+
 

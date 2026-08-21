@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
-import { BookingRequestItem, CourseRegistrationStats, ReviewBookingPayload } from "@/types/course";
 import { bookingAdminApi } from "@/services/bookingAdminApi";
+import { CourseRegistrationStats, CreateBookingPayload, ReviewBookingPayload } from "@/types/course";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface UseCourseRegistrationsParams {
   page?: number;
@@ -30,67 +30,31 @@ export const useCourseRegistrations = (
   const bookingType = isObject ? paramsOrPage.bookingType : bookingTypeParam;
   const queryClient = useQueryClient();
 
-  const {
-    data: allBookings = [],
-    isLoading,
-    isFetching,
-    error,
-    refetch,
-  } = useQuery<BookingRequestItem[], Error>({
-    queryKey: ["booking-requests"],
+  const { data, isLoading, isFetching, error, refetch } = useQuery({
+    queryKey: ["course-registrations", page, limit, status, bookingType, search],
     queryFn: async () => {
-      return await bookingAdminApi.getAllBookings();
+      return await bookingAdminApi.getAllBookings({
+        page,
+        limit,
+        status,
+        bookingType,
+        search,
+      });
     },
-    staleTime: 60 * 1000,
+    staleTime: 30 * 1000,
     placeholderData: keepPreviousData,
   });
 
-  // Client-side filtering and search
-  let filtered = [...allBookings];
+  const registrations = data?.items || [];
+  const total = data?.total || 0;
+  const totalPages = data?.totalPages || 1;
 
-  if (status && status !== "ALL") {
-    filtered = filtered.filter((item) => {
-      const itemStatus = item.status.toLowerCase();
-      const filterStatus = status.toLowerCase();
-      if (filterStatus === "approved" || filterStatus === "confirmed") {
-        return itemStatus === "approved" || itemStatus === "confirmed";
-      }
-      return itemStatus === filterStatus;
-    });
-  }
-
-  if (bookingType && bookingType !== "ALL") {
-    filtered = filtered.filter((item) => item.booking_type.toLowerCase() === bookingType.toLowerCase());
-  }
-
-  if (search && search.trim()) {
-    const s = search.toLowerCase().trim();
-    filtered = filtered.filter(
-      (item) =>
-        item.id.toLowerCase().includes(s) ||
-        item.full_name?.toLowerCase().includes(s) ||
-        item.email?.toLowerCase().includes(s) ||
-        item.booking_title?.toLowerCase().includes(s) ||
-        item.phone?.toLowerCase().includes(s) ||
-        item.company?.toLowerCase().includes(s),
-    );
-  }
-
-  // Sort newest first
-  filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-
-  const total = filtered.length;
-  const totalPages = Math.ceil(total / limit);
-  const skip = (page - 1) * limit;
-  const paginatedRegistrations = filtered.slice(skip, skip + limit);
-
-  // Dynamic stats calculation across all items
-  const stats: CourseRegistrationStats = {
-    total: allBookings.length,
-    pending: allBookings.filter((i) => i.status.toLowerCase() === "pending").length,
-    approved: allBookings.filter((i) => i.status.toLowerCase() === "confirmed" || i.status.toLowerCase() === "approved").length,
-    rejected: allBookings.filter((i) => i.status.toLowerCase() === "rejected").length,
-    completed: allBookings.filter((i) => i.status.toLowerCase() === "completed").length,
+  const stats: CourseRegistrationStats = data?.stats || {
+    total: total,
+    pending: registrations.filter((i) => (i.status || "").toLowerCase() === "pending").length,
+    approved: registrations.filter((i) => ["confirmed", "approved"].includes((i.status || "").toLowerCase())).length,
+    rejected: registrations.filter((i) => (i.status || "").toLowerCase() === "rejected").length,
+    completed: registrations.filter((i) => ["cancelled", "completed"].includes((i.status || "").toLowerCase())).length,
   };
 
   const reviewMutation = useMutation({
@@ -98,7 +62,7 @@ export const useCourseRegistrations = (
       return await bookingAdminApi.reviewBooking(id, payload);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["booking-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["course-registrations"] });
     },
   });
 
@@ -107,21 +71,21 @@ export const useCourseRegistrations = (
       return await bookingAdminApi.deleteBooking(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["booking-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["course-registrations"] });
     },
   });
 
   const createMutation = useMutation({
-    mutationFn: async (payload: Partial<BookingRequestItem>) => {
+    mutationFn: async (payload: Partial<CreateBookingPayload>) => {
       return await bookingAdminApi.createBooking(payload);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["booking-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["course-registrations"] });
     },
   });
 
   return {
-    registrations: paginatedRegistrations,
+    registrations,
     pagination: {
       page,
       limit,

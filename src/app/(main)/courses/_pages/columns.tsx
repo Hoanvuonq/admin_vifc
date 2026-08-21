@@ -26,13 +26,18 @@ export const getColumns = (
         const isApproved = statusLower === "confirmed" || statusLower === "approved" || statusLower === "completed";
         const isRejected = statusLower === "rejected" || statusLower === "cancelled";
 
+        const avatarUrl =
+          item.users?.avatar_url ||
+          item.avatar_url ||
+          `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(
+            item.email || item.full_name || "guest"
+          )}`;
+
         return (
           <div className="flex items-center gap-3 py-1">
             <div className="relative select-none shrink-0">
               <ItemImage
-                path={`https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(
-                  item.email || item.full_name || "guest"
-                )}`}
+                path={avatarUrl}
                 productName={item.full_name || item.email}
                 className="w-14 h-14 shrink-0 rounded-2xl"
               />

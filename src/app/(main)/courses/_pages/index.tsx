@@ -90,12 +90,16 @@ export const CourseRegistrationsScreen = () => {
   const renderDropdown = (item: BookingRequestItem) => {
     const orderCode = `#${item.id.slice(0, 8).toUpperCase()}`;
     const isPending = (item.status || "").toLowerCase() === "pending";
+    const avatarUrl =
+      item.users?.avatar_url ||
+      item.avatar_url ||
+      `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(item.email || item.full_name || "guest")}`;
 
     return (
       <div className="px-8 py-5 bg-linear-to-r from-orange-50/40 via-slate-50/60 to-white rounded-3xl border border-orange-100/80 m-2 flex flex-col lg:flex-row gap-6 items-start justify-between shadow-inner animate-in fade-in duration-300">
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <ItemImage
-            path={`https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(item.email || item.full_name || "guest")}`}
+            path={avatarUrl}
             productName={item.full_name || item.email}
             className="w-16 h-16 rounded-2xl border-2 border-white shadow-sm shrink-0"
           />

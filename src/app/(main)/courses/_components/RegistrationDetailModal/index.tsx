@@ -194,9 +194,13 @@ export const RegistrationDetailModal: React.FC<RegistrationDetailModalProps> = (
         <div className="p-4 rounded-3xl bg-slate-50 border border-slate-200/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5 min-w-0">
             <ItemImage
-              path={`https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(
-                registration.email || registration.full_name || "guest"
-              )}`}
+              path={
+                registration.users?.avatar_url ||
+                registration.avatar_url ||
+                `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(
+                  registration.email || registration.full_name || "guest"
+                )}`
+              }
               productName={registration.full_name || registration.email}
               className="w-14 h-14 rounded-2xl border-2 border-white shadow-sm shrink-0"
             />

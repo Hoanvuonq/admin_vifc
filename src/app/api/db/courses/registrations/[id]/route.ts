@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server";
-import prisma from "../../../../../../lib/prisma";
+import { query } from "../../../../../../lib/postgres";
 import { redis } from "../../../../../../lib/redis";
 import { BookingRequestItem } from "@/types/course";
 
-export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 
-    // 1. Validate ID parameter (Standard from api/db/users/[id])
     if (!id || id.trim() === "") {
       return NextResponse.json(
         {
@@ -23,11 +19,10 @@ export async function GET(
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // 2. Cache Logic
     const cacheKey = `courses:registrations:detail:${id}`;
     try {
       const cached = await redis.get(cacheKey);
@@ -35,14 +30,37 @@ export async function GET(
         return NextResponse.json(JSON.parse(cached), { status: 200 });
       }
     } catch (redisError) {
-      console.warn("Redis cache read failed for registration detail:", redisError);
+      console.warn(`Redis get failed for registration ${id}:`, redisError);
     }
 
-    // 3. Find registration
-    const items: BookingRequestItem[] = globalThis.__mockCourseRegistrations || [];
-    const found = items.find((i) => i.id === id);
+    const unionSql = `
+      SELECT 
+        id, user_id, email, full_name, phone::text, company::text,
+        booking_type, booking_title, 
+        COALESCE(tuition_fee, 0)::numeric as tuition_fee, COALESCE(deposit, 0)::numeric as deposit,
+        status, source, note, created_at, updated_at
+      FROM course_registrations
+      WHERE id = $1 AND deleted_at IS NULL
+      UNION ALL
+      SELECT 
+        id, user_id, email, full_name, NULL::text as phone, NULL::text as company,
+        booking_type, booking_title, 0::numeric as tuition_fee, 0::numeric as deposit,
+        status, source, note, created_at, updated_at
+      FROM booking_requests
+      WHERE id = $1
+    `;
 
-    if (!found) {
+    const sql = `
+      SELECT unified.*, u.avatar_url, u.company as user_company
+      FROM (${unionSql}) unified
+      LEFT JOIN users u ON unified.user_id = u.id
+      LIMIT 1
+    `;
+
+    const res = await query(sql, [id]);
+    const dbItem = res.rows[0];
+
+    if (!dbItem) {
       return NextResponse.json(
         {
           success: false,
@@ -54,46 +72,55 @@ export async function GET(
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
-    const transformedItem: BookingRequestItem = {
-      id: found.id,
-      user_id: found.user_id || `usr-${found.id.slice(0, 8)}`,
-      email: found.email || (found as any).userEmail || "",
-      full_name: found.full_name || (found as any).userName || "Học viên",
-      booking_type: found.booking_type || (found as any).bookingType || "course",
-      booking_title: found.booking_title || (found as any).courseName || "Khóa học",
-      status: (found.status || "pending").toLowerCase() as BookingRequestItem["status"],
-      source: found.source || "web-dashboard",
-      note: found.note || (found as any).notes || (found as any).adminNotes || "",
-      created_at: found.created_at || (found as any).registrationDate || new Date().toISOString(),
-      updated_at: found.updated_at || new Date().toISOString(),
-      phone: found.phone || (found as any).userPhone || "",
-      company: found.company || "",
-      tuitionFee: Number((found as any).tuitionFee) || 0,
-      deposit: Number((found as any).deposit) || 0,
+    const foundItem: BookingRequestItem = {
+      id: dbItem.id,
+      user_id: dbItem.user_id,
+      email: dbItem.email,
+      full_name: dbItem.full_name,
+      phone: dbItem.phone || null,
+      company: dbItem.company || dbItem.user_company || null,
+      booking_type: dbItem.booking_type || "course",
+      booking_title: dbItem.booking_title,
+      tuition_fee: dbItem.tuition_fee ? Number(dbItem.tuition_fee) : 0,
+      deposit: dbItem.deposit ? Number(dbItem.deposit) : 0,
+      tuitionFee: dbItem.tuition_fee ? Number(dbItem.tuition_fee) : 0,
+      status: (dbItem.status || "pending").toLowerCase(),
+      source: dbItem.source || "web-dashboard",
+      note: dbItem.note || "",
+      created_at: new Date(dbItem.created_at).toISOString(),
+      updated_at: new Date(dbItem.updated_at).toISOString(),
+      avatar_url: dbItem.avatar_url || null,
+      users: dbItem.user_id
+        ? {
+            id: dbItem.user_id,
+            email: dbItem.email,
+            full_name: dbItem.full_name,
+            avatar_url: dbItem.avatar_url,
+          }
+        : null,
     };
 
     const responseData = {
       success: true,
-      data: transformedItem,
+      data: foundItem,
       meta: {
         timestamp: new Date().toISOString(),
       },
     };
 
-    // 4. Save to Redis Cache (TTL 60s)
     try {
-      await redis.setex(cacheKey, 60, JSON.stringify(responseData));
+      await redis.setex(cacheKey, 30, JSON.stringify(responseData));
     } catch (redisError) {
-      console.warn("Redis cache write failed:", redisError);
+      console.warn(`Redis setex failed for registration ${id}:`, redisError);
     }
 
     return NextResponse.json(responseData, { status: 200 });
   } catch (error) {
-    console.error("Prisma course registration detail query failed:", error);
+    console.error("GET /api/db/courses/registrations/[id] error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -106,19 +133,15 @@ export async function GET(
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 
-    // 1. Validate ID parameter
     if (!id || id.trim() === "") {
       return NextResponse.json(
         {
@@ -131,138 +154,81 @@ export async function PATCH(
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const body = await request.json();
-    const { status, note, phone, company, booking_title, tuitionFee, deposit } = body;
+    const { status, note, phone, company, booking_title, tuition_fee, tuitionFee, deposit } = body;
 
-    const items: BookingRequestItem[] = globalThis.__mockCourseRegistrations || [];
-    const index = items.findIndex((i) => i.id === id);
+    const finalStatus = status ? String(status).toLowerCase() : undefined;
+    const finalNote = note !== undefined ? String(note).trim() : undefined;
 
-    if (index === -1) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "NOT_FOUND",
-            message: "Course registration not found to update",
-          },
-          meta: {
-            timestamp: new Date().toISOString(),
-          },
-        },
-        { status: 404 }
-      );
-    }
+    let updatedItem: any = null;
 
-    const currentItem = items[index];
-    const updatedItem: BookingRequestItem = {
-      ...currentItem,
-      status: status !== undefined ? status : currentItem.status,
-      note: note !== undefined ? note : currentItem.note,
-      phone: phone !== undefined ? phone : currentItem.phone,
-      company: company !== undefined ? company : currentItem.company,
-      booking_title: booking_title !== undefined ? booking_title : currentItem.booking_title,
-      tuitionFee: tuitionFee !== undefined ? Number(tuitionFee) : currentItem.tuitionFee,
-      deposit: deposit !== undefined ? Number(deposit) : currentItem.deposit,
-      updated_at: new Date().toISOString(),
-    };
+    const updateCourseSql = `
+      UPDATE course_registrations
+      SET 
+        status = COALESCE($2, status),
+        note = COALESCE($3, note),
+        phone = COALESCE($4, phone),
+        company = COALESCE($5, company),
+        booking_title = COALESCE($6, booking_title),
+        tuition_fee = COALESCE($7, tuition_fee),
+        deposit = COALESCE($8, deposit),
+        updated_at = NOW()
+      WHERE id = $1
+      RETURNING *
+    `;
 
-    items[index] = updatedItem;
-    globalThis.__mockCourseRegistrations = items;
+    const resCourse = await query(updateCourseSql, [
+      id,
+      finalStatus || null,
+      finalNote ?? null,
+      phone || null,
+      company || null,
+      booking_title || null,
+      tuition_fee ?? tuitionFee ?? null,
+      deposit ?? null,
+    ]);
 
-    // 2. Invalidate Redis Cache (Standard pattern from api/db/users/[id])
-    try {
-      const keys = await redis.keys("courses:registrations:*");
-      if (keys.length > 0) {
-        await redis.del(...keys);
+    if (resCourse.rows.length > 0) {
+      updatedItem = resCourse.rows[0];
+    } else {
+      const updateBookingSql = `
+        UPDATE booking_requests
+        SET 
+          status = COALESCE($2, status),
+          note = COALESCE($3, note),
+          updated_at = NOW()
+        WHERE id = $1
+        RETURNING *
+      `;
+      const resBooking = await query(updateBookingSql, [id, finalStatus || null, finalNote ?? null]);
+      if (resBooking.rows.length > 0) {
+        updatedItem = resBooking.rows[0];
       }
-    } catch (redisError) {
-      console.warn("Redis cache invalidation failed for course registrations:", redisError);
     }
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Updated course registration successfully",
-        data: updatedItem,
-        meta: {
-          timestamp: new Date().toISOString(),
-        },
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("Prisma course registration update failed:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: "UPDATE_FAILED",
-          message: "Failed to update course registration",
-          details: error instanceof Error ? error.message : String(error),
-        },
-        meta: {
-          timestamp: new Date().toISOString(),
-        },
-      },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-
-    // 1. Validate ID parameter
-    if (!id || id.trim() === "") {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "INVALID_REQUEST",
-            message: "Registration ID is required",
-          },
-          meta: {
-            timestamp: new Date().toISOString(),
-          },
-        },
-        { status: 400 }
-      );
-    }
-
-    const items: BookingRequestItem[] = globalThis.__mockCourseRegistrations || [];
-    const initialLength = items.length;
-    const filtered = items.filter((i) => i.id !== id);
-
-    if (filtered.length === initialLength) {
+    if (!updatedItem) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: "NOT_FOUND",
-            message: "Course registration not found to delete",
+            message: "Registration not found to update",
           },
           meta: {
             timestamp: new Date().toISOString(),
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
-    globalThis.__mockCourseRegistrations = filtered;
-
-    // 2. Invalidate Redis Cache
     try {
       const keys = await redis.keys("courses:registrations:*");
-      if (keys.length > 0) {
+      if (keys && keys.length > 0) {
         await redis.del(...keys);
       }
     } catch (redisError) {
@@ -272,20 +238,86 @@ export async function DELETE(
     return NextResponse.json(
       {
         success: true,
-        message: "Deleted course registration successfully",
+        data: updatedItem,
+        message: "Updated registration successfully",
         meta: {
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
-    console.error("Prisma course registration delete failed:", error);
+    console.error("PATCH /api/db/courses/registrations/[id] error:", error);
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: "DELETE_FAILED",
+          code: "DATABASE_ERROR",
+          message: "Failed to update course registration",
+          details: error instanceof Error ? error.message : String(error),
+        },
+        meta: {
+          timestamp: new Date().toISOString(),
+        },
+      },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PUT(request: Request, context: { params: Promise<{ id: string }> }) {
+  return PATCH(request, context);
+}
+
+export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+
+    if (!id || id.trim() === "") {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "INVALID_REQUEST",
+            message: "Registration ID is required",
+          },
+          meta: {
+            timestamp: new Date().toISOString(),
+          },
+        },
+        { status: 400 },
+      );
+    }
+
+    await query("UPDATE course_registrations SET deleted_at = NOW(), updated_at = NOW() WHERE id = $1", [id]);
+    await query("DELETE FROM booking_requests WHERE id = $1", [id]);
+
+    try {
+      const keys = await redis.keys("courses:registrations:*");
+      if (keys && keys.length > 0) {
+        await redis.del(...keys);
+      }
+    } catch (redisError) {
+      console.warn("Redis cache invalidation failed:", redisError);
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Registration deleted successfully",
+        meta: {
+          timestamp: new Date().toISOString(),
+        },
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("DELETE /api/db/courses/registrations/[id] error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: "DATABASE_ERROR",
           message: "Failed to delete course registration",
           details: error instanceof Error ? error.message : String(error),
         },
@@ -293,7 +325,7 @@ export async function DELETE(
           timestamp: new Date().toISOString(),
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
