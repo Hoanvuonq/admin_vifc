@@ -21,148 +21,136 @@ export type StatusConfig = {
 export const statusConfig: Record<string, StatusConfig> = {
   LAYOUT: {
     label: "Layout",
-    styles: "bg-indigo-50 text-indigo-600 border-indigo-200/60 shadow-none",
-    premiumStyles:
-      "bg-linear-to-br from-indigo-500 to-purple-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(99,102,241,0.3)] backdrop-blur-sm",
-    icon: <LayoutTemplate size={12} />,
-    iconColor: "text-indigo-500",
+    styles: "bg-indigo-50 text-indigo-600 border-indigo-200/80",
+    premiumStyles: "bg-indigo-50/90 text-indigo-600 border-indigo-200 shadow-2xs",
+    icon: <LayoutTemplate size={13} />,
+    iconColor: "text-indigo-600",
   },
   PENDING: {
-    label: "Pending",
-    styles: "bg-amber-50/50 text-amber-600 border-amber-200/60 shadow-none",
-    premiumStyles:
-      "bg-linear-to-br from-amber-500 to-orange-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(245,158,11,0.3)] backdrop-blur-sm",
-    icon: <Clock size={12} />,
-    iconColor: "text-amber-500",
+    label: "Đang chờ",
+    styles: "bg-amber-50/90 text-amber-600 border-amber-200",
+    premiumStyles: "bg-amber-50/90 text-amber-600 border-amber-200/90 shadow-2xs",
+    icon: <Clock size={13} />,
+    iconColor: "text-amber-600",
   },
   SUCCESS: {
-    label: "Success",
-    styles:
-      "bg-emerald-50/50 text-emerald-600 border-emerald-200/60 shadow-none",
-    premiumStyles:
-      "bg-linear-to-br from-emerald-500 to-teal-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(16,185,129,0.3)] backdrop-blur-sm",
-    icon: <CheckCircle2 size={12} />,
-    iconColor: "text-emerald-500",
-  },
-  PROCESSING: {
-    label: "Processing",
-    styles: "bg-sky-50/50 text-sky-600 border-sky-200/60 shadow-none",
-    premiumStyles:
-      "bg-linear-to-br from-sky-500 to-indigo-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(14,165,233,0.3)] backdrop-blur-sm",
-    icon: <Loader2 size={12} />,
-    iconColor: "text-sky-500",
-  },
-  CANCELLED: {
-    label: "Cancelled",
-    styles: "bg-rose-50 text-rose-500 border-rose-100 shadow-none",
-    premiumStyles:
-      "bg-linear-to-br from-rose-400 to-rose-300 text-white border-white/20 shadow-[0_4px_10px_-3px_rgba(251,113,133,0.3)] backdrop-blur-sm",
-    icon: <XCircle size={12} />,
-    iconColor: "text-rose-400",
-  },
-  FAILED: {
-    label: "Failed",
-    styles: "bg-rose-50/50 text-rose-600 border-rose-200/60 shadow-none",
-    premiumStyles:
-      "bg-linear-to-br from-rose-500 to-red-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(244,63,94,0.3)] backdrop-blur-sm",
-    icon: <AlertCircle size={12} />,
-    iconColor: "text-rose-500",
+    label: "Hoàn thành",
+    styles: "bg-emerald-50/90 text-emerald-600 border-emerald-200",
+    premiumStyles: "bg-emerald-50/90 text-emerald-600 border-emerald-200/90 shadow-2xs",
+    icon: <CheckCircle2 size={13} />,
+    iconColor: "text-emerald-600",
   },
   APPROVED: {
-    label: "Approved",
-    styles:
-      "bg-emerald-50/50 text-emerald-600 border-emerald-200/60 shadow-none",
-    premiumStyles:
-      "bg-linear-to-br from-emerald-500 to-teal-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(16,185,129,0.3)] backdrop-blur-sm",
-    icon: <ShieldCheck size={12} />,
-    iconColor: "text-emerald-500",
+    label: "Đã xác nhận",
+    styles: "bg-emerald-50/90 text-emerald-600 border-emerald-200",
+    premiumStyles: "bg-emerald-50/90 text-emerald-600 border-emerald-200/90 shadow-2xs",
+    icon: <CheckCircle2 size={13} />,
+    iconColor: "text-emerald-600",
+  },
+  CONFIRMED: {
+    label: "Đã xác nhận",
+    styles: "bg-emerald-50/90 text-emerald-600 border-emerald-200",
+    premiumStyles: "bg-emerald-50/90 text-emerald-600 border-emerald-200/90 shadow-2xs",
+    icon: <CheckCircle2 size={13} />,
+    iconColor: "text-emerald-600",
+  },
+  PROCESSING: {
+    label: "Đang xử lý",
+    styles: "bg-sky-50/90 text-sky-600 border-sky-200",
+    premiumStyles: "bg-sky-50/90 text-sky-600 border-sky-200/90 shadow-2xs",
+    icon: <Loader2 size={13} />,
+    iconColor: "text-sky-600",
+  },
+  CANCELLED: {
+    label: "Đã hủy",
+    styles: "bg-rose-50/90 text-rose-600 border-rose-200",
+    premiumStyles: "bg-rose-50/90 text-rose-600 border-rose-200/90 shadow-2xs",
+    icon: <XCircle size={13} />,
+    iconColor: "text-rose-600",
+  },
+  FAILED: {
+    label: "Thất bại",
+    styles: "bg-rose-50/90 text-rose-600 border-rose-200",
+    premiumStyles: "bg-rose-50/90 text-rose-600 border-rose-200/90 shadow-2xs",
+    icon: <AlertCircle size={13} />,
+    iconColor: "text-rose-600",
   },
   REJECTED: {
-    label: "Rejected",
-    styles: "bg-rose-50/50 text-rose-600 border-rose-200/60 shadow-none",
-    premiumStyles:
-      "bg-linear-to-br from-rose-500 to-red-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(244,63,94,0.3)] backdrop-blur-sm",
-    icon: <AlertCircle size={12} />,
-    iconColor: "text-rose-500",
+    label: "Đã hủy",
+    styles: "bg-rose-50/90 text-rose-600 border-rose-200",
+    premiumStyles: "bg-rose-50/90 text-rose-600 border-rose-200/90 shadow-2xs",
+    icon: <XCircle size={13} />,
+    iconColor: "text-rose-600",
   },
   PUBLISHED: {
-    label: "Published",
-    styles:
-      "bg-emerald-50/50 text-emerald-600 border-emerald-200/60 shadow-none",
-    premiumStyles:
-      "bg-linear-to-br from-emerald-500 to-teal-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(16,185,129,0.3)] backdrop-blur-sm",
-    icon: <CheckCircle2 size={12} />,
-    iconColor: "text-emerald-500",
+    label: "Xuất bản",
+    styles: "bg-emerald-50/90 text-emerald-700 border-emerald-200",
+    premiumStyles: "bg-emerald-50/90 text-emerald-700 border-emerald-200/90 shadow-2xs",
+    icon: <CheckCircle2 size={13} />,
+    iconColor: "text-emerald-600",
   },
   DRAFT: {
-    label: "Draft",
-    styles: "bg-blue-50 text-blue-600 border-blue-200/60 shadow-none",
-    premiumStyles:
-      "bg-linear-to-br from-blue-500 to-blue-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(59,130,246,0.3)] backdrop-blur-sm",
-    icon: <Clock size={12} />,
-    iconColor: "text-blue-500",
+    label: "Bản nháp",
+    styles: "bg-blue-50/90 text-blue-700 border-blue-200",
+    premiumStyles: "bg-blue-50/90 text-blue-700 border-blue-200/90 shadow-2xs",
+    icon: <Clock size={13} />,
+    iconColor: "text-blue-600",
   },
   PENDING_REVIEW: {
-    label: "Pending Review",
-    styles: "bg-amber-50/50 text-amber-600 border-amber-200/60 shadow-none",
-    premiumStyles:
-      "bg-linear-to-br from-amber-500 to-orange-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(245,158,11,0.3)] backdrop-blur-sm",
-    icon: <Clock size={12} />,
-    iconColor: "text-amber-500",
+    label: "Chờ duyệt",
+    styles: "bg-amber-50/90 text-amber-700 border-amber-200",
+    premiumStyles: "bg-amber-50/90 text-amber-700 border-amber-200/90 shadow-2xs",
+    icon: <Clock size={13} />,
+    iconColor: "text-amber-600",
   },
   ARCHIVED: {
-    label: "Deleted",
-    styles: "bg-zinc-100 text-zinc-600 border-zinc-200/60 shadow-none",
-    premiumStyles:
-      "bg-linear-to-br from-zinc-500 to-zinc-400 text-white border-white/30 shadow-[0_4px_10px_-3px_rgba(115,115,115,0.3)] backdrop-blur-sm",
-    icon: <Trash2 size={12} />,
+    label: "Đã xóa",
+    styles: "bg-zinc-100 text-zinc-600 border-zinc-200",
+    premiumStyles: "bg-zinc-100 text-zinc-600 border-zinc-200 shadow-2xs",
+    icon: <Trash2 size={13} />,
     iconColor: "text-zinc-500",
   },
 };
 
 export const statusMap: Record<string, string> = {
   COMPLETED: "SUCCESS",
+  "HOÀN THÀNH": "SUCCESS",
   ACTIVE: "SUCCESS",
   INACTIVE: "PENDING",
   BANNED: "FAILED",
   ERROR: "FAILED",
   PENDING: "PENDING",
+  "ĐANG CHỜ": "PENDING",
+  "CHỜ DUYỆT": "PENDING",
+  "CHỜ XÁC NHẬN": "PENDING",
   PROCESSING: "PROCESSING",
+  "ĐANG XỬ LÝ": "PROCESSING",
   CANCELLED: "CANCELLED",
+  "ĐÃ HỦY": "CANCELLED",
   FAILED: "FAILED",
+  "THẤT BẠI": "FAILED",
   APPROVED: "APPROVED",
+  "ĐÃ DUYỆT": "APPROVED",
+  CONFIRMED: "CONFIRMED",
+  "ĐÃ XÁC NHẬN": "CONFIRMED",
   REJECTED: "REJECTED",
+  "TỪ CHỐI": "REJECTED",
   PUBLISHED: "PUBLISHED",
   DRAFT: "DRAFT",
   PENDING_REVIEW: "PENDING_REVIEW",
   ARCHIVED: "ARCHIVED",
 };
 
-export const STATUS_STYLES: Record<string, string> = {
-  PENDING: "bg-amber-50 text-amber-800 border-amber-200",
-  SUCCESS: "bg-green-50 text-green-800 border-green-200",
-  FAILED: "bg-red-50 text-red-800 border-red-200",
-  CANCELLED: "bg-gray-50 text-gray-800 border-gray-200",
-};
-
-export const getStatusStyle = (status: string): string => {
-  const key = statusMap[status.toUpperCase()] || status.toUpperCase();
-  return (
-    STATUS_STYLES[key] ||
-    statusConfig[key]?.styles ||
-    "bg-gray-100 text-gray-800"
-  );
-};
-
 export const getStatusConfig = (status: string) => {
-  const key = status.toUpperCase();
-  const finalKey = statusMap[key] || key;
+  const normalized = status.trim().toUpperCase();
+  const finalKey = statusMap[normalized] || normalized;
   return (
     statusConfig[finalKey] || {
       label: status,
-      styles: "bg-slate-50 text-gray-500 border-slate-200",
-      icon: <Clock size={12} />,
-      iconColor: "text-gray-600",
+      styles: "bg-slate-50 text-slate-600 border-slate-200",
+      premiumStyles: "bg-slate-50 text-slate-600 border-slate-200 shadow-2xs",
+      icon: <Clock size={13} />,
+      iconColor: "text-slate-500",
     }
   );
 };

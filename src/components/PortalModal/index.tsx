@@ -55,22 +55,24 @@ export const PortalModal: React.FC<IPortalModal> = ({
     <AnimatePresence>
       {isOpen && (
         <div className={cn("fixed inset-0 z-9999 flex font-sans", containerClassName)}>
+          {/* Lightweight high-performance overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            transition={{ duration: 0.18 }}
+            className="absolute inset-0 bg-slate-950/60 transition-opacity"
             onClick={() => !preventCloseOnClickOverlay && onClose()}
           />
 
+          {/* Modal Container */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 10, x: containerClassName.includes("justify-end") ? 20 : 0 }}
-            animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10, x: containerClassName.includes("justify-end") ? 20 : 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            initial={{ opacity: 0, scale: 0.97, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.97, y: 8 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
-              "relative w-full bg-white shadow-3xl flex flex-col overflow-hidden border border-gray-100 z-10",
+              "relative w-full bg-white shadow-2xl flex flex-col overflow-hidden border border-gray-100/90 z-10 isolate",
               width,
               !className.includes("max-h-") && "max-h-[90vh]",
               !className.includes("rounded-") && "rounded-3xl",
@@ -78,8 +80,8 @@ export const PortalModal: React.FC<IPortalModal> = ({
             )}
           >
             {title && (
-              <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100 bg-white sticky top-0 z-20">
-                <SectionHeaderModal title={title} description={description} icon={icon} >
+              <div className="flex items-center justify-between px-6 py-3.5 border-b border-gray-100 bg-white sticky top-0 z-20 shrink-0">
+                <SectionHeaderModal title={title} description={description} icon={icon}>
                   <div className="flex items-center gap-4">
                     {headerExtra}
                     <CloseButton onClick={onClose} />
@@ -88,16 +90,22 @@ export const PortalModal: React.FC<IPortalModal> = ({
               </div>
             )}
 
-            <div className={cn(
-              "flex-1 relative min-h-0 flex flex-col",
-              !noPadding && "p-4",
-              className.includes("h-full") ? "overflow-visible" : "overflow-y-auto scrollbar-none"
-            )}>
+            {/* Smooth 60fps Scrolling Content Area */}
+            <div
+              className={cn(
+                "flex-1 relative min-h-0 flex flex-col overscroll-contain overflow-y-auto custom-scrollbar",
+                !noPadding && "p-6",
+                className.includes("h-full") && "overflow-visible"
+              )}
+              style={{
+                WebkitOverflowScrolling: "touch",
+              }}
+            >
               {children}
             </div>
 
             {footer && (
-              <div className="bg-gray-50 px-6 py-2 border-t border-gray-100 flex justify-end gap-2 sticky bottom-0 z-20">
+              <div className="bg-gray-50/90 px-6 py-3 border-t border-gray-100 flex justify-end gap-2 sticky bottom-0 z-20 shrink-0">
                 {footer}
               </div>
             )}

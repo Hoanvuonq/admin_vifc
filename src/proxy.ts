@@ -12,8 +12,12 @@ export const config = {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Exclude auth routes from protection
-  if (pathname.startsWith('/api/auth/login') || pathname.startsWith('/api/auth/refresh')) {
+  // Exclude auth routes and public course registration routes from protection
+  if (
+    pathname.startsWith('/api/auth/login') ||
+    pathname.startsWith('/api/auth/refresh') ||
+    pathname.startsWith('/api/db/courses/registrations')
+  ) {
     return NextResponse.next();
   }
 

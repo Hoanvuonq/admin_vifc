@@ -50,9 +50,9 @@
     background-color: rgba(249, 115, 22, 0.8);
   }
 
-  body,
   .custom-scrollbar {
-    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   body::-webkit-scrollbar-button,

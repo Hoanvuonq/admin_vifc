@@ -4,6 +4,7 @@ import {
   CreditCard,
   FileText,
   FolderOpen,
+  GraduationCap,
   Key,
   Lock,
   Settings,
@@ -50,6 +51,14 @@ export const MOCK_SIDEBAR_ITEMS: MenuItemSidebar[] = [
     children: [
       // { key: "subscription-plans", label: "Plans & Pricing", href: "/subscriptions/plans", icon: <Gem size={14} /> },
       { key: "transactions-list", label: "Transactions", href: "/transactions", icon: <FileText size={14} /> },
+    ]
+  },
+  {
+    key: "courses",
+    label: "Courses & Booking",
+    icon: <GraduationCap size={20} />,
+    children: [
+      { key: "courses-registrations", label: "Course Registrations", href: "/courses", icon: <GraduationCap size={14} /> },
     ]
   },
   {
