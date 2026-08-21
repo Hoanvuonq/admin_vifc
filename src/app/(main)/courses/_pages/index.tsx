@@ -5,24 +5,9 @@ import { DataTable } from "@/components/DataTable";
 import { useCourseRegistrations } from "@/hooks/useCourseRegistrations";
 import { toast } from "@/providers/ToastProvider";
 import { BookingRequestItem, ReviewBookingPayload } from "@/types/course";
-import {
-  BookOpenCheck,
-  Building,
-  Calendar,
-  CheckCircle2,
-  Clock,
-  Edit,
-  GraduationCap,
-  Mail,
-  Phone,
-  ShieldCheck,
-  XCircle,
-} from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  CourseFilters,
-  RegistrationDetailModal,
-} from "../_components";
+import { BookOpenCheck, Building, Calendar, CheckCircle2, Clock, Edit, GraduationCap, Mail, Phone, ShieldCheck, XCircle } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { CourseFilters, RegistrationDetailModal } from "../_components";
 import { getColumns } from "./columns";
 
 export const CourseRegistrationsScreen = () => {
@@ -34,32 +19,19 @@ export const CourseRegistrationsScreen = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize] = useState(10);
 
-  const [selectedRegistration, setSelectedRegistration] =
-    useState<BookingRequestItem | null>(null);
+  const [selectedRegistration, setSelectedRegistration] = useState<BookingRequestItem | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  // Debounce search
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearch(searchQuery), 350);
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  // Reset page on filter change
   useEffect(() => {
     setCurrentPage(0);
   }, [debouncedSearch, selectedStatus, selectedType]);
 
-  const {
-    registrations,
-    stats,
-    pagination,
-    isLoading,
-    refetch,
-    confirmBooking,
-    rejectBooking,
-    reviewBooking,
-    deleteRegistration,
-  } = useCourseRegistrations({
+  const { registrations, stats, pagination, isLoading, refetch, confirmBooking, rejectBooking, reviewBooking, deleteRegistration } = useCourseRegistrations({
     page: currentPage + 1,
     limit: pageSize,
     status: selectedStatus,
@@ -103,10 +75,7 @@ export const CourseRegistrationsScreen = () => {
     }
   };
 
-  const handleReviewFromModal = async (
-    id: string,
-    payload: ReviewBookingPayload
-  ) => {
+  const handleReviewFromModal = async (id: string, payload: ReviewBookingPayload) => {
     try {
       await reviewBooking({ id, payload });
       toast.success("Cập nhật trạng thái booking thành công!");
@@ -116,45 +85,30 @@ export const CourseRegistrationsScreen = () => {
     }
   };
 
-  const columns = useMemo(
-    () =>
-      getColumns(
-        handleViewDetails,
-        handleQuickApprove,
-        handleQuickReject,
-        handleDelete
-      ),
-    []
-  );
+  const columns = useMemo(() => getColumns(handleViewDetails, handleQuickApprove, handleQuickReject, handleDelete), []);
 
   const renderDropdown = (item: BookingRequestItem) => {
     const orderCode = `#${item.id.slice(0, 8).toUpperCase()}`;
     const isPending = (item.status || "").toLowerCase() === "pending";
 
     return (
-      <div className="px-8 py-5 bg-gradient-to-r from-orange-50/40 via-slate-50/60 to-white rounded-3xl border border-orange-100/80 m-2 flex flex-col lg:flex-row gap-6 items-start justify-between shadow-inner animate-in fade-in duration-300">
-        {/* User Card */}
+      <div className="px-8 py-5 bg-linear-to-r from-orange-50/40 via-slate-50/60 to-white rounded-3xl border border-orange-100/80 m-2 flex flex-col lg:flex-row gap-6 items-start justify-between shadow-inner animate-in fade-in duration-300">
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <ItemImage
-            path={`https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(
-              item.email || item.full_name || "guest"
-            )}`}
+            path={`https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(item.email || item.full_name || "guest")}`}
             productName={item.full_name || item.email}
             className="w-16 h-16 rounded-2xl border-2 border-white shadow-sm shrink-0"
           />
           <div className="space-y-1">
             <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
               {item.full_name || "Chưa đặt tên"}
-              <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-mono font-bold">
-                {orderCode}
-              </span>
+              <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-mono font-bold">{orderCode}</span>
             </h4>
             <p className="text-xs text-gray-600 flex items-center gap-1.5 select-all">
               <Mail size={12} className="text-gray-400 shrink-0" /> {item.email}
             </p>
             <p className="text-xs text-gray-600 flex items-center gap-1.5 select-all">
-              <Phone size={12} className="text-gray-400 shrink-0" />{" "}
-              {item.phone || "Chưa có SĐT"}
+              <Phone size={12} className="text-gray-400 shrink-0" /> {item.phone || "Chưa có SĐT"}
             </p>
             {item.company && (
               <p className="text-xs text-gray-500 flex items-center gap-1.5">
@@ -164,21 +118,14 @@ export const CourseRegistrationsScreen = () => {
           </div>
         </div>
 
-        {/* Detailed Metadata Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3 text-xs lg:border-l border-gray-200/80 lg:pl-6 w-full lg:w-auto">
           <div>
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">
-              Dịch vụ / Khóa học
-            </span>
-            <span className="font-bold text-gray-800 mt-0.5 block">
-              {item.booking_title}
-            </span>
+            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Dịch vụ / Khóa học</span>
+            <span className="font-bold text-gray-800 mt-0.5 block">{item.booking_title}</span>
           </div>
 
           <div>
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">
-              Ngày gửi yêu cầu
-            </span>
+            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Ngày gửi yêu cầu</span>
             <span className="font-bold text-gray-700 flex items-center gap-1 mt-0.5">
               <Calendar size={12} className="text-orange-500" />
               {new Date(item.created_at).toLocaleDateString("vi-VN")}
@@ -186,21 +133,13 @@ export const CourseRegistrationsScreen = () => {
           </div>
 
           <div>
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">
-              Nguồn đăng ký
-            </span>
-            <span className="font-bold text-gray-700 mt-0.5 block">
-              {item.source || "dashboard"}
-            </span>
+            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Nguồn đăng ký</span>
+            <span className="font-bold text-gray-700 mt-0.5 block">{item.source || "dashboard"}</span>
           </div>
 
           <div className="col-span-2 sm:col-span-3">
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">
-              Ghi chú từ khách hàng
-            </span>
-            <span className="text-gray-700 mt-0.5 block italic text-[11.5px]">
-              {item.note ? `"${item.note}"` : "Không có ghi chú thêm từ khách hàng."}
-            </span>
+            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Ghi chú từ khách hàng</span>
+            <span className="text-gray-700 mt-0.5 block italic text-[11.5px]">{item.note ? `"${item.note}"` : "Không có ghi chú thêm từ khách hàng."}</span>
           </div>
         </div>
 

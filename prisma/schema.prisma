@@ -28,6 +28,7 @@ model User {
   user_roles         UserRole[]
   user_subscriptions UserSubscription[]
   user_cards         UserCard[]
+  course_registrations course_registrations[]
 
   @@index([deleted_at], map: "idx_users_deleted_at")
   @@index([email], map: "idx_users_email")
@@ -178,3 +179,30 @@ model subscription_plans {
   deleted_at         DateTime?          @db.Timestamptz(6)
   user_subscriptions UserSubscription[]
 }
+
+model course_registrations {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String?   @db.Uuid
+  email         String    @db.VarChar(255)
+  full_name     String    @db.VarChar(255)
+  phone         String?   @db.VarChar(50)
+  company       String?   @db.VarChar(255)
+  booking_type  String    @default("course") @db.VarChar(50)
+  booking_title String    @db.VarChar(500)
+  tuition_fee   Decimal?  @default(0) @db.Decimal(12, 2)
+  deposit       Decimal?  @default(0) @db.Decimal(12, 2)
+  status        String    @default("pending") @db.VarChar(50)
+  source        String    @default("web-dashboard") @db.VarChar(100)
+  note          String?
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime  @default(now()) @db.Timestamptz(6)
+  deleted_at    DateTime? @db.Timestamptz(6)
+  users         User?     @relation(fields: [user_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_course_registrations_user_id")
+  @@index([email], map: "idx_course_registrations_email")
+  @@index([status], map: "idx_course_registrations_status")
+  @@index([booking_type], map: "idx_course_registrations_booking_type")
+  @@map("course_registrations")
+}
+

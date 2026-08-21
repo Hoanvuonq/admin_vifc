@@ -1,22 +1,11 @@
 "use client";
 
-import {
-  FormInput,
-  PortalModal,
-  PremiumButton,
-  SectionHeader,
-  SelectComponent,
-} from "@/components";
+import { FormInput, PortalModal, PremiumButton, SectionHeader, SelectComponent } from "@/components";
 import { toast } from "@/providers/ToastProvider";
 import { BookingRequestItem } from "@/types/course";
-import {
-  FileText,
-  GraduationCap,
-  Plus,
-  ShieldCheck,
-  User,
-} from "lucide-react";
+import { FileText, GraduationCap, Plus, ShieldCheck, User } from "lucide-react";
 import React, { useState } from "react";
+export * from "./registrationSchema";
 
 export interface CreateRegistrationModalProps {
   isOpen: boolean;
@@ -32,12 +21,7 @@ const BOOKING_TYPE_OPTIONS = [
   { value: "lounge", label: "VIP Lounge" },
 ];
 
-export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = ({
-  isOpen,
-  onClose,
-  onCreate,
-  isLoading = false,
-}) => {
+export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = ({ isOpen, onClose, onCreate, isLoading = false }) => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -147,12 +131,7 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
       <form onSubmit={handleSubmit} className="space-y-5 animate-in fade-in duration-300">
         {/* Section 1: Customer Personal Info */}
         <div className="space-y-3.5">
-          <SectionHeader
-            icon={User}
-            title="Thông tin học viên & Khách hàng"
-            description="Họ tên, email và số điện thoại liên hệ"
-            size="sm"
-          />
+          <SectionHeader icon={User} title="Thông tin học viên & Khách hàng" description="Họ tên, email và số điện thoại liên hệ" size="sm" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
             <div className="md:col-span-2">
@@ -176,13 +155,7 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
               required
             />
 
-            <FormInput
-              label="Số điện thoại liên hệ"
-              placeholder="Ví dụ: 0912 345 678"
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
+            <FormInput label="Số điện thoại liên hệ" placeholder="Ví dụ: 0912 345 678" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
 
             <div className="md:col-span-2">
               <FormInput
@@ -197,12 +170,7 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
 
         {/* Section 2: Course & Booking Details */}
         <div className="space-y-3.5">
-          <SectionHeader
-            icon={GraduationCap}
-            title="Thông tin Khóa học & Dịch vụ"
-            description="Tên khóa học, loại hình và thông tin học phí"
-            size="sm"
-          />
+          <SectionHeader icon={GraduationCap} title="Thông tin Khóa học & Dịch vụ" description="Tên khóa học, loại hình và thông tin học phí" size="sm" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
             <div className="md:col-span-2">
@@ -217,14 +185,8 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
             </div>
 
             <div className="md:col-span-2 space-y-2">
-              <label className="text-[12px] font-bold text-gray-700 ml-1 flex items-center gap-1">
-                Loại hình dịch vụ
-              </label>
-              <SelectComponent
-                value={bookingType}
-                onChange={setBookingType}
-                options={BOOKING_TYPE_OPTIONS}
-              />
+              <label className="text-[12px] font-bold text-gray-700 ml-1 flex items-center gap-1">Loại hình dịch vụ</label>
+              <SelectComponent value={bookingType} onChange={setBookingType} options={BOOKING_TYPE_OPTIONS} />
             </div>
 
             <FormInput
@@ -247,12 +209,7 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
 
         {/* Section 3: Notes */}
         <div className="space-y-3.5">
-          <SectionHeader
-            icon={FileText}
-            title="Ghi chú & Yêu cầu bổ sung"
-            description="Lưu ý lịch học, xuất hóa đơn VAT hoặc yêu cầu từ học viên"
-            size="sm"
-          />
+          <SectionHeader icon={FileText} title="Ghi chú & Yêu cầu bổ sung" description="Lưu ý lịch học, xuất hóa đơn VAT hoặc yêu cầu từ học viên" size="sm" />
 
           <FormInput
             isTextArea

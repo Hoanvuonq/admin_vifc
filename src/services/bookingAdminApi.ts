@@ -13,7 +13,6 @@ const getAuthHeaders = () => {
   };
 };
 
-// Fallback in-memory data in case the external BE service is waking up or in offline dev
 let fallbackBookings: BookingRequestItem[] = [
   {
     id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
