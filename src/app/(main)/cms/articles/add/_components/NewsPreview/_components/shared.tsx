@@ -2,9 +2,7 @@ import React from "react";
 import { Image as ImageIcon } from "lucide-react";
 import { ContentBlock } from "../type";
 import { FormInput } from "@/components";
-import {
-  AlignCenter, AlignLeft, AlignRight, ArrowDown, ArrowUp, Trash2
-} from "lucide-react";
+import { AlignCenter, AlignLeft, AlignRight, ArrowDown, ArrowUp, Trash2 } from "lucide-react";
 import Image from "next/image";
 
 // ────────────────────────────────────────────────────────────
@@ -49,7 +47,7 @@ export const BannerImage: React.FC<{
 }> = ({ thumbnail, title, isRounded = false, aspectClass = "aspect-21/9" }) => {
   const hasImage = thumbnail && !thumbnail.includes("api.dicebear.com/7.x/shapes/svg");
   return (
-    <div className={`w-full p-2.5 ${aspectClass} overflow-hidden bg-slate-50 relative ${isRounded ? "rounded-3xl shadow-2xs" : ""}`}>
+    <div className={`w-full p-2.5 ${aspectClass} overflow-hidden bg-slate-50 relative ${isRounded ? "rounded-2xl shadow-2xs" : ""}`}>
       {hasImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <Image src={thumbnail} fill alt={title} className={`w-full h-full object-cover ${isRounded ? "rounded-2xl" : ""}`} />
@@ -81,7 +79,10 @@ export const BlockControls: React.FC<{
   >
     <button
       type="button"
-      onClick={(e) => { e.stopPropagation(); onMoveBlock?.(index, "up"); }}
+      onClick={(e) => {
+        e.stopPropagation();
+        onMoveBlock?.(index, "up");
+      }}
       disabled={index === 0}
       className="p-1 rounded-lg text-slate-555 hover:bg-slate-105 hover:text-slate-800 disabled:opacity-20 transition-colors"
       title="Move Up"
@@ -90,7 +91,10 @@ export const BlockControls: React.FC<{
     </button>
     <button
       type="button"
-      onClick={(e) => { e.stopPropagation(); onMoveBlock?.(index, "down"); }}
+      onClick={(e) => {
+        e.stopPropagation();
+        onMoveBlock?.(index, "down");
+      }}
       disabled={index === totalBlocks - 1}
       className="p-1 rounded-lg text-slate-555 hover:bg-slate-105 hover:text-slate-800 disabled:opacity-20 transition-colors"
       title="Move Down"
@@ -98,12 +102,13 @@ export const BlockControls: React.FC<{
       <ArrowDown size={11} className="stroke-[2.5]" />
     </button>
 
-
-
     <div className="w-px h-3.5 bg-slate-200 mx-0.5" />
     <button
       type="button"
-      onClick={(e) => { e.stopPropagation(); onDeleteBlock?.(block.id); }}
+      onClick={(e) => {
+        e.stopPropagation();
+        onDeleteBlock?.(block.id);
+      }}
       className="p-1 rounded-lg text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors"
       title="Delete block"
     >
@@ -140,9 +145,7 @@ export const BlockContent: React.FC<{ block: ContentBlock }> = ({ block }) => {
       <div className="py-2.5 w-full text-center">
         <div className="w-full transition-all duration-300">
           <BlockImage block={block} />
-          {block.caption && (
-            <p className="text-[9.5px] text-slate-450 italic text-center font-bold mt-2">{block.caption}</p>
-          )}
+          {block.caption && <p className="text-[9.5px] text-slate-450 italic text-center font-bold mt-2">{block.caption}</p>}
         </div>
       </div>
     );
@@ -151,7 +154,7 @@ export const BlockContent: React.FC<{ block: ContentBlock }> = ({ block }) => {
   if (block.type === "pdf") {
     return (
       <div className="py-4 w-full">
-        <div className="bg-[#3b3b3b] rounded-[18px] p-5 max-w-[280px] mx-auto flex flex-col items-center justify-center relative overflow-hidden shadow-md">
+        <div className="bg-[#3b3b3b] rounded-2xl p-5 max-w-[280px] mx-auto flex flex-col items-center justify-center relative overflow-hidden shadow-md">
           {block.thumbnailUrl ? (
             <div className="w-full relative shadow-sm rounded-lg overflow-hidden border border-[#555]">
               <img src={block.thumbnailUrl} alt={block.caption || "PDF Cover"} className="w-full h-auto object-cover" />
@@ -163,15 +166,18 @@ export const BlockContent: React.FC<{ block: ContentBlock }> = ({ block }) => {
           )}
 
           <div className="absolute inset-x-0 bottom-12 flex justify-center z-10">
-            <a href={block.content || "#"} target="_blank" rel="noopener noreferrer" className="bg-white hover:bg-slate-50 text-slate-900 px-5 py-2 rounded-full text-[10px] font-extrabold flex items-center gap-1.5 shadow-lg transition-transform hover:scale-105 active:scale-95">
+            <a
+              href={block.content || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white hover:bg-slate-50 text-slate-900 px-5 py-2 rounded-full text-[10px] font-extrabold flex items-center gap-1.5 shadow-lg transition-transform hover:scale-105 active:scale-95"
+            >
               View full report <ArrowUp size={11} className="rotate-45" />
             </a>
           </div>
 
           <div className="mt-5 text-center w-full">
-            <span className="text-[10px] font-medium text-slate-300 truncate block w-full px-2">
-              {block.caption || "Untitled Document.pdf"}
-            </span>
+            <span className="text-[10px] font-medium text-slate-300 truncate block w-full px-2">{block.caption || "Untitled Document.pdf"}</span>
           </div>
         </div>
       </div>
@@ -185,7 +191,7 @@ export const PDFPreview: React.FC<{ url?: string; cover?: string; name?: string 
   if (!url && !cover && !name) return null;
   return (
     <div className="py-4 w-full">
-      <div className="bg-[#3b3b3b] rounded-[18px] p-5 max-w-[280px] mx-auto flex flex-col items-center justify-center relative overflow-hidden shadow-md">
+      <div className="bg-[#3b3b3b] rounded-2xl p-5 max-w-[280px] mx-auto flex flex-col items-center justify-center relative overflow-hidden shadow-md">
         {cover ? (
           <div className="w-full relative shadow-sm rounded-lg overflow-hidden border border-[#555]">
             <img src={cover} alt={name || "PDF Cover"} className="w-full h-auto object-cover" />
@@ -197,29 +203,33 @@ export const PDFPreview: React.FC<{ url?: string; cover?: string; name?: string 
         )}
 
         <div className="absolute inset-x-0 bottom-12 flex justify-center z-10">
-          <a href={url || "#"} target="_blank" rel="noopener noreferrer" className="bg-white hover:bg-slate-50 text-slate-900 px-5 py-2 rounded-full text-[10px] font-extrabold flex items-center gap-1.5 shadow-lg transition-transform hover:scale-105 active:scale-95">
+          <a
+            href={url || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white hover:bg-slate-50 text-slate-900 px-5 py-2 rounded-full text-[10px] font-extrabold flex items-center gap-1.5 shadow-lg transition-transform hover:scale-105 active:scale-95"
+          >
             View full report <ArrowUp size={11} className="rotate-45" />
           </a>
         </div>
 
         <div className="mt-5 text-center w-full">
-          <span className="text-[10px] font-medium text-slate-300 truncate block w-full px-2">
-            {name || "Untitled Document.pdf"}
-          </span>
+          <span className="text-[10px] font-medium text-slate-300 truncate block w-full px-2">{name || "Untitled Document.pdf"}</span>
         </div>
       </div>
     </div>
   );
 };
 
-export const TagsAndComments: React.FC<{ tags: string[]; allowComments: boolean }> = ({
-  tags, allowComments
-}) => (
+export const TagsAndComments: React.FC<{ tags: string[]; allowComments: boolean }> = ({ tags, allowComments }) => (
   <>
     {tags.length > 0 && (
       <div className="flex flex-wrap gap-1.5 pt-6 mt-6 select-none">
         {tags.map((tg) => (
-          <span key={tg} className="text-[9.5px] font-extrabold bg-slate-50 text-slate-655 px-3 py-1 rounded-lg border border-slate-255 transition-colors hover:bg-slate-border-gray-50/50">
+          <span
+            key={tg}
+            className="text-[9.5px] font-extrabold bg-slate-50 text-slate-655 px-3 py-1 rounded-lg border border-slate-255 transition-colors hover:bg-slate-border-gray-50/50"
+          >
             #{tg}
           </span>
         ))}

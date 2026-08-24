@@ -7,18 +7,8 @@ import { memo } from "react";
 import Skeleton from "react-loading-skeleton";
 import { SmartKPICardProps } from "./type";
 
-function SmartKPICardComponent({
-  title,
-  value,
-  growth,
-  format = "number",
-  icon,
-  suffix,
-  loading = false,
-  colorTheme = "blue",
-}: SmartKPICardProps) {
-  const formattedValue =
-    format === "currency" ? value : formatNumber(typeof value === "string" ? Number(value) : value);
+function SmartKPICardComponent({ title, value, growth, format = "number", icon, suffix, loading = false, colorTheme = "blue" }: SmartKPICardProps) {
+  const formattedValue = format === "currency" ? value : formatNumber(typeof value === "string" ? Number(value) : value);
 
   const themes = {
     blue: {
@@ -58,7 +48,7 @@ function SmartKPICardComponent({
 
   if (loading) {
     return (
-      <div className="bg-gray-100 p-4 rounded-[2.2rem] border border-gray-100 shadow-custom h-35 flex flex-col justify-between overflow-hidden">
+      <div className="bg-gray-100 p-4 rounded-2xl border border-gray-100 shadow-custom h-35 flex flex-col justify-between overflow-hidden">
         <div className="flex items-center gap-3">
           <Skeleton circle width={32} height={32} />
           <Skeleton width={100} height={14} />
@@ -74,43 +64,31 @@ function SmartKPICardComponent({
   return (
     <div
       className={cn(
-        "relative p-4 rounded-[2.2rem] border border-gray-100 bg-white shadow-sm",
-        "hover:shadow-[0_20px_50px_rgba(0,0,0,0.04)] transition-all duration-500 group overflow-hidden"
+        "relative p-4 rounded-2xl border border-gray-100 bg-white shadow-sm",
+        "hover:shadow-[0_20px_50px_rgba(0,0,0,0.04)] transition-all duration-500 group overflow-hidden",
       )}
     >
       <div
         className={cn(
           "absolute top-0 right-0 w-24 h-24 rounded-full -mr-10 -mt-10 opacity-40 transition-transform group-hover:scale-150 duration-700",
-          theme.decoration
+          theme.decoration,
         )}
       />
 
       <div className="relative z-10 flex flex-col h-full justify-between">
         <div className="flex items-center gap-3 mb-4">
           <div
-            className={cn(
-              "w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110",
-              theme.iconBg,
-              theme.text
-            )}
+            className={cn("w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110", theme.iconBg, theme.text)}
           >
             {icon}
           </div>
-          <span className="text-[10px] font-bold uppercase  text-gray-500 group-hover:text-gray-600 transition-colors">
-            {title}
-          </span>
+          <span className="text-[10px] font-bold uppercase  text-gray-500 group-hover:text-gray-600 transition-colors">{title}</span>
         </div>
 
         <div className="flex items-end justify-between">
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-semibold text-gray-900 italic leading-none tabular-nums">
-              {formattedValue}
-            </span>
-            {suffix && (
-              <span className="text-[10px] font-bold text-gray-500 uppercase italic">
-                {suffix}
-              </span>
-            )}
+            <span className="text-3xl font-semibold text-gray-900 italic leading-none tabular-nums">{formattedValue}</span>
+            {suffix && <span className="text-[10px] font-bold text-gray-500 uppercase italic">{suffix}</span>}
           </div>
 
           {growth !== undefined && (
@@ -119,14 +97,10 @@ function SmartKPICardComponent({
                 "flex items-center text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all duration-500 tabular-nums",
                 isPositive
                   ? "bg-emerald-50 text-emerald-600 border-emerald-100 group-hover:bg-emerald-500 group-hover:text-white"
-                  : "bg-red-50 text-red-600 border-red-100 group-hover:bg-red-500 group-hover:text-white"
+                  : "bg-red-50 text-red-600 border-red-100 group-hover:bg-red-500 group-hover:text-white",
               )}
             >
-              {isPositive ? (
-                <ArrowUpRight size={12} className="mr-1 stroke-3" />
-              ) : (
-                <ArrowDownRight size={12} className="mr-1 stroke-3" />
-              )}
+              {isPositive ? <ArrowUpRight size={12} className="mr-1 stroke-3" /> : <ArrowDownRight size={12} className="mr-1 stroke-3" />}
               {Math.abs(growth).toFixed(1)}%
             </div>
           )}
@@ -136,7 +110,7 @@ function SmartKPICardComponent({
       <div
         className={cn(
           "absolute left-0 bottom-0 w-0 h-1 transition-all duration-500 group-hover:w-full opacity-60",
-          isPositive ? "bg-emerald-500" : "bg-red-500"
+          isPositive ? "bg-emerald-500" : "bg-red-500",
         )}
       />
     </div>

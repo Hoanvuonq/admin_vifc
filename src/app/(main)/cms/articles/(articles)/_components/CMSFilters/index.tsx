@@ -2,16 +2,7 @@
 
 import { StatusTabs } from "@/app/(main)/(dashboard)/_components";
 import { DateTimeInput, PremiumButton, SearchComponent, SelectComponent } from "@/components";
-import {
-  BookOpen,
-  CheckCircle2,
-  Download,
-  FileText,
-  Filter,
-  Plus,
-  RefreshCw,
-  Trash2
-} from "lucide-react";
+import { BookOpen, CheckCircle2, Download, FileText, Filter, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useMemo } from "react";
 import { CATEGORY_OPTIONS } from "../../_constants/cms.constants";
@@ -22,47 +13,49 @@ export const CMSFilters: React.FC<CMSFiltersProps> = ({ counts }) => {
   const router = useRouter();
 
   const {
-    searchText, setSearchText,
-    selectedCategory, setSelectedCategory,
-    selectedStatus, setSelectedStatus,
-    startDate, setStartDate,
-    endDate, setEndDate,
-    resetFilters
+    searchText,
+    setSearchText,
+    selectedCategory,
+    setSelectedCategory,
+    selectedStatus,
+    setSelectedStatus,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    resetFilters,
   } = useArticleListStore();
 
-  const tabs = useMemo(() => [
-    { key: "ALL", label: "All", icon: BookOpen, count: counts.total },
-    { key: "PUBLISHED", label: "Published", icon: CheckCircle2, count: counts.published },
-    { key: "DRAFT", label: "Drafts", icon: FileText, count: counts.draft },
-    { key: "ARCHIVED", label: "Deleted", icon: Trash2, count: counts.archived },
-  ], [counts]);
+  const tabs = useMemo(
+    () => [
+      { key: "ALL", label: "All", icon: BookOpen, count: counts.total },
+      { key: "PUBLISHED", label: "Published", icon: CheckCircle2, count: counts.published },
+      { key: "DRAFT", label: "Drafts", icon: FileText, count: counts.draft },
+      { key: "ARCHIVED", label: "Deleted", icon: Trash2, count: counts.archived },
+    ],
+    [counts],
+  );
 
-  const categoryOptions = useMemo(() => [
-    { label: "All Categories", value: "ALL" },
-    ...CATEGORY_OPTIONS
-  ], []);
+  const categoryOptions = useMemo(() => [{ label: "All Categories", value: "ALL" }, ...CATEGORY_OPTIONS], []);
 
-  const statusOptions = useMemo(() => [
-    { label: "All Statuses", value: "ALL" },
-    { label: "Published", value: "PUBLISHED" },
-    { label: "Draft", value: "DRAFT" },
-    { label: "Deleted", value: "ARCHIVED" }
-  ], []);
+  const statusOptions = useMemo(
+    () => [
+      { label: "All Statuses", value: "ALL" },
+      { label: "Published", value: "PUBLISHED" },
+      { label: "Draft", value: "DRAFT" },
+      { label: "Deleted", value: "ARCHIVED" },
+    ],
+    [],
+  );
 
   return (
-    <div className="bg-white/80 backdrop-blur-2xl py-4 px-6 rounded-[2.5rem] border border-white/60 shadow-custom w-full animate-in fade-in slide-in-from-top-2 duration-500 space-y-4">
+    <div className="bg-white/80 backdrop-blur-2xl py-4 px-6 rounded-2xl border border-white/60 shadow-custom w-full animate-in fade-in slide-in-from-top-2 duration-500 space-y-4">
       <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
         <div className="w-full lg:w-auto">
-          <StatusTabs
-            tabs={tabs}
-            current={selectedStatus}
-            onChange={setSelectedStatus}
-            layoutId="cms-status-pill"
-          />
+          <StatusTabs tabs={tabs} current={selectedStatus} onChange={setSelectedStatus} layoutId="cms-status-pill" />
         </div>
 
         <div className="flex items-center gap-2 w-full lg:w-auto justify-end">
-
           <PremiumButton
             label="Filter"
             variant="blue"
@@ -102,42 +95,20 @@ export const CMSFilters: React.FC<CMSFiltersProps> = ({ counts }) => {
         </div>
 
         <div className="lg:col-span-1">
-          <SelectComponent
-            placeholder="Category"
-            value={selectedCategory}
-            onChange={setSelectedCategory}
-            options={categoryOptions}
-          />
+          <SelectComponent placeholder="Category" value={selectedCategory} onChange={setSelectedCategory} options={categoryOptions} />
         </div>
 
         <div className="lg:col-span-1">
-          <SelectComponent
-            placeholder="Status"
-            value={selectedStatus}
-            onChange={setSelectedStatus}
-            options={statusOptions}
-          />
+          <SelectComponent placeholder="Status" value={selectedStatus} onChange={setSelectedStatus} options={statusOptions} />
         </div>
 
         <div className="lg:col-span-2 flex items-center gap-2">
           <div className="flex-1">
-            <DateTimeInput
-              label=""
-              value={startDate}
-              onChange={setStartDate}
-              isDate={true}
-              placeholder="From Date"
-            />
+            <DateTimeInput label="" value={startDate} onChange={setStartDate} isDate={true} placeholder="From Date" />
           </div>
           <span className="text-gray-400 text-xs font-bold shrink-0">to</span>
           <div className="flex-1">
-            <DateTimeInput
-              label=""
-              value={endDate}
-              onChange={setEndDate}
-              isDate={true}
-              placeholder="To Date"
-            />
+            <DateTimeInput label="" value={endDate} onChange={setEndDate} isDate={true} placeholder="To Date" />
           </div>
           <button
             onClick={resetFilters}

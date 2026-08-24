@@ -116,19 +116,25 @@ export const CreateUserModal: React.FC<CreateUserModalProps> = ({ open, onClose,
       password: data.password || undefined,
       status: data.status,
       isVIFCPass: data.isVIFCPass || false,
+      so_the: data.so_the?.trim() || undefined,
+      loai_the: data.loai_the?.trim() || undefined,
+      cardUsername: data.cardUsername?.trim() || undefined,
       avatarFile: data.avatarFile || null,
       avatarUrl: data.avatarUrl || "",
       subscriptionPlanId: data.subscriptionPlanId || undefined,
       company: data.company?.trim() || undefined,
       country: data.country?.trim() || undefined,
-    }
+    };
     if (onSave) return await onSave(payload);
     try {
-
       const res = await fetch("/api/db/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          ...payload,
+          full_name: payload.name,
+          card_username: payload.cardUsername,
+        }),
       });
 
       if (!res.ok) {
@@ -161,20 +167,8 @@ export const CreateUserModal: React.FC<CreateUserModalProps> = ({ open, onClose,
             <span>Tài khoản tự động áp dụng chính sách bảo mật hệ thống VIFC</span>
           </div>
           <div className="flex items-center gap-2.5 ml-auto">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-5 h-12 rounded-2xl border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold text-[12px] uppercase tracking-wider transition-colors cursor-pointer"
-            >
-              Hủy bỏ
-            </button>
-            <PremiumButton
-              label="Tạo tài khoản"
-              icon={UserPlus}
-              onClick={handleSubmit(onSubmit)}
-              isLoading={isSubmitting}
-              className="px-7 h-12 rounded-2xl font-bold text-[12px] uppercase tracking-wider shadow-lg shadow-orange-500/20"
-            />
+            <PremiumButton type="button" label="Hủy bỏ" onClick={onClose} variant="gray" size="md" />
+            <PremiumButton label="Tạo tài khoản" icon={UserPlus} onClick={handleSubmit(onSubmit)} size="md" isLoading={isSubmitting} />
           </div>
         </div>
       }

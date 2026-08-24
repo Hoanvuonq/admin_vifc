@@ -19,6 +19,7 @@ const BOOKING_TYPE_OPTIONS = [
   { value: "workshop", label: "Hội thảo (Workshop)" },
   { value: "meeting-room", label: "Phòng họp (Meeting Room)" },
   { value: "lounge", label: "VIP Lounge" },
+  { value: "consulting", label: "Tư vấn 1-1 (Consulting)" },
 ];
 
 export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = ({ isOpen, onClose, onCreate, isLoading = false }) => {
@@ -102,17 +103,17 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
       width="max-w-2xl"
       className="max-h-[90vh]"
       footer={
-        <div className="flex items-center justify-between w-full">
-          <div className="hidden sm:flex items-center gap-2 text-[11px] font-medium text-gray-500">
-            <ShieldCheck size={15} className="text-emerald-500" />
-            <span>Phiếu đăng ký được tự động lưu trữ và đồng bộ an toàn trên VIFC</span>
+        <div className="flex items-center justify-between w-full gap-4">
+          <div className="hidden sm:flex items-center gap-2 text-[11.5px] font-medium text-gray-500 min-w-0">
+            <ShieldCheck size={16} className="text-emerald-500 shrink-0" />
+            <span className="truncate">Lưu trữ và đồng bộ an toàn trên hệ thống VIFC</span>
           </div>
-          <div className="flex items-center gap-2.5 ml-auto">
+          <div className="flex items-center gap-2.5 ml-auto shrink-0">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting || isLoading}
-              className="px-5 h-11 rounded-2xl border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold text-[12px] uppercase tracking-wider transition-colors cursor-pointer disabled:opacity-50"
+              className="px-5 h-11 rounded-2xl border border-gray-200 text-gray-700 hover:bg-gray-100 font-bold text-[12px] uppercase tracking-wider transition-colors cursor-pointer disabled:opacity-50 whitespace-nowrap shrink-0"
             >
               Hủy bỏ
             </button>
@@ -122,18 +123,17 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
               variant="orange"
               onClick={handleSubmit}
               isLoading={isSubmitting || isLoading}
-              className="px-6 h-11 rounded-2xl font-bold text-[12px] uppercase tracking-wider shadow-lg shadow-orange-500/20"
+              className="px-6 h-11 rounded-2xl font-bold text-[12px] uppercase tracking-wider shadow-lg shadow-orange-500/20 whitespace-nowrap shrink-0"
             />
           </div>
         </div>
       }
     >
       <form onSubmit={handleSubmit} className="space-y-5 animate-in fade-in duration-300">
-        {/* Section 1: Customer Personal Info */}
-        <div className="space-y-3.5">
+        <div className="space-y-3">
           <SectionHeader icon={User} title="Thông tin học viên & Khách hàng" description="Họ tên, email và số điện thoại liên hệ" size="sm" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="md:col-span-2">
               <FormInput
                 label="Họ và tên học viên / Khách hàng"
@@ -169,10 +169,10 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
         </div>
 
         {/* Section 2: Course & Booking Details */}
-        <div className="space-y-3.5">
+        <div className="space-y-3">
           <SectionHeader icon={GraduationCap} title="Thông tin Khóa học & Dịch vụ" description="Tên khóa học, loại hình và thông tin học phí" size="sm" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="md:col-span-2">
               <FormInput
                 label="Tên khóa học / Dịch vụ đăng ký"
@@ -208,7 +208,7 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
         </div>
 
         {/* Section 3: Notes */}
-        <div className="space-y-3.5">
+        <div className="space-y-3">
           <SectionHeader icon={FileText} title="Ghi chú & Yêu cầu bổ sung" description="Lưu ý lịch học, xuất hóa đơn VAT hoặc yêu cầu từ học viên" size="sm" />
 
           <FormInput

@@ -10,6 +10,9 @@ export interface CreateUserModalProps {
     phone: string;
     password?: string;
     isVIFCPass?: boolean;
+    so_the?: string;
+    loai_the?: string;
+    cardUsername?: string;
     status: UserItem["status"];
     avatarFile: File | null;
     avatarUrl: string;

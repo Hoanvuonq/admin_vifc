@@ -17,10 +17,9 @@ const getSearchableText = (str: string) => {
     .replace(/\s+/g, "");
 };
 
-
 export const Header = ({
   collapsed = false,
-  onToggleSidebar = () => { },
+  onToggleSidebar = () => {},
   isMobile = false,
   scrollY = 0,
   headerInfo,
@@ -52,17 +51,17 @@ export const Header = ({
 
   const searchableItems = useMemo(() => {
     const items: any[] = [];
-    sidebarItems.forEach(item => {
+    sidebarItems.forEach((item) => {
       if (item.href) {
         items.push({ label: item.label, icon: item.icon, href: item.href, parent: null });
       }
       if (item.children) {
-        item.children.forEach(child => {
+        item.children.forEach((child) => {
           items.push({
             label: child.label,
             icon: child.icon || item.icon,
             href: child.href,
-            parent: item.label
+            parent: item.label,
           });
         });
       }
@@ -73,11 +72,13 @@ export const Header = ({
   const suggestions = useMemo(() => {
     if (!searchValue.trim()) return [];
     const searchKey = getSearchableText(searchValue);
-    return searchableItems.filter(item => {
-      const itemKey = getSearchableText(item.label);
-      const parentKey = item.parent ? getSearchableText(item.parent) : "";
-      return itemKey.includes(searchKey) || parentKey.includes(searchKey);
-    }).slice(0, 8);
+    return searchableItems
+      .filter((item) => {
+        const itemKey = getSearchableText(item.label);
+        const parentKey = item.parent ? getSearchableText(item.parent) : "";
+        return itemKey.includes(searchKey) || parentKey.includes(searchKey);
+      })
+      .slice(0, 8);
   }, [searchValue, searchableItems]);
 
   const handleSelect = (href: string) => {
@@ -101,7 +102,7 @@ export const Header = ({
       className={cn(
         "sticky top-0 z-50 w-full h-16 md:h-20 px-4 md:px-8",
         "flex items-center justify-between transition-all duration-500",
-        showPageHeader ? "bg-white/90 backdrop-blur-2xl shadow-custom" : "bg-white/60 backdrop-blur-2xl shadow-sm"
+        showPageHeader ? "bg-white/90 backdrop-blur-2xl shadow-custom" : "bg-white/60 backdrop-blur-2xl shadow-sm",
       )}
     >
       <div className="flex items-center gap-3 md:gap-6 flex-1 min-w-0">
@@ -110,12 +111,7 @@ export const Header = ({
           className="group relative cursor-pointer p-2 md:p-2.5 rounded-2xl text-gray-500 hover:text-orange-600 hover:bg-orange-50 transition-all duration-300 active:scale-90 border border-transparent hover:border-orange-100 shadow-sm hover:shadow-orange-200/20 shrink-0"
           aria-label="Toggle Sidebar"
         >
-          <Menu
-            className={cn(
-              "w-5 h-5 md:w-6 md:h-6 transition-all duration-500",
-              collapsed ? "rotate-180 scale-110" : ""
-            )}
-          />
+          <Menu className={cn("w-5 h-5 md:w-6 md:h-6 transition-all duration-500", collapsed ? "rotate-180 scale-110" : "")} />
           <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-orange-500 rounded-full border-2 border-white opacity-0 group-hover:opacity-100 transition-opacity" />
         </button>
 
@@ -152,9 +148,7 @@ export const Header = ({
                           suffix={metric.suffix}
                           compact
                         />
-                        {index < headerInfo.metrics!.length - 1 && (
-                          <div className="w-px h-6 bg-gray-200/50 mx-1" />
-                        )}
+                        {index < headerInfo.metrics!.length - 1 && <div className="w-px h-6 bg-gray-200/50 mx-1" />}
                       </Fragment>
                     ))}
                   </div>
@@ -169,13 +163,7 @@ export const Header = ({
                 transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
                 className="flex items-center gap-4 md:gap-8"
               >
-                <TitlePageHeader
-                  icon={LayoutGrid}
-                  title={defaultTitle}
-                  highlightTitle={defaultHighlightTitle}
-                  subtitle="Welcome backs"
-                  size="xs"
-                />
+                <TitlePageHeader icon={LayoutGrid} title={defaultTitle} highlightTitle={defaultHighlightTitle} subtitle="Welcome backs" size="xs" />
 
                 <div className="hidden lg:flex flex-1 max-w-lg ml-20 relative" ref={searchRef}>
                   <SearchComponent
@@ -193,7 +181,7 @@ export const Header = ({
                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute top-full left-0 right-0 mt-3 bg-white/95 backdrop-blur-xl border border-gray-100 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-hidden z-50 p-2"
+                        className="absolute top-full left-0 right-0 mt-3 bg-white/95 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-hidden z-50 p-2"
                       >
                         {searchValue.trim().length > 0 ? (
                           suggestions.length > 0 ? (
@@ -214,12 +202,13 @@ export const Header = ({
                                     </div>
                                     <div className="flex flex-col items-start">
                                       <span className="text-sm font-bold text-gray-700 group-hover:text-orange-600">{item.label}</span>
-                                      {item.parent && (
-                                        <span className="text-[10px] font-bold text-gray-400 uppercase">{item.parent}</span>
-                                      )}
+                                      {item.parent && <span className="text-[10px] font-bold text-gray-400 uppercase">{item.parent}</span>}
                                     </div>
                                   </div>
-                                  <ChevronRight size={16} className="text-gray-300 group-hover:text-orange-400 transform group-hover:translate-x-1 transition-all" />
+                                  <ChevronRight
+                                    size={16}
+                                    className="text-gray-300 group-hover:text-orange-400 transform group-hover:translate-x-1 transition-all"
+                                  />
                                 </button>
                               ))}
                             </div>
@@ -242,7 +231,7 @@ export const Header = ({
                               {sidebarItems.slice(0, 8).map((item, idx) => (
                                 <button
                                   key={idx}
-                                  onClick={() => handleSelect(item.href || (item.children?.[0]?.href || ""))}
+                                  onClick={() => handleSelect(item.href || item.children?.[0]?.href || "")}
                                   className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-2xl group transition-all"
                                 >
                                   <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-white group-hover:text-orange-600 group-hover:shadow-sm transition-all">
@@ -288,7 +277,7 @@ export const Header = ({
             >
               {notificationDropdown}
               <div className="hidden xs:block h-8 w-px bg-slate-100 mx-1 md:mx-2" />
-              <div className="hidden lg:flex items-center gap-2 bg-slate-50/80 p-1.5 rounded-3xl border border-slate-100 shadow-sm">
+              <div className="hidden lg:flex items-center gap-2 bg-slate-50/80 p-1.5 rounded-2xl border border-slate-100 shadow-sm">
                 <LanguageSwitcher />
                 <div className="w-px h-4 bg-slate-200 mx-1" />
                 <ThemeSwitcher />
@@ -297,9 +286,7 @@ export const Header = ({
           )}
         </AnimatePresence>
 
-        <div className="pl-2 md:pl-4 border-l border-slate-100 h-10 flex items-center">
-          {accountDropdown}
-        </div>
+        <div className="pl-2 md:pl-4 border-l border-slate-100 h-10 flex items-center">{accountDropdown}</div>
       </div>
     </header>
   );

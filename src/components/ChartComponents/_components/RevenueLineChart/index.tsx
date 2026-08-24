@@ -6,18 +6,9 @@ import dayjs from "dayjs";
 import { Activity, ShoppingBag, TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";
 import _ from "lodash";
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { RevenueLineChartProps } from "./type";
 import { formatPrice } from "@/utils/format";
-
 
 export const RevenueLineChart = ({
   revenueData,
@@ -26,10 +17,10 @@ export const RevenueLineChart = ({
   secondaryOrderData,
   primaryLabel,
   secondaryLabel,
-  period = 'today',
+  period = "today",
   title,
   subTitle,
-  loading
+  loading,
 }: RevenueLineChartProps) => {
   const [metric, setMetric] = useState<"revenue" | "orders">("revenue");
 
@@ -42,31 +33,27 @@ export const RevenueLineChart = ({
     const targetSource = metric === "revenue" ? revenueData : orderData;
     if (_.isEmpty(targetSource)) return [];
 
-    const isHourly = _.get(targetSource, 'length') === 24 || period === 'today';
+    const isHourly = _.get(targetSource, "length") === 24 || period === "today";
 
     return targetSource!.map((val, idx) => {
       const revVal = _.get(revenueData, idx);
-      const rev = typeof revVal === 'string'
-        ? parseFloat(revVal) || 0
-        : (revVal as number || 0);
+      const rev = typeof revVal === "string" ? parseFloat(revVal) || 0 : (revVal as number) || 0;
       const ord = _.get(orderData, idx) || 0;
 
       let sec = 0;
       if (metric === "revenue") {
         const secVal = _.get(secondaryData, idx);
-        sec = typeof secVal === 'string'
-          ? parseFloat(secVal) || 0
-          : (secVal as number || 0);
+        sec = typeof secVal === "string" ? parseFloat(secVal) || 0 : (secVal as number) || 0;
       } else {
         sec = _.get(secondaryOrderData, idx) || 0;
       }
 
-      let label = '';
+      let label = "";
       if (isHourly) {
-        label = `${String(idx).padStart(2, '0')}:00`;
+        label = `${String(idx).padStart(2, "0")}:00`;
       } else {
-        const date = dayjs().subtract(targetSource!.length - 1 - idx, 'day');
-        label = date.format('MM/DD');
+        const date = dayjs().subtract(targetSource!.length - 1 - idx, "day");
+        label = date.format("MM/DD");
       }
 
       return {
@@ -75,42 +62,44 @@ export const RevenueLineChart = ({
         revenue: rev,
         orders: ord,
         secondary: sec,
-        isHourly
+        isHourly,
       };
     });
   }, [revenueData, orderData, secondaryData, secondaryOrderData, metric, period]);
 
   const peak = useMemo(() => {
     if (_.isEmpty(chartData)) return { label: "N/A", value: 0 };
-    return _.maxBy(chartData, 'value') || { label: "N/A", value: 0 };
+    return _.maxBy(chartData, "value") || { label: "N/A", value: 0 };
   }, [chartData]);
 
   const formatYAxis = (value: number) => {
     if (metric === "orders") return value.toLocaleString();
-    let formatted = '';
+    let formatted = "";
     if (value >= 1000000000) formatted = `${(value / 1000000000).toFixed(1)}B`;
     else if (value >= 1000000) {
       const millionValue = value / 1000000;
       formatted = `${millionValue >= 10 ? millionValue.toFixed(0) : millionValue.toFixed(1)}M`;
-    }
-    else if (value >= 1000) formatted = `${(value / 1000).toFixed(0)}k`;
+    } else if (value >= 1000) formatted = `${(value / 1000).toFixed(0)}k`;
     else formatted = value.toLocaleString();
     return `$${formatted}`;
   };
 
   return (
-    <div className="h-full bg-white rounded-[2.5rem] p-4 shadow-custom flex flex-col justify-between border-none animate-in fade-in duration-700">
+    <div className="h-full bg-white rounded-2xl p-4 shadow-custom flex flex-col justify-between border-none animate-in fade-in duration-700">
       <style jsx global>{`
-        .recharts-sector, .recharts-surface, .recharts-layer, .recharts-dot {
-            outline: none !important;
-            -webkit-tap-highlight-color: transparent;
+        .recharts-sector,
+        .recharts-surface,
+        .recharts-layer,
+        .recharts-dot {
+          outline: none !important;
+          -webkit-tap-highlight-color: transparent;
         }
       `}</style>
 
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
         <SectionHeader
           icon={metric === "revenue" ? Activity : ShoppingBag}
-          title={metric === "revenue" ? (title || "Revenue Analysis") : "Order Frequency"}
+          title={metric === "revenue" ? title || "Revenue Analysis" : "Order Frequency"}
           description={subTitle || "Overview report of store revenue and sales activity"}
         />
 
@@ -133,7 +122,7 @@ export const RevenueLineChart = ({
               onClick={() => setMetric("revenue")}
               className={cn(
                 "px-4 py-2 rounded-xl cursor-pointer text-[10px] font-bold uppercase transition-all",
-                metric === "revenue" ? "bg-white text-orange-600 shadow-sm border border-orange-100" : "text-gray-600 hover:text-gray-600"
+                metric === "revenue" ? "bg-white text-orange-600 shadow-sm border border-orange-100" : "text-gray-600 hover:text-gray-600",
               )}
             >
               Revenue
@@ -142,7 +131,7 @@ export const RevenueLineChart = ({
               onClick={() => setMetric("orders")}
               className={cn(
                 "px-4 py-2 rounded-xl cursor-pointer text-[10px] font-bold uppercase transition-all",
-                metric === "orders" ? "bg-white text-indigo-600 shadow-sm border border-indigo-100" : "text-gray-600 hover:text-gray-600"
+                metric === "orders" ? "bg-white text-indigo-600 shadow-sm border border-indigo-100" : "text-gray-600 hover:text-gray-600",
               )}
             >
               Orders
@@ -153,7 +142,7 @@ export const RevenueLineChart = ({
 
       <div className="flex-1 min-h-[300px] w-full relative group/line">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ left: 0, right: 10, top: 10, bottom: 10 }} style={{ outline: 'none' }}>
+          <AreaChart data={chartData} margin={{ left: 0, right: 10, top: 10, bottom: 10 }} style={{ outline: "none" }}>
             <defs>
               <linearGradient id="colorMetric" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={metric === "revenue" ? "#f97316" : "#6366f1"} stopOpacity={0.3} />
@@ -179,31 +168,35 @@ export const RevenueLineChart = ({
               tick={{ fill: "#94a3b8", fontSize: 10, fontWeight: 800 }}
               tickFormatter={formatYAxis}
               width={60}
-              domain={['auto', 'auto']}
+              domain={["auto", "auto"]}
             />
             <Tooltip
-              cursor={{ stroke: metric === "revenue" ? "#f97316" : "#6366f1", strokeWidth: 2, strokeDasharray: '4 4' }}
+              cursor={{ stroke: metric === "revenue" ? "#f97316" : "#6366f1", strokeWidth: 2, strokeDasharray: "4 4" }}
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   const dataPoint = payload[0].payload;
                   return (
-                    <div className="bg-white/95 backdrop-blur-md border border-gray-100 p-5 rounded-3xl shadow-2xl animate-in zoom-in-95 duration-200 min-w-56">
+                    <div className="bg-white/95 backdrop-blur-md border border-gray-100 p-5 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 min-w-56">
                       <div className="text-[10px] font-bold uppercase text-gray-600 mb-3 border-b border-gray-100 pb-2 flex items-center justify-between">
                         <span>{dataPoint.isHourly ? "Time" : "Date"}</span>
                         <span className="italic text-gray-400">{dataPoint.label}</span>
                       </div>
                       <div className="space-y-3">
                         <div className="flex flex-col">
-                          <span className="text-[9px] font-bold text-orange-600 uppercase tracking-tighter mb-1">{metric === "revenue" ? "Revenue" : "Orders"}</span>
+                          <span className="text-[9px] font-bold text-orange-600 uppercase tracking-tighter mb-1">
+                            {metric === "revenue" ? "Revenue" : "Orders"}
+                          </span>
                           <span className="text-lg font-bold text-orange-600 italic tracking-tighter">
-                            {metric === "revenue" ? formatPrice(dataPoint.revenue || 0) : `${dataPoint.orders} ${dataPoint.orders === 1 ? 'Order' : 'Orders'}`}
+                            {metric === "revenue" ? formatPrice(dataPoint.revenue || 0) : `${dataPoint.orders} ${dataPoint.orders === 1 ? "Order" : "Orders"}`}
                           </span>
                         </div>
                         {hasComparison && (
                           <div className="flex flex-col pt-2 border-t border-gray-50">
                             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter mb-1">{secondaryLabel || "Previous Period"}</span>
                             <span className="text-base font-bold text-gray-500 italic tracking-tighter">
-                              {metric === "revenue" ? formatPrice(dataPoint.secondary || 0) : `${dataPoint.secondary} ${dataPoint.secondary === 1 ? 'Order' : 'Orders'}`}
+                              {metric === "revenue"
+                                ? formatPrice(dataPoint.secondary || 0)
+                                : `${dataPoint.secondary} ${dataPoint.secondary === 1 ? "Order" : "Orders"}`}
                             </span>
                           </div>
                         )}
@@ -215,15 +208,7 @@ export const RevenueLineChart = ({
               }}
             />
             {hasComparison && (
-              <Area
-                type="monotone"
-                dataKey="secondary"
-                stroke="#cbd5e1"
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#colorSecondary)"
-                dot={false}
-              />
+              <Area type="monotone" dataKey="secondary" stroke="#cbd5e1" strokeWidth={2} fillOpacity={1} fill="url(#colorSecondary)" dot={false} />
             )}
             <Area
               type="monotone"
@@ -238,17 +223,17 @@ export const RevenueLineChart = ({
                 strokeWidth: 3,
                 stroke: "#fff",
                 fill: metric === "revenue" ? "#f97316" : "#6366f1",
-                style: { outline: 'none' },
-                tabIndex: -1
+                style: { outline: "none" },
+                tabIndex: -1,
               }}
               animationDuration={1500}
-              style={{ outline: 'none' }}
+              style={{ outline: "none" }}
             />
           </AreaChart>
         </ResponsiveContainer>
 
         {loading && (
-          <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex items-center justify-center z-10 rounded-[2.5rem] animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex items-center justify-center z-10 rounded-2xl animate-in fade-in duration-300">
             <div className="w-10 h-10 border-4 border-orange-500/10 border-t-orange-500 rounded-full animate-spin shadow-lg" />
           </div>
         )}
@@ -257,13 +242,13 @@ export const RevenueLineChart = ({
       <div className="mt-8 pt-6 border-t border-slate-50 flex flex-wrap justify-between items-center gap-4">
         <div className="flex items-center gap-6">
           <div className="flex flex-col">
-            <span className="text-[9px] font-bold text-gray-600 uppercase mb-1">
-              Peak {metric === "revenue" ? "Revenue" : "Orders"}
-            </span>
-            <span className={cn(
-              "text-xs font-bold uppercase italic px-3 py-1 rounded-lg border shadow-xs transition-colors",
-              metric === "revenue" ? "text-orange-900 bg-orange-50 border-orange-100" : "text-indigo-900 bg-indigo-50 border-indigo-100"
-            )}>
+            <span className="text-[9px] font-bold text-gray-600 uppercase mb-1">Peak {metric === "revenue" ? "Revenue" : "Orders"}</span>
+            <span
+              className={cn(
+                "text-xs font-bold uppercase italic px-3 py-1 rounded-lg border shadow-xs transition-colors",
+                metric === "revenue" ? "text-orange-900 bg-orange-50 border-orange-100" : "text-indigo-900 bg-indigo-50 border-indigo-100",
+              )}
+            >
               {peak.label} <span className="mx-1 opacity-20">•</span> {formatYAxis(peak.value)}
             </span>
           </div>

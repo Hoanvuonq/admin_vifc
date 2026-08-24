@@ -55,7 +55,6 @@ export const PortalModal: React.FC<IPortalModal> = ({
     <AnimatePresence>
       {isOpen && (
         <div className={cn("fixed inset-0 z-9999 flex font-sans", containerClassName)}>
-          {/* Lightweight high-performance overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -65,7 +64,6 @@ export const PortalModal: React.FC<IPortalModal> = ({
             onClick={() => !preventCloseOnClickOverlay && onClose()}
           />
 
-          {/* Modal Container */}
           <motion.div
             initial={{ opacity: 0, scale: 0.97, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -75,8 +73,8 @@ export const PortalModal: React.FC<IPortalModal> = ({
               "relative w-full bg-white shadow-2xl flex flex-col overflow-hidden border border-gray-100/90 z-10 isolate",
               width,
               !className.includes("max-h-") && "max-h-[90vh]",
-              !className.includes("rounded-") && "rounded-3xl",
-              className
+              !className.includes("rounded-") && "rounded-2xl",
+              className,
             )}
           >
             {title && (
@@ -90,12 +88,11 @@ export const PortalModal: React.FC<IPortalModal> = ({
               </div>
             )}
 
-            {/* Smooth 60fps Scrolling Content Area */}
             <div
               className={cn(
                 "flex-1 relative min-h-0 flex flex-col overscroll-contain overflow-y-auto custom-scrollbar",
-                !noPadding && "p-6",
-                className.includes("h-full") && "overflow-visible"
+                !noPadding && "p-3",
+                className.includes("h-full") && "overflow-visible",
               )}
               style={{
                 WebkitOverflowScrolling: "touch",
@@ -104,11 +101,7 @@ export const PortalModal: React.FC<IPortalModal> = ({
               {children}
             </div>
 
-            {footer && (
-              <div className="bg-gray-50/90 px-6 py-3 border-t border-gray-100 flex justify-end gap-2 sticky bottom-0 z-20 shrink-0">
-                {footer}
-              </div>
-            )}
+            {footer && <div className="bg-gray-50/90 px-6 py-3 border-t border-gray-100 flex justify-end gap-2 sticky bottom-0 z-20 shrink-0">{footer}</div>}
           </motion.div>
         </div>
       )}

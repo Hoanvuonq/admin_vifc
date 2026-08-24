@@ -18,30 +18,22 @@ export interface TransactionFiltersProps {
   };
 }
 
-export const TransactionFilters: React.FC<TransactionFiltersProps> = ({
-  searchText,
-  setSearchText,
-  selectedStatus,
-  setSelectedStatus,
-  counts,
-}) => {
-  const tabs = useMemo(() => [
-    { key: "ALL", label: "All Transactions", icon: Receipt, count: counts.total },
-    { key: "SUCCESS", label: "Completed", icon: CheckCircle2, count: counts.success },
-    { key: "PENDING", label: "Pending", icon: Clock, count: counts.pending },
-    { key: "FAILED", label: "Failed", icon: AlertCircle, count: counts.failed },
-  ], [counts]);
+export const TransactionFilters: React.FC<TransactionFiltersProps> = ({ searchText, setSearchText, selectedStatus, setSelectedStatus, counts }) => {
+  const tabs = useMemo(
+    () => [
+      { key: "ALL", label: "All Transactions", icon: Receipt, count: counts.total },
+      { key: "SUCCESS", label: "Completed", icon: CheckCircle2, count: counts.success },
+      { key: "PENDING", label: "Pending", icon: Clock, count: counts.pending },
+      { key: "FAILED", label: "Failed", icon: AlertCircle, count: counts.failed },
+    ],
+    [counts],
+  );
 
   return (
-    <div className="bg-white/80 backdrop-blur-2xl py-4 px-6 rounded-[2.5rem] border border-white/60 shadow-custom w-full animate-in fade-in slide-in-from-top-2 duration-500 space-y-4">
+    <div className="bg-white/80 backdrop-blur-2xl py-4 px-6 rounded-2xl border border-white/60 shadow-custom w-full animate-in fade-in slide-in-from-top-2 duration-500 space-y-4">
       <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
         <div className="w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0 hide-scrollbar">
-          <StatusTabs
-            tabs={tabs as any}
-            current={selectedStatus}
-            onChange={setSelectedStatus}
-            layoutId="trx-status-pill"
-          />
+          <StatusTabs tabs={tabs as any} current={selectedStatus} onChange={setSelectedStatus} layoutId="trx-status-pill" />
         </div>
 
         <div className="flex items-center gap-2 w-full lg:w-auto justify-end">

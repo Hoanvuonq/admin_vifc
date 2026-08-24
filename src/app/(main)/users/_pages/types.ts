@@ -1,4 +1,4 @@
-import { UserSubscription } from "@/types/user";
+import { UserCard, UserSubscription } from "@/types/user";
 
 export interface UserItem {
   id: string;
@@ -7,6 +7,7 @@ export interface UserItem {
   role: "ADMIN" | "FREE" | "PREMIUM" | "ANNUAL PREMIUM" | string;
   status: "ACTIVE" | "INACTIVE" | "BANNED";
   isVIFCPass?: boolean;
+  card?: UserCard | null;
   phone: string;
   joinedDate: string;
   lastActive: string;

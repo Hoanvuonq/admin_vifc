@@ -9,7 +9,7 @@ export const UserFilters: React.FC<UserFiltersProps> = ({ searchText, setSearchT
   const filterOptions = useUserFilterOptions();
 
   return (
-    <div className="bg-white/80 backdrop-blur-2xl py-4 px-6 rounded-[2.5rem] border border-white/60 shadow-custom w-full animate-in fade-in slide-in-from-top-2 duration-500">
+    <div className="bg-white/80 backdrop-blur-2xl py-4 px-6 rounded-2xl border border-white/60 shadow-custom w-full animate-in fade-in slide-in-from-top-2 duration-500">
       <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
         <div className="flex-1">
           <SearchComponent
@@ -29,12 +29,7 @@ export const UserFilters: React.FC<UserFiltersProps> = ({ searchText, setSearchT
 
         {onCreateUser && (
           <div className="shrink-0">
-            <PremiumButton
-              label="Tạo người dùng mới"
-              icon={UserPlus}
-              onClick={onCreateUser}
-              className="h-11 px-5 rounded-2xl font-bold text-[11.5px] uppercase tracking-wider shadow-lg shadow-orange-500/20 whitespace-nowrap"
-            />
+            <PremiumButton label="Tạo người dùng mới" icon={UserPlus} onClick={onCreateUser} size="md" variant="gray" />
           </div>
         )}
       </div>

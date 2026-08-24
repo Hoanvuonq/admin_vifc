@@ -14,13 +14,13 @@ export async function GET(request: Request) {
     const search = searchParams.get("search")?.trim();
 
     // 1. Validate pagination parameters
-    if (page < 1 || limit < 1 || limit > 100) {
+    if (page < 1 || limit < 1 || limit > 1000) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: "INVALID_REQUEST",
-            message: "Invalid pagination parameters. Page >= 1 and Limit between 1 and 100",
+            message: "Invalid pagination parameters. Page >= 1 and Limit between 1 and 1000",
           },
           meta: {
             timestamp: new Date().toISOString(),
@@ -112,9 +112,15 @@ export async function GET(request: Request) {
     `;
 
     const dataQuery = `
-      SELECT unified.*, u.avatar_url, u.company as user_company
+      SELECT unified.*, u.avatar_url, u.company as user_company,
+             uc.so_the as card_so_the, uc.loai_the as card_loai_the, uc.username as card_username
       FROM (${unionSql}) unified
       LEFT JOIN users u ON unified.user_id = u.id
+      LEFT JOIN (
+        SELECT DISTINCT ON (user_id) user_id, so_the, loai_the, username
+        FROM user_cards
+        ORDER BY user_id, created_at DESC
+      ) uc ON unified.user_id = uc.user_id
       ${whereSql}
       ORDER BY unified.created_at DESC
       LIMIT $${paramIndex++} OFFSET $${paramIndex++}
@@ -154,6 +160,13 @@ export async function GET(request: Request) {
       created_at: r.created_at ? new Date(r.created_at).toISOString() : new Date().toISOString(),
       updated_at: r.updated_at ? new Date(r.updated_at).toISOString() : new Date().toISOString(),
       avatar_url: r.avatar_url || null,
+      card: r.card_so_the
+        ? {
+            so_the: r.card_so_the,
+            loai_the: r.card_loai_the,
+            username: r.card_username,
+          }
+        : null,
       users: r.user_id
         ? {
             id: r.user_id,

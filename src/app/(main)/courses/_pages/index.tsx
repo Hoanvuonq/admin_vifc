@@ -4,10 +4,10 @@ import { AdminPageHeader, ItemImage } from "@/components";
 import { DataTable } from "@/components/DataTable";
 import { useCourseRegistrations } from "@/hooks/useCourseRegistrations";
 import { toast } from "@/providers/ToastProvider";
-import { BookingRequestItem, ReviewBookingPayload } from "@/types/course";
+import { BookingRequestItem, CreateBookingPayload, ReviewBookingPayload } from "@/types/course";
 import { BookOpenCheck, Building, Calendar, CheckCircle2, Clock, Edit, GraduationCap, Mail, Phone, ShieldCheck, XCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { CourseFilters, RegistrationDetailModal } from "../_components";
+import { CourseFilters, CreateRegistrationModal, RegistrationDetailModal, ExportExcelModal } from "../_components";
 import { getColumns } from "./columns";
 
 export const CourseRegistrationsScreen = () => {
@@ -21,23 +21,95 @@ export const CourseRegistrationsScreen = () => {
 
   const [selectedRegistration, setSelectedRegistration] = useState<BookingRequestItem | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearch(searchQuery), 350);
+    const handler = setTimeout(() => setDebouncedSearch(searchQuery), 300);
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
+  // Reset page to 0 when filter changes
   useEffect(() => {
     setCurrentPage(0);
   }, [debouncedSearch, selectedStatus, selectedType]);
 
-  const { registrations, stats, pagination, isLoading, refetch, confirmBooking, rejectBooking, reviewBooking, deleteRegistration } = useCourseRegistrations({
-    page: currentPage + 1,
-    limit: pageSize,
-    status: selectedStatus,
-    bookingType: selectedType,
-    search: debouncedSearch,
-  });
+  // Fetch full records from API (high limit) so FE can filter accurately
+  const { registrations, stats, isLoading, refetch, confirmBooking, rejectBooking, reviewBooking, deleteRegistration, createRegistration, isCreating } =
+    useCourseRegistrations({
+      page: 1,
+      limit: 500,
+    });
+
+  // FRONTEND FILTERING: status, booking_type (lounge, course, etc.), and search query
+  const filteredRegistrations = useMemo(() => {
+    return (registrations || []).filter((item) => {
+      // 1. Status Filter
+      if (selectedStatus && selectedStatus !== "ALL") {
+        const itemStatus = (item.status || "").toLowerCase().trim();
+        const filterStatus = selectedStatus.toLowerCase().trim();
+
+        if (filterStatus === "approved") {
+          if (!["approved", "confirmed"].includes(itemStatus)) return false;
+        } else if (filterStatus === "confirmed") {
+          if (!["confirmed", "approved"].includes(itemStatus)) return false;
+        } else if (filterStatus === "rejected") {
+          if (!["rejected", "cancelled"].includes(itemStatus)) return false;
+        } else if (filterStatus === "cancelled") {
+          if (!["cancelled", "rejected"].includes(itemStatus)) return false;
+        } else if (filterStatus === "completed") {
+          if (!["completed", "success"].includes(itemStatus)) return false;
+        } else if (itemStatus !== filterStatus) {
+          return false;
+        }
+      }
+
+      // 2. Booking Type Filter (e.g. "lounge", "course", "workshop", "meeting-room", "consulting")
+      if (selectedType && selectedType !== "ALL") {
+        const itemType = (item.booking_type || "").toLowerCase().replace(/_/g, "-").trim();
+        const filterType = selectedType.toLowerCase().replace(/_/g, "-").trim();
+
+        if (itemType !== filterType && !itemType.includes(filterType) && !filterType.includes(itemType)) {
+          return false;
+        }
+      }
+
+      // 3. Search query filter (matches name, email, phone, company, title, id, note)
+      if (debouncedSearch && debouncedSearch.trim()) {
+        const q = debouncedSearch.toLowerCase().trim();
+        const matchName = (item.full_name || "").toLowerCase().includes(q);
+        const matchEmail = (item.email || "").toLowerCase().includes(q);
+        const matchPhone = (item.phone || "").toLowerCase().includes(q);
+        const matchTitle = (item.booking_title || "").toLowerCase().includes(q);
+        const matchCompany = (item.company || "").toLowerCase().includes(q);
+        const matchId = (item.id || "").toLowerCase().includes(q);
+        const matchNote = (item.note || "").toLowerCase().includes(q);
+
+        if (!matchName && !matchEmail && !matchPhone && !matchTitle && !matchCompany && !matchId && !matchNote) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [registrations, selectedStatus, selectedType, debouncedSearch]);
+
+  // Client-side pagination
+  const paginatedRegistrations = useMemo(() => {
+    const startIndex = currentPage * pageSize;
+    return filteredRegistrations.slice(startIndex, startIndex + pageSize);
+  }, [filteredRegistrations, currentPage, pageSize]);
+
+  const computedStats = useMemo(() => {
+    const list = registrations || [];
+    return {
+      total: list.length,
+      pending: list.filter((i) => (i.status || "").toLowerCase() === "pending").length,
+      approved: list.filter((i) => ["confirmed", "approved"].includes((i.status || "").toLowerCase())).length,
+      rejected: list.filter((i) => ["rejected", "cancelled"].includes((i.status || "").toLowerCase())).length,
+      completed: list.filter((i) => ["completed", "success"].includes((i.status || "").toLowerCase())).length,
+    };
+  }, [registrations]);
 
   const handleViewDetails = (item: BookingRequestItem) => {
     setSelectedRegistration(item);
@@ -85,6 +157,18 @@ export const CourseRegistrationsScreen = () => {
     }
   };
 
+  const handleCreateRegistration = async (payload: Partial<CreateBookingPayload>) => {
+    try {
+      await createRegistration(payload);
+      toast.success("Đã tạo đơn đăng ký thành công!");
+      setIsCreateModalOpen(false);
+      refetch();
+    } catch (error: any) {
+      toast.error(error?.message || "Không thể tạo đơn đăng ký.");
+      throw error;
+    }
+  };
+
   const columns = useMemo(() => getColumns(handleViewDetails, handleQuickApprove, handleQuickReject, handleDelete), []);
 
   const renderDropdown = (item: BookingRequestItem) => {
@@ -96,13 +180,9 @@ export const CourseRegistrationsScreen = () => {
       `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(item.email || item.full_name || "guest")}`;
 
     return (
-      <div className="px-8 py-5 bg-linear-to-r from-orange-50/40 via-slate-50/60 to-white rounded-3xl border border-orange-100/80 m-2 flex flex-col lg:flex-row gap-6 items-start justify-between shadow-inner animate-in fade-in duration-300">
+      <div className="px-8 py-5 bg-linear-to-r from-orange-50/40 via-slate-50/60 to-white rounded-2xl border border-orange-100/80 m-2 flex flex-col lg:flex-row gap-6 items-start justify-between shadow-inner animate-in fade-in duration-300">
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-          <ItemImage
-            path={avatarUrl}
-            productName={item.full_name || item.email}
-            className="w-16 h-16 rounded-2xl border-2 border-white shadow-sm shrink-0"
-          />
+          <ItemImage path={avatarUrl} productName={item.full_name || item.email} className="w-16 h-16 rounded-2xl border-2 border-white shadow-sm shrink-0" />
           <div className="space-y-1">
             <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
               {item.full_name || "Chưa đặt tên"}
@@ -178,25 +258,25 @@ export const CourseRegistrationsScreen = () => {
         metrics={[
           {
             label: "Tổng lượt yêu cầu",
-            value: stats.total,
+            value: computedStats.total || stats.total,
             icon: <BookOpenCheck size={14} />,
             color: "blue",
           },
           {
             label: "Chờ duyệt (Pending)",
-            value: stats.pending,
+            value: computedStats.pending,
             icon: <Clock size={14} />,
             color: "orange",
           },
           {
             label: "Đã xác nhận (Confirmed)",
-            value: stats.approved,
+            value: computedStats.approved,
             icon: <ShieldCheck size={14} />,
             color: "emerald",
           },
           {
             label: "Từ chối / Hủy",
-            value: stats.rejected,
+            value: computedStats.rejected,
             icon: <XCircle size={14} />,
             color: "rose",
           },
@@ -204,14 +284,14 @@ export const CourseRegistrationsScreen = () => {
       />
 
       <DataTable
-        data={registrations}
+        data={paginatedRegistrations}
         columns={columns}
         loading={isLoading}
         rowKey="id"
         emptyMessage="Không tìm thấy đơn booking nào phù hợp với bộ lọc"
         page={currentPage}
         size={pageSize}
-        totalElements={pagination.total || registrations.length}
+        totalElements={filteredRegistrations.length}
         onPageChange={(p) => setCurrentPage(p)}
         headerContent={
           <CourseFilters
@@ -221,9 +301,11 @@ export const CourseRegistrationsScreen = () => {
             setSelectedStatus={setSelectedStatus}
             selectedType={selectedType}
             setSelectedType={setSelectedType}
-            counts={stats}
+            counts={computedStats}
             onRefresh={() => refetch()}
             isLoading={isLoading}
+            onExportExcel={() => setIsExportModalOpen(true)}
+            onCreateRegistration={() => setIsCreateModalOpen(true)}
           />
         }
         renderDropdown={renderDropdown}
@@ -238,6 +320,21 @@ export const CourseRegistrationsScreen = () => {
         registration={selectedRegistration}
         onReview={handleReviewFromModal}
         isLoading={isLoading}
+      />
+
+      <CreateRegistrationModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreate={handleCreateRegistration}
+        isLoading={isCreating}
+      />
+
+      <ExportExcelModal
+        open={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        registrations={registrations || []}
+        defaultType={selectedType}
+        defaultStatus={selectedStatus}
       />
     </div>
   );

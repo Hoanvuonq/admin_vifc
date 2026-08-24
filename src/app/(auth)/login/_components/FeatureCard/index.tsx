@@ -60,29 +60,34 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
         rotateY,
         transformStyle: "preserve-3d",
       }}
-      className={cn(
-        "relative group overflow-hidden rounded-[2.5rem] h-full transition-all duration-500 cursor-pointer shadow-md",
-        className
-      )}
+      className={cn("relative group overflow-hidden rounded-2xl h-full transition-all duration-500 cursor-pointer shadow-md", className)}
     >
-      <div className={cn(
-        "absolute inset-0 transition-all rounded-[2.5rem] duration-700 opacity-30 group-hover:opacity-60 bg-linear-to-br ",
-        gradientFrom, gradientTo
-      )} />
+      <div
+        className={cn("absolute inset-0 transition-all rounded-2xl duration-700 opacity-30 group-hover:opacity-60 bg-linear-to-br ", gradientFrom, gradientTo)}
+      />
 
-      <div className={cn(
-        "relative h-full w-full backdrop-blur-xl rounded-[2.5rem] shadow- border border-white/20 py-4 px-5 sm:px-6 overflow-hidden flex flex-col transition-all duration-700",
-        "bg-linear-to-br", gradientFrom, gradientTo, "bg-opacity-[0.12] group-hover:bg-opacity-[0.25]",
-        (isTall || isMobile) ? "items-center justify-between text-center" : "justify-center",
-        !isTall && !isMobile && isCard0 ? "flex-row text-left items-center gap-4 sm:gap-5" : "",
-        !isTall && !isMobile && isCard3 ? "flex-row-reverse text-right items-center gap-4 sm:gap-5" : ""
-      )}>
-
+      <div
+        className={cn(
+          "relative h-full w-full backdrop-blur-xl rounded-2xl shadow- border border-white/20 py-4 px-5 sm:px-6 overflow-hidden flex flex-col transition-all duration-700",
+          "bg-linear-to-br",
+          gradientFrom,
+          gradientTo,
+          "bg-opacity-[0.12] group-hover:bg-opacity-[0.25]",
+          isTall || isMobile ? "items-center justify-between text-center" : "justify-center",
+          !isTall && !isMobile && isCard0 ? "flex-row text-left items-center gap-4 sm:gap-5" : "",
+          !isTall && !isMobile && isCard3 ? "flex-row-reverse text-right items-center gap-4 sm:gap-5" : "",
+        )}
+      >
         <div className="absolute inset-0 pointer-events-none z-0">
           <div className="absolute top-0 left-0 w-full h-PX bg-linear-to-r from-transparent via-white/30 to-transparent" />
           <div className={cn("absolute bottom-0 left-0 w-full h-32 blur-3xl opacity-20 bg-linear-to-t", gradientTo, "to-transparent")} />
 
-          <svg width="100%" height="100%" viewBox="0 0 200 200" className="absolute inset-0 opacity-40 group-hover:opacity-80 transition-opacity duration-700 text-white">
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 200 200"
+            className="absolute inset-0 opacity-40 group-hover:opacity-80 transition-opacity duration-700 text-white"
+          >
             <path
               d="M0 40 H50 L70 20 M110 20 V60 L130 80 H200 M180 200 V160 L160 140 H100 M0 180 H40 L60 200"
               fill="none"
@@ -103,7 +108,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
                 duration: 4,
                 repeat: Infinity,
                 ease: "linear",
-                delay: index * 0.5
+                delay: index * 0.5,
               }}
               style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.8))" }}
             />
@@ -120,31 +125,27 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
           </svg>
         </div>
 
-        <div className={cn(
-          "relative z-20 space-y-1.5 sm:space-y-2.5 itim-regular",
-          isTall ? "w-full pt-2" : "flex-1"
-        )}>
+        <div className={cn("relative z-20 space-y-1.5 sm:space-y-2.5 itim-regular", isTall ? "w-full pt-2" : "flex-1")}>
           <motion.h3
             className={cn(
               "font-bold text-white uppercase tracking-wider drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]",
-              isTall ? "text-lg sm:text-xl" : "text-base sm:text-lg leading-[1.1]"
+              isTall ? "text-lg sm:text-xl" : "text-base sm:text-lg leading-[1.1]",
             )}
             whileHover={{ scale: 1.02 }}
           >
             {title}
           </motion.h3>
-          <p className={cn(
-            "text-white font-semibold leading-relaxed drop-shadow-md",
-            isTall ? "text-xs sm:text-sm max-w-60 mx-auto lg:mx-0" : "text-[10px] sm:text-xs opacity-90 mt-1"
-          )}>
+          <p
+            className={cn(
+              "text-white font-semibold leading-relaxed drop-shadow-md",
+              isTall ? "text-xs sm:text-sm max-w-60 mx-auto lg:mx-0" : "text-[10px] sm:text-xs opacity-90 mt-1",
+            )}
+          >
             {description}
           </p>
         </div>
 
-        <div className={cn(
-          "relative z-20 flex items-center justify-center",
-          isTall ? "w-full grow py-4 sm:py-8" : "shrink-0"
-        )}>
+        <div className={cn("relative z-20 flex items-center justify-center", isTall ? "w-full grow py-4 sm:py-8" : "shrink-0")}>
           <motion.div
             animate={{
               y: [0, -8, 0],
@@ -152,42 +153,42 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
             transition={{
               duration: 4,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
             style={{ transformStyle: "preserve-3d" }}
-            className={cn(
-              "relative flex items-center justify-center",
-              isTall ? "w-36 h-36 sm:w-44 sm:h-44" : "w-24 h-24 sm:w-28 sm:h-28"
-            )}
+            className={cn("relative flex items-center justify-center", isTall ? "w-36 h-36 sm:w-44 sm:h-44" : "w-24 h-24 sm:w-28 sm:h-28")}
           >
-            <div className={cn(
-              "absolute inset-0 blur-2xl sm:blur-3xl opacity-60 scale-100 bg-linear-to-br",
-              gradientFrom, gradientTo
-            )} />
+            <div className={cn("absolute inset-0 blur-2xl sm:blur-3xl opacity-60 scale-100 bg-linear-to-br", gradientFrom, gradientTo)} />
 
-            <div className={cn(
-              "relative rounded-2xl sm:rounded-3xl flex items-center justify-center border border-white/40 overflow-hidden transition-all duration-500",
-              "bg-white/20 backdrop-blur-2xl group-hover:scale-110 group-hover:border-white/60 shadow-[0_10px_30px_rgba(0,0,0,0.2)] sm:shadow-[0_20px_50px_rgba(0,0,0,0.2)]",
-              isTall ? "w-28 h-28 sm:w-36 sm:h-36" : "w-20 h-20 sm:w-24 sm:h-24"
-            )}>
+            <div
+              className={cn(
+                "relative rounded-2xl sm:rounded-2xl flex items-center justify-center border border-white/40 overflow-hidden transition-all duration-500",
+                "bg-white/20 backdrop-blur-2xl group-hover:scale-110 group-hover:border-white/60 shadow-[0_10px_30px_rgba(0,0,0,0.2)] sm:shadow-[0_20px_50px_rgba(0,0,0,0.2)]",
+                isTall ? "w-28 h-28 sm:w-36 sm:h-36" : "w-20 h-20 sm:w-24 sm:h-24",
+              )}
+            >
               <div className="absolute inset-0 bg-linear-to-tr from-white/30 via-transparent to-white/10 z-20" />
 
               {Icon ? (
-                <Icon className={cn(
-                  iconColor,
-                  isTall ? "text-6xl sm:text-7xl" : "text-4xl sm:text-5xl",
-                  "relative z-10 filter drop-shadow-[0_0_20px_rgba(255,255,255,0.6)] group-hover:rotate-6 transition-transform duration-500"
-                )} />
-              ) : imageIcon && (
-                <div className="relative w-[80%] h-[80%] z-10 flex items-center justify-center">
-                  <Image
-                    src={imageIcon}
-                    alt={title}
-                    fill
-                    className="object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)] sm:drop-shadow-[0_15px_30px_rgba(0,0,0,0.4)] group-hover:scale-110 transition-transform duration-500 p-1"
-                    sizes="(max-width: 640px) 80px, 150px"
-                  />
-                </div>
+                <Icon
+                  className={cn(
+                    iconColor,
+                    isTall ? "text-6xl sm:text-7xl" : "text-4xl sm:text-5xl",
+                    "relative z-10 filter drop-shadow-[0_0_20px_rgba(255,255,255,0.6)] group-hover:rotate-6 transition-transform duration-500",
+                  )}
+                />
+              ) : (
+                imageIcon && (
+                  <div className="relative w-[80%] h-[80%] z-10 flex items-center justify-center">
+                    <Image
+                      src={imageIcon}
+                      alt={title}
+                      fill
+                      className="object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)] sm:drop-shadow-[0_15px_30px_rgba(0,0,0,0.4)] group-hover:scale-110 transition-transform duration-500 p-1"
+                      sizes="(max-width: 640px) 80px, 150px"
+                    />
+                  </div>
+                )
               )}
 
               <motion.div
@@ -207,9 +208,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
           <div className="relative z-20 mt-auto pt-2 sm:pt-4 w-full">
             <div className="h-px w-full bg-linear-to-r from-transparent via-white/20 to-transparent mb-2 sm:mb-4" />
             <div className="flex justify-between items-center px-4">
-              <span className="text-[9px] sm:text-[11px] font-bold text-white uppercase tracking-tight">
-                TECH CORE
-              </span>
+              <span className="text-[9px] sm:text-[11px] font-bold text-white uppercase tracking-tight">TECH CORE</span>
               <div className="flex gap-1.5 sm:gap-2">
                 <motion.div
                   animate={{ opacity: [0.4, 1, 0.4] }}
@@ -224,9 +223,9 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
         )}
       </div>
 
-      <div className={cn(
-        "absolute inset-0 rounded-[2.5rem] border-2 border-white/0 group-hover:border-white/20 transition-all duration-500 pointer-events-none z-30"
-      )} />
+      <div
+        className={cn("absolute inset-0 rounded-2xl border-2 border-white/0 group-hover:border-white/20 transition-all duration-500 pointer-events-none z-30")}
+      />
     </motion.div>
   );
 };

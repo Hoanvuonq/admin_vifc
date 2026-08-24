@@ -14,6 +14,8 @@ function mapUserToItem(user: User): UserItem {
   const status: UserItem["status"] =
     statusMap[user.status?.toLowerCase()] ?? "INACTIVE";
 
+  const userCard = user.card || (user.user_cards && user.user_cards.length > 0 ? user.user_cards[0] : null);
+
   return {
     id: user.id,
     name: user.full_name || user.email,
@@ -21,6 +23,8 @@ function mapUserToItem(user: User): UserItem {
     role: (user.subscription?.plan?.name?.toUpperCase() ??
       "FREE") as UserItem["role"],
     status,
+    isVIFCPass: Boolean(userCard),
+    card: userCard,
     phone: "—",
     joinedDate: user.created_at ? user.created_at.split("T")[0] : "—",
     lastActive: user.updated_at ? user.updated_at.split("T")[0] : "—",

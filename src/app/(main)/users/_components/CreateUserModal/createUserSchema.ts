@@ -10,6 +10,9 @@ export interface CreateUserFormData {
   password?: string;
   confirmPassword?: string;
   isVIFCPass?: boolean;
+  so_the?: string;
+  loai_the?: string;
+  cardUsername?: string;
   status: UserItem["status"];
   subscriptionPlanId?: string;
   company?: string;
@@ -39,6 +42,9 @@ export const createUserSchema = Yup.object().shape({
       return password === value;
     }),
   isVIFCPass: Yup.boolean().optional().default(false),
+  so_the: Yup.string().optional().default(""),
+  loai_the: Yup.string().optional().default(""),
+  cardUsername: Yup.string().optional().default(""),
   status: Yup.string()
     .oneOf(["ACTIVE", "INACTIVE", "BANNED"])
     .required("Vui lòng chọn trạng thái"),
@@ -63,6 +69,10 @@ export const useCreateUserForm = (options?: UseFormProps<CreateUserFormData>) =>
       country: "Việt Nam",
       avatarUrl: "",
       avatarFile: null,
+      isVIFCPass: false,
+      so_the: "",
+      loai_the: "",
+      cardUsername: "",
     },
     ...options,
   });

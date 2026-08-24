@@ -26,6 +26,11 @@ export interface BookingRequestItem {
   deleted_at?: string | null;
   title?: string;
   avatar_url?: string | null;
+  card?: {
+    so_the: string;
+    loai_the?: string;
+    username?: string;
+  } | null;
   users?: {
     id: string;
     email: string;

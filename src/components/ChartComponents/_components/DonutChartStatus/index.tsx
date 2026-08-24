@@ -2,22 +2,12 @@
 
 import { Activity, CheckCircle2, Clock, XCircle, Zap } from "lucide-react";
 import { useMemo } from "react";
-import {
-  Area,
-  AreaChart,
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
+import { Area, AreaChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 import { CardBox } from "@/app/(main)/(dashboard)/_components";
 import { DonutChartStatusProps } from "./type";
 
-
 export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusProps) => {
-
   const successCount = useMemo(() => {
     if (!data) return 0;
     const completed = data.statusCounts?.COMPLETED ?? data.completedCount ?? 0;
@@ -43,8 +33,8 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
     return [
       { name: "Success", value: successCount, color: "#f97316" },
       { name: "Pending", value: pendingCount, color: "#fb923c" },
-      { name: "Cancelled", value: cancelledCount, color: "#f43f5e" }
-    ].filter(item => item.value > 0);
+      { name: "Cancelled", value: cancelledCount, color: "#f43f5e" },
+    ].filter((item) => item.value > 0);
   }, [successCount, pendingCount, cancelledCount]);
 
   const successRate = useMemo(() => {
@@ -62,37 +52,27 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
     return Math.round((cancelledCount / data.totalOrders) * 100);
   }, [data, cancelledCount]);
 
-  const sparklineSuccess = useMemo(() => [
-    { value: 12 }, { value: 16 }, { value: 14 }, { value: 20 }, { value: 18 }, { value: 24 }, { value: 22 }
-  ], []);
+  const sparklineSuccess = useMemo(() => [{ value: 12 }, { value: 16 }, { value: 14 }, { value: 20 }, { value: 18 }, { value: 24 }, { value: 22 }], []);
 
-  const sparklinePending = useMemo(() => [
-    { value: 6 }, { value: 8 }, { value: 5 }, { value: 9 }, { value: 7 }, { value: 8 }, { value: 6 }
-  ], []);
+  const sparklinePending = useMemo(() => [{ value: 6 }, { value: 8 }, { value: 5 }, { value: 9 }, { value: 7 }, { value: 8 }, { value: 6 }], []);
 
-  const sparklineCancelled = useMemo(() => [
-    { value: 2 }, { value: 4 }, { value: 1 }, { value: 3 }, { value: 2 }, { value: 1 }, { value: 2 }
-  ], []);
+  const sparklineCancelled = useMemo(() => [{ value: 2 }, { value: 4 }, { value: 1 }, { value: 3 }, { value: 2 }, { value: 1 }, { value: 2 }], []);
 
   return (
-    <CardBox
-      title="Status Analysis"
-      description="Analysis of order structure and status"
-      icon={Activity}
-      onRefresh={onRefresh}
-      loading={loading}
-    >
+    <CardBox title="Status Analysis" description="Analysis of order structure and status" icon={Activity} onRefresh={onRefresh} loading={loading}>
       <style jsx global>{`
-        .recharts-sector, .recharts-surface, .recharts-layer {
-            outline: none !important;
-            -webkit-tap-highlight-color: transparent;
+        .recharts-sector,
+        .recharts-surface,
+        .recharts-layer {
+          outline: none !important;
+          -webkit-tap-highlight-color: transparent;
         }
       `}</style>
 
       <div className="relative group/chart">
         <div className="h-64 mt-2 relative">
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart style={{ outline: 'none' }}>
+            <PieChart style={{ outline: "none" }}>
               <Pie
                 data={chartData}
                 dataKey="value"
@@ -107,7 +87,7 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
                 strokeWidth={2}
                 animationBegin={0}
                 animationDuration={1500}
-                style={{ outline: 'none', border: 'none' }}
+                style={{ outline: "none", border: "none" }}
               >
                 {chartData.map((entry, index) => (
                   <Cell
@@ -116,8 +96,8 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
                     className="hover:opacity-85 transition-opacity outline-none"
                     style={{
                       filter: `drop-shadow(0px 8px 12px ${entry.color}25)`,
-                      outline: 'none',
-                      border: 'none'
+                      outline: "none",
+                      border: "none",
                     }}
                     tabIndex={-1}
                   />
@@ -128,7 +108,7 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     return (
-                      <div className="bg-white/90 backdrop-blur-md border border-slate-100 p-4 rounded-3xl shadow-xl shadow-orange-500/10 animate-in fade-in zoom-in-95">
+                      <div className="bg-white/90 backdrop-blur-md border border-slate-100 p-4 rounded-2xl shadow-xl shadow-orange-500/10 animate-in fade-in zoom-in-95">
                         <div className="flex items-center gap-2 mb-1.5">
                           <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: payload[0].payload.color }} />
                           <span className="text-[10px] font-bold uppercase text-gray-600 tracking-wider">{payload[0].name}</span>
@@ -153,20 +133,17 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
                 <span className="text-[9px] font-bold uppercase tracking-wider">Statistics</span>
               </div>
               <div className="flex items-baseline">
-                <span className="text-3xl font-extrabold text-gray-900 tracking-tighter tabular-nums leading-none">
-                  {data?.successRate || 0}
-                </span>
+                <span className="text-3xl font-extrabold text-gray-900 tracking-tighter tabular-nums leading-none">{data?.successRate || 0}</span>
                 <span className="text-lg font-bold text-orange-500 ml-0.5">%</span>
               </div>
               <span className="text-[10px] font-bold text-green-600 uppercase mt-1 tracking-widest italic text-center">Success Rate</span>
             </div>
           </div>
         </div>
-
       </div>
 
       <div className="grid grid-cols-3 gap-2 mt-8">
-        <div className="relative group/metric overflow-hidden p-3 pb-3.5 rounded-3xl bg-white border border-slate-100 transition-all duration-300 shadow-md hover:-translate-y-1 hover:shadow-lg hover:border-orange-200/80">
+        <div className="relative group/metric overflow-hidden p-3 pb-3.5 rounded-2xl bg-white border border-slate-100 transition-all duration-300 shadow-md hover:-translate-y-1 hover:shadow-lg hover:border-orange-200/80">
           <div className="flex justify-between items-start mb-2.5 relative z-20">
             <div className="p-1.5 rounded-xl bg-orange-50 text-orange-600 shadow-sm border border-orange-100/50 group-hover/metric:scale-105 transition-transform duration-300">
               <CheckCircle2 size={14} />
@@ -177,7 +154,9 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
           </div>
           <div className="relative z-20">
             <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest block mb-0.5">Success</span>
-            <div className="text-lg font-extrabold text-gray-900 tracking-tight tabular-nums transition-colors duration-300 group-hover/metric:text-orange-600">{successCount}</div>
+            <div className="text-lg font-extrabold text-gray-900 tracking-tight tabular-nums transition-colors duration-300 group-hover/metric:text-orange-600">
+              {successCount}
+            </div>
           </div>
 
           <div className="absolute -bottom-1 left-0 right-0 h-10 pointer-events-none opacity-50 group-hover/metric:opacity-100 transition-opacity duration-300">
@@ -189,21 +168,13 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
                     <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#f97316"
-                  strokeWidth={1.5}
-                  fillOpacity={1}
-                  fill="url(#gradientOrange)"
-                  animationDuration={2000}
-                />
+                <Area type="monotone" dataKey="value" stroke="#f97316" strokeWidth={1.5} fillOpacity={1} fill="url(#gradientOrange)" animationDuration={2000} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="relative group/metric overflow-hidden p-3 pb-3.5 rounded-3xl bg-white border border-slate-100 transition-all duration-300 shadow-md hover:-translate-y-1 hover:shadow-lg hover:border-amber-200/80">
+        <div className="relative group/metric overflow-hidden p-3 pb-3.5 rounded-2xl bg-white border border-slate-100 transition-all duration-300 shadow-md hover:-translate-y-1 hover:shadow-lg hover:border-amber-200/80">
           <div className="flex justify-between items-start mb-2.5 relative z-20">
             <div className="p-1.5 rounded-xl bg-orange-50/20 text-orange-500 shadow-sm border border-orange-100/30 group-hover/metric:scale-105 transition-transform duration-300">
               <Clock size={14} />
@@ -214,7 +185,9 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
           </div>
           <div className="relative z-20">
             <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest block mb-0.5">Pending</span>
-            <div className="text-lg font-extrabold text-gray-900 tracking-tight tabular-nums transition-colors duration-300 group-hover/metric:text-orange-500">{pendingCount}</div>
+            <div className="text-lg font-extrabold text-gray-900 tracking-tight tabular-nums transition-colors duration-300 group-hover/metric:text-orange-500">
+              {pendingCount}
+            </div>
           </div>
 
           <div className="absolute -bottom-1 left-0 right-0 h-10 pointer-events-none opacity-50 group-hover/metric:opacity-100 transition-opacity duration-300">
@@ -226,21 +199,13 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
                     <stop offset="95%" stopColor="#fb923c" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#fb923c"
-                  strokeWidth={1.5}
-                  fillOpacity={1}
-                  fill="url(#gradientAmber)"
-                  animationDuration={2000}
-                />
+                <Area type="monotone" dataKey="value" stroke="#fb923c" strokeWidth={1.5} fillOpacity={1} fill="url(#gradientAmber)" animationDuration={2000} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="relative group/metric overflow-hidden p-3 pb-3.5 rounded-3xl bg-white border border-slate-100 transition-all duration-300 shadow-md hover:-translate-y-1 hover:shadow-lg hover:border-rose-200/80">
+        <div className="relative group/metric overflow-hidden p-3 pb-3.5 rounded-2xl bg-white border border-slate-100 transition-all duration-300 shadow-md hover:-translate-y-1 hover:shadow-lg hover:border-rose-200/80">
           <div className="flex justify-between items-start mb-2.5 relative z-20">
             <div className="p-1.5 rounded-xl bg-rose-50 text-rose-500 shadow-sm border border-rose-100/50 group-hover/metric:scale-105 transition-transform duration-300">
               <XCircle size={14} />
@@ -251,7 +216,9 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
           </div>
           <div className="relative z-20">
             <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest block mb-0.5">Cancelled</span>
-            <div className="text-lg font-extrabold text-rose-500 tracking-tight tabular-nums transition-colors duration-300 group-hover/metric:text-rose-600">{cancelledCount}</div>
+            <div className="text-lg font-extrabold text-rose-500 tracking-tight tabular-nums transition-colors duration-300 group-hover/metric:text-rose-600">
+              {cancelledCount}
+            </div>
           </div>
 
           <div className="absolute -bottom-1 left-0 right-0 h-10 pointer-events-none opacity-50 group-hover/metric:opacity-100 transition-opacity duration-300">
@@ -263,15 +230,7 @@ export const DonutChartStatus = ({ data, onRefresh, loading }: DonutChartStatusP
                     <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#f43f5e"
-                  strokeWidth={1.5}
-                  fillOpacity={1}
-                  fill="url(#gradientRose)"
-                  animationDuration={2000}
-                />
+                <Area type="monotone" dataKey="value" stroke="#f43f5e" strokeWidth={1.5} fillOpacity={1} fill="url(#gradientRose)" animationDuration={2000} />
               </AreaChart>
             </ResponsiveContainer>
           </div>

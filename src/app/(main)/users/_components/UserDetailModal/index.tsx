@@ -24,12 +24,16 @@ function mapUserToItem(user: User): UserItem {
     inactive: "INACTIVE",
   };
   const status: UserItem["status"] = statusMap[user.status?.toLowerCase()] ?? "INACTIVE";
+  const userCard = user.card || (user.user_cards && user.user_cards.length > 0 ? user.user_cards[0] : null);
+
   return {
     id: user.id,
     name: user.full_name || user.email,
     email: user.email,
     role: (user.subscription?.plan?.name?.toUpperCase() ?? "FREE") as UserItem["role"],
     status,
+    isVIFCPass: Boolean(userCard),
+    card: userCard,
     phone: "—",
     joinedDate: user.created_at ? user.created_at.split("T")[0] : "—",
     lastActive: user.updated_at ? user.updated_at.split("T")[0] : "—",
@@ -42,11 +46,7 @@ function mapUserToItem(user: User): UserItem {
   };
 }
 
-export const UserDetailModal = ({
-  open,
-  userId,
-  onClose,
-}: UserDetailModalProps) => {
+export const UserDetailModal = ({ open, userId, onClose }: UserDetailModalProps) => {
   const [user, setUser] = useState<UserItem | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -81,9 +81,7 @@ export const UserDetailModal = ({
       {loading ? (
         <SectionLoading message="Loading..." />
       ) : error ? (
-        <div className="p-10 text-center text-rose-500 font-semibold">
-          ⚠ {error}
-        </div>
+        <div className="p-10 text-center text-rose-500 font-semibold">⚠ {error}</div>
       ) : user ? (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-4">
           <ProfileHeaderCard
@@ -98,115 +96,59 @@ export const UserDetailModal = ({
           <div className="grid grid-cols-1 gap-8">
             <div className="space-y-8">
               {/* Basic info */}
-              <div className="p-8 rounded-[3rem] bg-slate-50/20 border border-slate-100/50 relative group overflow-hidden">
+              <div className="p-8 rounded-2xl bg-slate-50/20 border border-slate-100/50 relative group overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl -mr-32 -mt-32 transition-opacity group-hover:opacity-100 opacity-50" />
                 <SectionHeader icon={Fingerprint} title="Thông tin cơ bản" description="System Governance & Identification" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-                  <InfoCard
-                    label="Mã định danh (UID)"
-                    value={`#${user.id.toUpperCase()}`}
-                    icon={Hash}
-                    className="md:col-span-2"
-                    color="slate"
-                  />
-                  <InfoCard
-                    label="Tên tài khoản"
-                    value={user.name}
-                    icon={ShieldCheck}
-                  />
-                  <InfoCard
-                    label="Email liên hệ"
-                    value={user.email}
-                    icon={Mail}
-                  />
-                  <InfoCard
-                    label="Ngày gia nhập"
-                    value={user.joinedDate}
-                    icon={Calendar}
-                    color="emerald"
-                  />
-                  <InfoCard
-                    label="Hoạt động cuối"
-                    value={user.lastActive}
-                    icon={Clock}
-                    color="orange"
-                  />
-                  <InfoCard
-                    label="Trạng thái hệ thống"
-                    value={user.status}
-                    icon={Activity}
-                    color={user.status === "ACTIVE" ? "emerald" : "slate"}
-                  />
-                  <InfoCard
-                    label="Nhà cung cấp xác thực"
-                    value={user.auth_provider || "—"}
-                    icon={ShieldCheck}
-                    color="blue"
-                  />
-                  {user.company && (
-                    <InfoCard
-                      label="Công ty"
-                      value={user.company}
-                      icon={Building2}
-                    />
-                  )}
-                  {user.country && (
-                    <InfoCard
-                      label="Quốc gia"
-                      value={user.country}
-                      icon={Globe}
-                    />
+                  <InfoCard label="Mã định danh (UID)" value={`#${user.id.toUpperCase()}`} icon={Hash} className="md:col-span-2" color="slate" />
+                  <InfoCard label="Tên tài khoản" value={user.name} icon={ShieldCheck} />
+                  <InfoCard label="Email liên hệ" value={user.email} icon={Mail} />
+                  <InfoCard label="Ngày gia nhập" value={user.joinedDate} icon={Calendar} color="emerald" />
+                  <InfoCard label="Hoạt động cuối" value={user.lastActive} icon={Clock} color="orange" />
+                  <InfoCard label="Trạng thái hệ thống" value={user.status} icon={Activity} color={user.status === "ACTIVE" ? "emerald" : "slate"} />
+                  <InfoCard label="Nhà cung cấp xác thực" value={user.auth_provider || "—"} icon={ShieldCheck} color="blue" />
+                  {user.company && <InfoCard label="Công ty" value={user.company} icon={Building2} />}
+                  {user.country && <InfoCard label="Quốc gia" value={user.country} icon={Globe} />}
+                </div>
+              </div>
+
+              {/* VIFC-Pass Card Section */}
+              <div className="p-8 rounded-2xl bg-slate-50/20 border border-slate-100/50 relative group overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl -mr-32 -mt-32 transition-opacity group-hover:opacity-100 opacity-50" />
+                <SectionHeader icon={CreditCard} title="Thẻ thành viên & VIFC-Pass" description="Membership & Digital Identity Card" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+                  {user.card ? (
+                    <>
+                      <InfoCard label="Mã số thẻ (Card Number)" value={`#${user.card.so_the}`} icon={CreditCard} color="orange" className="md:col-span-2" />
+                      <InfoCard label="Hạng thẻ / Loại thẻ" value={user.card.loai_the?.toUpperCase() || "DEFAULT"} icon={ShieldCheck} color="amber" />
+                      <InfoCard label="Tên in trên thẻ" value={user.card.username} icon={Fingerprint} color="emerald" />
+                    </>
+                  ) : (
+                    <InfoCard label="Trạng thái thẻ" value="Chưa cấp thẻ thành viên VIFC-Pass" icon={CreditCard} color="slate" className="md:col-span-2" />
                   )}
                 </div>
               </div>
 
               {/* Subscription */}
-              <div className="p-8 rounded-[3rem] bg-slate-50/20 border border-slate-100/50 relative group overflow-hidden">
+              <div className="p-8 rounded-2xl bg-slate-50/20 border border-slate-100/50 relative group overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -mr-32 -mt-32 transition-opacity group-hover:opacity-100 opacity-50" />
                 <SectionHeader icon={CreditCard} title="Gói dịch vụ" description="Subscription & Plan Info" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
                   {user.subscription ? (
                     <>
-                      <InfoCard
-                        label="Tên gói"
-                        value={user.subscription.plan?.name ?? "—"}
-                        icon={CreditCard}
-                        color="amber"
-                        className="md:col-span-2"
-                      />
+                      <InfoCard label="Tên gói" value={user.subscription.plan?.name ?? "—"} icon={CreditCard} color="amber" className="md:col-span-2" />
                       <InfoCard
                         label="Giá gói"
                         value={user.subscription.plan?.price != null ? `$${user.subscription.plan.price.toLocaleString()}` : "—"}
                         icon={CreditCard}
                         color="emerald"
                       />
-                      <InfoCard
-                        label="Trạng thái"
-                        value={user.subscription.status.toUpperCase()}
-                        icon={Activity}
-                        color="emerald"
-                      />
-                      <InfoCard
-                        label="Ngày bắt đầu"
-                        value={user.subscription.start_date?.split("T")[0] ?? "—"}
-                        icon={Calendar}
-                        color="blue"
-                      />
-                      <InfoCard
-                        label="Ngày hết hạn"
-                        value={user.subscription.end_date?.split("T")[0] ?? "—"}
-                        icon={Clock}
-                        color="orange"
-                      />
+                      <InfoCard label="Trạng thái" value={user.subscription.status.toUpperCase()} icon={Activity} color="emerald" />
+                      <InfoCard label="Ngày bắt đầu" value={user.subscription.start_date?.split("T")[0] ?? "—"} icon={Calendar} color="blue" />
+                      <InfoCard label="Ngày hết hạn" value={user.subscription.end_date?.split("T")[0] ?? "—"} icon={Clock} color="orange" />
                     </>
                   ) : (
-                    <InfoCard
-                      label="Gói hiện tại"
-                      value="Free — Chưa đăng ký gói"
-                      icon={CreditCard}
-                      color="slate"
-                      className="md:col-span-2"
-                    />
+                    <InfoCard label="Gói hiện tại" value="Free — Chưa đăng ký gói" icon={CreditCard} color="slate" className="md:col-span-2" />
                   )}
                 </div>
               </div>
@@ -214,9 +156,7 @@ export const UserDetailModal = ({
           </div>
         </div>
       ) : (
-        <div className="p-10 text-center text-gray-500">
-          Không tìm thấy thông tin tài khoản.
-        </div>
+        <div className="p-10 text-center text-gray-500">Không tìm thấy thông tin tài khoản.</div>
       )}
     </PortalModal>
   );

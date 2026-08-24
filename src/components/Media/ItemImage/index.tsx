@@ -15,13 +15,7 @@ interface ItemImageProps {
   isPreview?: boolean;
 }
 
-export const ItemImage: React.FC<ItemImageProps> = React.memo(({
-  path,
-  productName,
-  className = "w-20 h-20",
-  size = "thumb",
-  isPreview = false,
-}) => {
+export const ItemImage: React.FC<ItemImageProps> = React.memo(({ path, productName, className = "w-20 h-20", size = "thumb", isPreview = false }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [viewIndex, setViewIndex] = useState<number | null>(null);
@@ -43,33 +37,26 @@ export const ItemImage: React.FC<ItemImageProps> = React.memo(({
   const isVideo = useMemo(() => {
     if (!mediaUrl) return false;
     const lowerPath = mediaUrl.toLowerCase();
-    return (
-      lowerPath.includes(".mp4") ||
-      lowerPath.includes(".webm") ||
-      lowerPath.includes(".ogg") ||
-      lowerPath.includes(".mov") ||
-      lowerPath.includes("video")
-    );
+    return lowerPath.includes(".mp4") || lowerPath.includes(".webm") || lowerPath.includes(".ogg") || lowerPath.includes(".mov") || lowerPath.includes("video");
   }, [mediaUrl]);
 
   const mediaList = useMemo(() => {
     if (!path || path === "N/A") return [];
-    return [{
-      imagePath: path,
-      name: productName || "CanoX Asset",
-      type: isVideo ? "VIDEO" : "IMAGE"
-    }];
+    return [
+      {
+        imagePath: path,
+        name: productName || "CanoX Asset",
+        type: isVideo ? "VIDEO" : "IMAGE",
+      },
+    ];
   }, [path, productName, isVideo]);
 
   if (!mediaUrl || isError) {
     return (
-      <div className={cn("relative flex items-center justify-center bg-gray-50 border border-gray-100 rounded-3xl overflow-hidden group shadow-inner", className)}>
-        <Image
-          src="/icon/package.png"
-          alt="No Asset"
-          fill
-          className="object-contain p-4 transition-all duration-500 group-hover:scale-110"
-        />
+      <div
+        className={cn("relative flex items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden group shadow-inner", className)}
+      >
+        <Image src="/icon/package.png" alt="No Asset" fill className="object-contain p-4 transition-all duration-500 group-hover:scale-110" />
       </div>
     );
   }
@@ -79,12 +66,12 @@ export const ItemImage: React.FC<ItemImageProps> = React.memo(({
       <div
         onClick={() => isPreview && setViewIndex(0)}
         className={cn(
-          "relative overflow-hidden group bg-white p-1 rounded-[1.8rem] border border-gray-100 shadow-sm transition-all duration-500",
+          "relative overflow-hidden group bg-white p-1 rounded-2xl border border-gray-100 shadow-sm transition-all duration-500",
           isPreview && "cursor-zoom-in",
-          className
+          className,
         )}
       >
-        <div className="relative cursor-pointer w-full h-full rounded-[1.4rem] overflow-hidden bg-gray-50 shadow-inner">
+        <div className="relative cursor-pointer w-full h-full rounded-2xl overflow-hidden bg-gray-50 shadow-inner">
           {isLoading && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-gray-50">
               <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/60 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
@@ -106,7 +93,7 @@ export const ItemImage: React.FC<ItemImageProps> = React.memo(({
               }}
               className={cn(
                 "w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110",
-                isLoading ? "opacity-0 scale-110" : "opacity-100 scale-100"
+                isLoading ? "opacity-0 scale-110" : "opacity-100 scale-100",
               )}
             />
           ) : (
@@ -118,7 +105,7 @@ export const ItemImage: React.FC<ItemImageProps> = React.memo(({
               unoptimized
               className={cn(
                 "object-cover transition-all duration-700 ease-out group-hover:scale-110",
-                isLoading ? "opacity-0 scale-110" : "opacity-100 scale-100"
+                isLoading ? "opacity-0 scale-110" : "opacity-100 scale-100",
               )}
               onLoadingComplete={() => setIsLoading(false)}
               onError={() => {
@@ -133,14 +120,7 @@ export const ItemImage: React.FC<ItemImageProps> = React.memo(({
         </div>
       </div>
 
-      {isPreview && (
-        <MediaLightbox
-          mediaList={mediaList}
-          currentIndex={viewIndex}
-          onChangeIndex={setViewIndex}
-          onClose={() => setViewIndex(null)}
-        />
-      )}
+      {isPreview && <MediaLightbox mediaList={mediaList} currentIndex={viewIndex} onChangeIndex={setViewIndex} onClose={() => setViewIndex(null)} />}
     </>
   );
 });

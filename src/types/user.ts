@@ -19,6 +19,16 @@ export interface UserSubscription {
   plan?: SubscriptionPlan;
 }
 
+export interface UserCard {
+  id: string;
+  user_id: string;
+  username: string;
+  so_the: string;
+  loai_the: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface User {
   id: string;
   email: string;
@@ -34,4 +44,6 @@ export interface User {
   updated_at: string;
   deleted_at?: string | null;
   subscription: UserSubscription | null;
+  card?: UserCard | null;
+  user_cards?: UserCard[];
 }

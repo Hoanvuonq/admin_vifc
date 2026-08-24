@@ -47,13 +47,7 @@ export const DataTable = <T,>({
 
   const getRowKey = (item: T, index: number) => {
     if (typeof rowKey === "function") return rowKey(item, index);
-    if (
-      rowKey &&
-      typeof rowKey === "string" &&
-      item &&
-      typeof item === "object" &&
-      rowKey in item
-    ) {
+    if (rowKey && typeof rowKey === "string" && item && typeof item === "object" && rowKey in item) {
       return (item[rowKey as keyof T] as unknown as string) || index;
     }
     return index;
@@ -72,7 +66,7 @@ export const DataTable = <T,>({
         </div>
       )}
 
-      <div className="flex flex-col flex-1 overflow-hidden bg-white border border-gray-200 rounded-4xl shadow-custom">
+      <div className="flex flex-col flex-1 overflow-hidden bg-white border border-gray-200 rounded-2xl shadow-custom">
         <div className="overflow-x-auto flex-1 custom-scrollbar relative scroll-smooth overscroll-x-contain" ref={containerRef}>
           <table className="min-w-full border-separate border-spacing-0 table-fixed sm:table-auto">
             <thead className="sticky top-0 z-20">
@@ -83,7 +77,7 @@ export const DataTable = <T,>({
                     className={cn(
                       "px-6 py-4 text-[11px] font-bold uppercase cherry-bomb-one-regular text-gray-500 tracking-wide border-b border-gray-200",
                       col.align === "center" ? "text-center" : col.align === "right" ? "text-right" : "text-left",
-                      col.headerClassName
+                      col.headerClassName,
                     )}
                   >
                     {col.header}
@@ -105,23 +99,14 @@ export const DataTable = <T,>({
                     {columns.map((col, colIdx) => (
                       <td key={colIdx} className="px-4 py-4">
                         <div className={col.align === "center" ? "flex justify-center" : col.align === "right" ? "flex justify-end" : "flex justify-start"}>
-                          <Skeleton
-                            height={28}
-                            width={colIdx === 0 ? 240 : 80}
-                            borderRadius="0.5rem"
-                          />
+                          <Skeleton height={28} width={colIdx === 0 ? 240 : 80} borderRadius="0.5rem" />
                         </div>
                       </td>
                     ))}
                   </motion.tr>
                 ))
               ) : data.length === 0 ? (
-                <motion.tr
-                  key="empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
+                <motion.tr key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   <td colSpan={columns.length} className="px-3">
                     {emptyState ? emptyState : <EmptyState isTable message={emptyMessage} />}
                   </td>
@@ -152,14 +137,14 @@ export const DataTable = <T,>({
                             toggleRow(id);
                             setTimeout(() => {
                               const element = document.getElementById(`row-${id}`);
-                              element?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                              element?.scrollIntoView({ behavior: "smooth", block: "nearest" });
                             }, 50);
                           }
                         }}
                         className={cn(
                           "group transition-all duration-300 select-none scroll-mt-20",
-                          (renderDropdown || isDropdown || onRowClick) ? "cursor-pointer hover:bg-orange-50/50" : "hover:bg-gray-50/50",
-                          isExpanded && "bg-orange-50/80 shadow-[inset_0_4px_20px_rgba(249,115,22,0.08)] border-l-4 border-l-orange-500"
+                          renderDropdown || isDropdown || onRowClick ? "cursor-pointer hover:bg-orange-50/50" : "hover:bg-gray-50/50",
+                          isExpanded && "bg-orange-50/80 shadow-[inset_0_4px_20px_rgba(249,115,22,0.08)] border-l-4 border-l-orange-500",
                         )}
                       >
                         {columns.map((col, colIdx) => {
@@ -181,7 +166,7 @@ export const DataTable = <T,>({
                                 "px-4 py-2 whitespace-nowrap text-[13px] text-gray-600 font-medium border-b border-gray-50/50 transition-colors",
                                 col.align === "center" ? "text-center" : col.align === "right" ? "text-right" : "text-left",
                                 col.className,
-                                isExpanded && "text-orange-950 font-bold"
+                                isExpanded && "text-orange-950 font-bold",
                               )}
                             >
                               {cellContent}
@@ -201,16 +186,16 @@ export const DataTable = <T,>({
                                   opacity: 1,
                                   transition: {
                                     height: { duration: 0.35, ease: [0.04, 0.62, 0.23, 0.98] },
-                                    opacity: { duration: 0.2, ease: "linear" }
-                                  }
+                                    opacity: { duration: 0.2, ease: "linear" },
+                                  },
                                 }}
                                 exit={{
                                   height: 0,
                                   opacity: 0,
                                   transition: {
                                     height: { duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] },
-                                    opacity: { duration: 0.15, ease: "linear" }
-                                  }
+                                    opacity: { duration: 0.15, ease: "linear" },
+                                  },
                                 }}
                                 className="overflow-hidden"
                               >
@@ -241,7 +226,9 @@ export const DataTable = <T,>({
             <div className="flex items-center gap-3">
               <span className="text-[10px] font-bold uppercase text-gray-600 tracking-tighter italic">Thống kê tài sản</span>
               <div className="flex items-center bg-white border border-gray-200 rounded-xl px-3 py-1 shadow-sm">
-                <span className="text-[11px] font-bold text-orange-600">{fromItem}-{toItem}</span>
+                <span className="text-[11px] font-bold text-orange-600">
+                  {fromItem}-{toItem}
+                </span>
                 <span className="mx-2 text-gray-500">/</span>
                 <span className="text-[11px] font-bold text-gray-500 uppercase">{totalElements} mục</span>
               </div>
@@ -260,7 +247,12 @@ export const DataTable = <T,>({
                 {Array.from({ length: totalPages }, (_, i) => i).map((pageNum) => {
                   const isSelected = page === pageNum;
                   if (totalPages > 5 && Math.abs(pageNum - page) > 1 && pageNum !== 0 && pageNum !== totalPages - 1) {
-                    if (pageNum === 1 || pageNum === totalPages - 2) return <span key={pageNum} className="px-1 text-gray-500">...</span>;
+                    if (pageNum === 1 || pageNum === totalPages - 2)
+                      return (
+                        <span key={pageNum} className="px-1 text-gray-500">
+                          ...
+                        </span>
+                      );
                     return null;
                   }
                   return (
@@ -271,7 +263,7 @@ export const DataTable = <T,>({
                         "h-8 min-w-8 rounded-xl text-[11px] font-bold transition-all border",
                         isSelected
                           ? "bg-orange-500 border-orange-500 text-white shadow-md shadow-orange-200"
-                          : "bg-white border-gray-200 text-gray-500 hover:bg-orange-50"
+                          : "bg-white border-gray-200 text-gray-500 hover:bg-orange-50",
                       )}
                     >
                       {pageNum + 1}

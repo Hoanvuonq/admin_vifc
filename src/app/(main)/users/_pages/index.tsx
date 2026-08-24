@@ -1,10 +1,10 @@
 "use client";
 
 import { AdminPageHeader, ItemImage } from "@/components";
-import { DataTable } from "@/components/DataTable";
+import { DataTable } from "@/components";
 import { useUsers } from "@/hooks/useUsers";
 import { useUpload } from "@/hooks/useUpload";
-import { Calendar, Clock, Edit, Mail, Phone, UserCheck, Users, UserX } from "lucide-react";
+import { Calendar, Clock, CreditCard, Edit, Mail, Phone, UserCheck, Users, UserX } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { PaymentHistoryModal, UserDetailModal, UserFilters, UserModal, CreateUserModal } from "../_components";
@@ -75,13 +75,45 @@ export const ManagerUsersScreen = () => {
     setIsAddUserModalOpen(true);
   };
 
-  const handleToggleBlock = (id: string, nextStatus: "ACTIVE" | "BANNED") => {
-    showToast(nextStatus === "BANNED" ? `Locked user account: ${id}` : `Unlocked user account: ${id}`, nextStatus === "BANNED" ? "warning" : "success");
+  const handleToggleBlock = async (id: string, nextStatus: "ACTIVE" | "BANNED") => {
+    try {
+      const res = await fetch(`/api/db/users/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: nextStatus.toLowerCase() }),
+      });
+      if (res.ok) {
+        showToast(nextStatus === "BANNED" ? "Đã khóa tài khoản người dùng thành công" : "Đã mở khóa tài khoản người dùng thành công", "success");
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+        setIsAddUserModalOpen(false);
+        setSelectedUserToEdit(null);
+      } else {
+        const errData = await res.json().catch(() => null);
+        showToast(errData?.error?.message || "Cập nhật trạng thái người dùng thất bại", "warning");
+      }
+    } catch {
+      showToast("Có lỗi xảy ra khi cập nhật trạng thái", "warning");
+    }
   };
 
-  const handleDeleteUser = (id: string) => {
-    if (confirm("Are you sure you want to delete this user?")) {
-      showToast(`Delete action triggered for user: ${id}`, "warning");
+  const handleDeleteUser = async (id: string) => {
+    if (confirm("Bạn có chắc chắn muốn xóa người dùng này khỏi hệ thống? Hành động này không thể hoàn tác.")) {
+      try {
+        const res = await fetch(`/api/db/users/${id}`, {
+          method: "DELETE",
+        });
+        if (res.ok) {
+          showToast("Đã xóa người dùng thành công", "success");
+          queryClient.invalidateQueries({ queryKey: ["users"] });
+          setIsAddUserModalOpen(false);
+          setSelectedUserToEdit(null);
+        } else {
+          const errData = await res.json().catch(() => null);
+          showToast(errData?.error?.message || "Xóa người dùng thất bại", "warning");
+        }
+      } catch {
+        showToast("Có lỗi xảy ra khi xóa người dùng", "warning");
+      }
     }
   };
 
@@ -90,10 +122,15 @@ export const ManagerUsersScreen = () => {
     email: string;
     phone: string;
     isVIFCPass?: boolean;
+    so_the?: string;
+    loai_the?: string;
+    cardUsername?: string;
     status: UserItem["status"];
     avatarFile: File | null;
     avatarUrl: string;
     subscriptionPlanId?: string;
+    company?: string;
+    country?: string;
   }) => {
     if (selectedUserToEdit) {
       try {
@@ -105,17 +142,30 @@ export const ManagerUsersScreen = () => {
           }
         }
 
-        const payload: Record<string, unknown> = {};
-        const hasActiveSubscription = Boolean(selectedUserToEdit.subscription?.plan?.id);
+        const payload: Record<string, unknown> = {
+          full_name: userData.name,
+          status: userData.status,
+          avatar_url: finalAvatarUrl,
+          company: userData.company,
+          country: userData.country,
+        };
 
-        if (!hasActiveSubscription) {
-          payload.full_name = userData.name;
-          payload.status = userData.status;
-          payload.avatar_url = finalAvatarUrl;
+        if (userData.subscriptionPlanId !== undefined) {
+          payload.subscription_plan_id = userData.subscriptionPlanId;
         }
 
-        if (userData.subscriptionPlanId && userData.subscriptionPlanId !== selectedUserToEdit.subscription?.plan?.id) {
-          payload.subscription_plan_id = userData.subscriptionPlanId;
+        // Card management fields
+        if (userData.isVIFCPass !== undefined) {
+          payload.isVIFCPass = userData.isVIFCPass;
+        }
+        if (userData.so_the !== undefined) {
+          payload.so_the = userData.so_the;
+        }
+        if (userData.loai_the !== undefined) {
+          payload.loai_the = userData.loai_the;
+        }
+        if (userData.cardUsername !== undefined) {
+          payload.card_username = userData.cardUsername;
         }
 
         const res = await fetch(`/api/db/users/${selectedUserToEdit.id}`, {
@@ -125,15 +175,16 @@ export const ManagerUsersScreen = () => {
         });
 
         if (res.ok) {
-          showToast(`Updated user: ${userData.name}`, "success");
+          showToast(`Đã cập nhật thông tin người dùng: ${userData.name}`, "success");
           queryClient.invalidateQueries({ queryKey: ["users"] });
           setIsAddUserModalOpen(false);
           setSelectedUserToEdit(null);
         } else {
-          showToast("Failed to update user", "warning");
+          const errData = await res.json().catch(() => null);
+          showToast(errData?.error?.message || "Cập nhật người dùng thất bại", "warning");
         }
       } catch (error) {
-        showToast("An error occurred during update", "warning");
+        showToast("Có lỗi xảy ra khi cập nhật thông tin người dùng", "warning");
       }
     } else {
       try {
@@ -151,7 +202,12 @@ export const ManagerUsersScreen = () => {
           email: userData.email,
           phone: userData.phone,
           status: userData.status.toLowerCase(),
+          company: userData.company,
+          country: userData.country,
           ...(userData.isVIFCPass && { isVIFCPass: userData.isVIFCPass }),
+          ...(userData.so_the && { so_the: userData.so_the }),
+          ...(userData.loai_the && { loai_the: userData.loai_the }),
+          ...(userData.cardUsername && { card_username: userData.cardUsername }),
           avatar_url: finalAvatarUrl || undefined,
           subscription_plan_id: userData.subscriptionPlanId || undefined,
         };
@@ -163,16 +219,16 @@ export const ManagerUsersScreen = () => {
         });
 
         if (res.ok) {
-          showToast(`Created user: ${userData.name}`, "success");
+          showToast(`Đã tạo thành công tài khoản: ${userData.name}`, "success");
           queryClient.invalidateQueries({ queryKey: ["users"] });
           setIsAddUserModalOpen(false);
           setIsCreateUserModalOpen(false);
         } else {
           const errData = await res.json().catch(() => null);
-          return showToast(errData?.error?.message || "Failed to create user", "warning");
+          return showToast(errData?.error?.message || "Tạo người dùng thất bại", "warning");
         }
       } catch (error) {
-        showToast("An error occurred during user creation", "warning");
+        showToast("Có lỗi xảy ra khi tạo người dùng", "warning");
       }
     }
   };
@@ -194,7 +250,7 @@ export const ManagerUsersScreen = () => {
   );
 
   const renderUserDetail = (user: UserItem) => (
-    <div className="px-8 py-6 bg-slate-50/50 rounded-4xl border border-gray-100 m-2 flex flex-col lg:flex-row gap-6 items-start justify-between shadow-inner animate-in fade-in duration-300">
+    <div className="px-8 py-6 bg-slate-50/50 rounded-2xl border border-gray-100 m-2 flex flex-col lg:flex-row gap-6 items-start justify-between shadow-inner animate-in fade-in duration-300">
       {/* Avatar + contact */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
         <ItemImage
@@ -256,6 +312,14 @@ export const ManagerUsersScreen = () => {
           <div>
             <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Country</span>
             <span className="font-bold text-gray-700 mt-0.5 block">{user.country}</span>
+          </div>
+        )}
+        {user.card && (
+          <div className="col-span-2">
+            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Thẻ VIFC-Pass</span>
+            <span className="font-bold text-orange-600 mt-0.5 flex items-center gap-1.5 font-mono">
+              <CreditCard size={13} /> #{user.card.so_the} ({user.card.loai_the}) — {user.card.username}
+            </span>
           </div>
         )}
         {user.subscription && (
@@ -353,6 +417,8 @@ export const ManagerUsersScreen = () => {
         }}
         userToEdit={selectedUserToEdit}
         onSave={handleSaveUser}
+        onToggleBlock={handleToggleBlock}
+        onDelete={handleDeleteUser}
       />
 
       <PaymentHistoryModal

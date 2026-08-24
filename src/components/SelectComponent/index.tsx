@@ -44,10 +44,8 @@ export const SelectComponent = ({
   const [newValue, setNewValue] = useState("");
   const [customOptions, setCustomOptions] = useState<AttributeOption[]>([]);
   const [search, setSearch] = useState("");
-  const [dropdownStyle, setDropdownStyle] =
-    useState<React.CSSProperties | null>(null);
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
-
 
   const getDisplayLabel = () => {
     let combinedOptions = [...options, ...customOptions];
@@ -79,8 +77,7 @@ export const SelectComponent = ({
       const gap = 8;
 
       const spaceBelow = viewportHeight - rect.bottom;
-      const showAtTop =
-        spaceBelow < dropdownMaxHeight && rect.top > dropdownMaxHeight;
+      const showAtTop = spaceBelow < dropdownMaxHeight && rect.top > dropdownMaxHeight;
 
       const style: React.CSSProperties = {
         position: "fixed",
@@ -120,10 +117,7 @@ export const SelectComponent = ({
     }
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
-      if (
-        !wrapperRef.current?.contains(target) &&
-        !document.getElementById("select-dropdown-portal")?.contains(target)
-      ) {
+      if (!wrapperRef.current?.contains(target) && !document.getElementById("select-dropdown-portal")?.contains(target)) {
         setIsOpen(false);
       }
     };
@@ -137,9 +131,7 @@ export const SelectComponent = ({
 
     if (isMulti) {
       const currentValues = (Array.isArray(value) ? value : []) as (string | boolean)[];
-      const newValue = currentValues.includes(val)
-        ? currentValues.filter((v) => v !== val)
-        : [...currentValues, val];
+      const newValue = currentValues.includes(val) ? currentValues.filter((v) => v !== val) : [...currentValues, val];
       onChange(newValue);
     } else {
       onChange(val);
@@ -164,7 +156,7 @@ export const SelectComponent = ({
   const handleAddNewConfirm = () => {
     if (newValue.trim()) {
       const val = newValue.trim();
-      setCustomOptions(prev => [...prev, { label: val, value: val }]);
+      setCustomOptions((prev) => [...prev, { label: val, value: val }]);
       onAddNew?.(val);
       setNewValue("");
       setIsAddingNew(false);
@@ -173,9 +165,7 @@ export const SelectComponent = ({
 
   const allOptions = [...options, ...customOptions];
 
-  const filteredOptions = allOptions.filter((opt) =>
-    opt.label.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filteredOptions = allOptions.filter((opt) => opt.label.toLowerCase().includes(search.toLowerCase()));
 
   let finalOptions = onSearchChange ? allOptions : filteredOptions;
 
@@ -202,8 +192,7 @@ export const SelectComponent = ({
               ? "opacity-50 cursor-not-allowed bg-slate-100 border-slate-100 text-gray-600"
               : "border-slate-100 bg-white/80 backdrop-blur-md hover:border-orange-200 hover:shadow-md hover:bg-white",
             isOpen && "border-orange-300 ring-4 ring-orange-500/10 bg-white scale-[0.99] shadow-inner",
-            error &&
-            "border-red-400 bg-red-50/30 animate-shake focus:border-red-500",
+            error && "border-red-400 bg-red-50/30 animate-shake focus:border-red-500",
           )}
           onClick={() => !disabled && !loading && setIsOpen(!isOpen)}
         >
@@ -219,10 +208,7 @@ export const SelectComponent = ({
                         className="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-xl text-[10px] font-bold text-gray-700 border border-gray-200 animate-in zoom-in duration-200 shadow-sm shrink-0 max-w-[120px]"
                       >
                         <span className="truncate">{opt?.label || val}</span>
-                        <button
-                          onClick={(e) => handleRemoveValue(e, val)}
-                          className="text-gray-600 hover:text-red-500 transition-colors p-0.5"
-                        >
+                        <button onClick={(e) => handleRemoveValue(e, val)} className="text-gray-600 hover:text-red-500 transition-colors p-0.5">
                           <X size={8} strokeWidth={3} />
                         </button>
                       </div>
@@ -231,9 +217,7 @@ export const SelectComponent = ({
                 </div>
               ) : (
                 <div className="flex items-center gap-2 overflow-hidden">
-                  <span className="text-xs font-bold text-gray-900 truncate">
-                    {getDisplayLabel()}
-                  </span>
+                  <span className="text-xs font-bold text-gray-900 truncate">{getDisplayLabel()}</span>
                   <div className="flex items-center justify-center bg-orange-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm animate-in zoom-in duration-300 shrink-0">
                     {value.length}
                   </div>
@@ -245,28 +229,13 @@ export const SelectComponent = ({
                   const selectedOpt = !Array.isArray(value) ? allOptions.find((opt) => opt.value === value) : null;
                   return selectedOpt ? (
                     <>
-                      {selectedOpt.icon && (
-                        <selectedOpt.icon className={cn("shrink-0", selectedOpt.color ? selectedOpt.color : "text-gray-700")} size={14} />
-                      )}
-                      <span
-                        className={cn(
-                          "truncate text-xs font-bold",
-                          selectedOpt.color ? selectedOpt.color : "text-gray-900",
-                          error && "text-red-600",
-                        )}
-                      >
+                      {selectedOpt.icon && <selectedOpt.icon className={cn("shrink-0", selectedOpt.color ? selectedOpt.color : "text-gray-700")} size={14} />}
+                      <span className={cn("truncate text-xs font-bold", selectedOpt.color ? selectedOpt.color : "text-gray-900", error && "text-red-600")}>
                         {selectedOpt.label}
                       </span>
                     </>
                   ) : (
-                    <span
-                      className={cn(
-                        "text-xs font-bold truncate transition-colors text-gray-600",
-                        error && "text-red-600",
-                      )}
-                    >
-                      {getDisplayLabel()}
-                    </span>
+                    <span className={cn("text-xs font-bold truncate transition-colors text-gray-600", error && "text-red-600")}>{getDisplayLabel()}</span>
                   );
                 })()}
               </div>
@@ -277,11 +246,7 @@ export const SelectComponent = ({
               <Loader2 className="animate-spin text-orange-500" size={14} />
             ) : (
               <ChevronDown
-                className={cn(
-                  "text-[10px] text-gray-600 transition-transform duration-300",
-                  isOpen && "rotate-180 text-orange-500",
-                  error && "text-red-500",
-                )}
+                className={cn("text-[10px] text-gray-600 transition-transform duration-300", isOpen && "rotate-180 text-orange-500", error && "text-red-500")}
                 size={12}
                 strokeWidth={3}
               />
@@ -289,11 +254,7 @@ export const SelectComponent = ({
           </div>
         </div>
 
-        {error && (
-          <p className="text-[10px] font-medium text-red-500 mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1 italic">
-            * {error}
-          </p>
-        )}
+        {error && <p className="text-[10px] font-medium text-red-500 mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1 italic">* {error}</p>}
       </div>
 
       {isOpen &&
@@ -302,7 +263,7 @@ export const SelectComponent = ({
           <div
             id="select-dropdown-portal"
             className={cn(
-              "bg-white/95 backdrop-blur-xl border border-slate-100 rounded-3xl shadow-[0_30px_60px_-12px_rgba(0,0,0,0.18)] flex flex-col overflow-hidden",
+              "bg-white/95 backdrop-blur-xl border border-slate-100 rounded-2xl shadow-[0_30px_60px_-12px_rgba(0,0,0,0.18)] flex flex-col overflow-hidden",
               "animate-in fade-in slide-in-from-top-2 duration-300 ease-out",
             )}
             style={dropdownStyle}
@@ -320,9 +281,7 @@ export const SelectComponent = ({
             <div className="overflow-y-auto max-h-55 p-2 custom-scrollbar">
               {finalOptions.length > 0 ? (
                 finalOptions.map((opt) => {
-                  const isSelected = isMulti
-                    ? Array.isArray(value) && (value as (string | boolean)[]).includes(opt.value)
-                    : value === opt.value;
+                  const isSelected = isMulti ? Array.isArray(value) && (value as (string | boolean)[]).includes(opt.value) : value === opt.value;
 
                   return (
                     <div
@@ -339,20 +298,10 @@ export const SelectComponent = ({
                     >
                       {isMulti ? (
                         <div className="flex items-center gap-3 px-1 w-full overflow-hidden">
-                          <Checkbox
-                            checked={isSelected}
-                            containerClassName="w-auto p-0 pointer-events-none"
-                            sizeClassName="w-4 h-4"
-                            disabled={opt.disabled}
-                          />
+                          <Checkbox checked={isSelected} containerClassName="w-auto p-0 pointer-events-none" sizeClassName="w-4 h-4" disabled={opt.disabled} />
                           {opt.image && (
                             <div className="w-8 h-8 relative rounded-lg overflow-hidden shrink-0 border border-gray-100 bg-gray-50 shadow-sm">
-                              <Image
-                                src={opt.image}
-                                alt={opt.label}
-                                fill
-                                className="object-cover"
-                              />
+                              <Image src={opt.image} alt={opt.label} fill className="object-cover" />
                             </div>
                           )}
                           <span
@@ -360,11 +309,15 @@ export const SelectComponent = ({
                               "truncate text-sm transition-colors",
                               isSelected
                                 ? "text-orange-600 font-bold"
-                                : opt.disabled ? "text-gray-500 pointer-events-none" : "text-gray-600 group-hover:text-orange-500",
+                                : opt.disabled
+                                  ? "text-gray-500 pointer-events-none"
+                                  : "text-gray-600 group-hover:text-orange-500",
                             )}
                           >
                             {opt.label}
-                            {opt.disabled && <span className="ml-2 text-[10px] font-bold text-orange-400 bg-orange-50 px-1.5 py-0.5 rounded-full">(Đã có)</span>}
+                            {opt.disabled && (
+                              <span className="ml-2 text-[10px] font-bold text-orange-400 bg-orange-50 px-1.5 py-0.5 rounded-full">(Đã có)</span>
+                            )}
                           </span>
                         </div>
                       ) : (
@@ -372,37 +325,31 @@ export const SelectComponent = ({
                           <div className="flex items-center gap-3 overflow-hidden">
                             {opt.image && (
                               <div className="w-8 h-8 relative rounded-lg overflow-hidden shrink-0 border border-gray-100 bg-gray-50 shadow-sm">
-                                <Image
-                                  src={opt.image}
-                                  alt={opt.label}
-                                  fill
-                                  className="object-cover"
-                                />
+                                <Image src={opt.image} alt={opt.label} fill className="object-cover" />
                               </div>
                             )}
                             <div className="flex items-center gap-2.5 overflow-hidden flex-1">
                               {opt.icon && (
-                                <opt.icon className={cn("shrink-0 transition-colors", opt.color ? opt.color : "text-gray-600 group-hover:text-orange-500")} size={14} />
+                                <opt.icon
+                                  className={cn("shrink-0 transition-colors", opt.color ? opt.color : "text-gray-600 group-hover:text-orange-500")}
+                                  size={14}
+                                />
                               )}
                               <span
                                 className={cn(
                                   "truncate transition-colors text-xs font-bold",
                                   isSelected
                                     ? "text-orange-600 "
-                                    : opt.disabled ? "text-gray-500 font-bold pointer-events-none" : cn("text-gray-600 group-hover:font-bold", opt.color ? `group-hover:${opt.color}` : "group-hover:text-orange-500"),
+                                    : opt.disabled
+                                      ? "text-gray-500 font-bold pointer-events-none"
+                                      : cn("text-gray-600 group-hover:font-bold", opt.color ? `group-hover:${opt.color}` : "group-hover:text-orange-500"),
                                 )}
                               >
                                 {opt.label}
                               </span>
                             </div>
                           </div>
-                          {isSelected && (
-                            <Check
-                              className="text-orange-500 animate-in zoom-in duration-200 shrink-0"
-                              size={11}
-                              strokeWidth={3}
-                            />
-                          )}
+                          {isSelected && <Check className="text-orange-500 animate-in zoom-in duration-200 shrink-0" size={11} strokeWidth={3} />}
                         </div>
                       )}
                     </div>
@@ -410,9 +357,7 @@ export const SelectComponent = ({
                 })
               ) : (
                 <div className="py-8 text-center flex flex-col items-center justify-center">
-                  <span className="text-sm font-medium text-gray-600">
-                    Không tìm thấy kết quả
-                  </span>
+                  <span className="text-sm font-medium text-gray-600">Không tìm thấy kết quả</span>
                 </div>
               )}
             </div>
@@ -463,4 +408,4 @@ export const SelectComponent = ({
         )}
     </div>
   );
-};  
+};

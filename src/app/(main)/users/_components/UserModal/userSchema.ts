@@ -15,6 +15,10 @@ export interface UserFormData {
   country?: string;
   avatarUrl?: string;
   avatarFile?: File | null;
+  isVIFCPass?: boolean;
+  so_the?: string;
+  loai_the?: string;
+  cardUsername?: string;
 }
 
 export const userSchema = Yup.object().shape({
@@ -42,6 +46,10 @@ export const userSchema = Yup.object().shape({
   subscriptionPlanId: Yup.string().optional().default(""),
   company: Yup.string().optional().default(""),
   country: Yup.string().optional().default(""),
+  isVIFCPass: Yup.boolean().optional().default(false),
+  so_the: Yup.string().optional().default(""),
+  loai_the: Yup.string().optional().default(""),
+  cardUsername: Yup.string().optional().default(""),
 });
 
 export const useUserForm = (options?: UseFormProps<UserFormData>) => {
@@ -60,6 +68,10 @@ export const useUserForm = (options?: UseFormProps<UserFormData>) => {
       country: "Việt Nam",
       avatarUrl: "",
       avatarFile: null,
+      isVIFCPass: false,
+      so_the: "",
+      loai_the: "",
+      cardUsername: "",
     },
     ...options,
   });

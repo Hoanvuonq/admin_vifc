@@ -19,14 +19,9 @@ const formatNumber = (val: any, isPhone?: boolean) => {
   return str.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
-type FormInputProps = BaseProps &
-  (React.InputHTMLAttributes<HTMLInputElement> &
-    React.TextareaHTMLAttributes<HTMLTextAreaElement>);
+type FormInputProps = BaseProps & (React.InputHTMLAttributes<HTMLInputElement> & React.TextareaHTMLAttributes<HTMLTextAreaElement>);
 
-export const FormInput = React.forwardRef<
-  HTMLInputElement | HTMLTextAreaElement,
-  FormInputProps
->(
+export const FormInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, FormInputProps>(
   (
     {
       label,
@@ -62,8 +57,7 @@ export const FormInput = React.forwardRef<
     const isPasswordType = type === "password";
 
     const isControlled = value !== undefined;
-    const displayValue =
-      type === "number" ? formatNumber(value, isPhone) : (value ?? "");
+    const displayValue = type === "number" ? formatNumber(value, isPhone) : (value ?? "");
 
     const triggerShake = () => {
       if (!isShaking) {
@@ -125,18 +119,14 @@ export const FormInput = React.forwardRef<
       "transition-all duration-200 shadow-custom",
       "focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 focus:bg-white",
       isDate && "cursor-pointer uppercase text-[11px]",
-      (externalError || localError || emptyError || lengthError) &&
-      "border-red-400 focus:border-red-500 focus:ring-red-500/10 bg-red-50/30",
+      (externalError || localError || emptyError || lengthError) && "border-red-400 focus:border-red-500 focus:ring-red-500/10 bg-red-50/30",
       isShaking && "animate-shake",
     );
 
     return (
       <div className={cn("space-y-2 w-full", containerClassName)}>
         {label && (
-          <label
-            htmlFor={id}
-            className="text-[12px] font-bold text-gray-700 ml-1 flex items-center gap-1"
-          >
+          <label htmlFor={id} className="text-[12px] font-bold text-gray-700 ml-1 flex items-center gap-1">
             {label}
             {required && <span className="text-red-500 text-sm">*</span>}
           </label>
@@ -146,11 +136,7 @@ export const FormInput = React.forwardRef<
           {isTextArea ? (
             <textarea
               ref={ref as React.ForwardedRef<HTMLTextAreaElement>}
-              className={cn(
-                commonStyles,
-                "py-3 min-h-25 resize-none",
-                className,
-              )}
+              className={cn(commonStyles, "py-3 min-h-25 resize-none", className)}
               onChange={handleInputChange}
               onBlur={handleBlur}
               value={isControlled ? (value ?? "") : undefined}
@@ -160,14 +146,9 @@ export const FormInput = React.forwardRef<
           ) : (
             <input
               ref={ref as any}
-              type={isPasswordType ? (showPassword ? "text" : "password") : (type === "number" ? "text" : type)}
+              type={isPasswordType ? (showPassword ? "text" : "password") : type === "number" ? "text" : type}
               inputMode={type === "number" ? "numeric" : props.inputMode}
-              className={cn(
-                commonStyles,
-                "h-12 text-ellipsis",
-                (isCheckbox || isPasswordType) && "pr-11",
-                className,
-              )}
+              className={cn(commonStyles, "h-12 text-ellipsis", (isCheckbox || isPasswordType) && "pr-11", className)}
               onChange={handleInputChange}
               onBlur={handleBlur}
               value={isControlled ? displayValue : undefined}
@@ -183,29 +164,23 @@ export const FormInput = React.forwardRef<
               className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-gray-600 hover:text-orange-500 transition-colors z-10 cursor-pointer"
               tabIndex={-1}
             >
-              {showPassword ? (
-                <Eye size={18} strokeWidth={2.5} />
-              ) : (
-                <EyeOff size={18} strokeWidth={2.5} />
-              )}
+              {showPassword ? <Eye size={18} strokeWidth={2.5} /> : <EyeOff size={18} strokeWidth={2.5} />}
             </button>
           )}
 
           {isCheckbox && (
             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center border-l border-gray-200 pl-2 h-5">
-              <Checkbox
-                checked={checkboxChecked}
-                onChange={(e) => onCheckboxChange?.(e.target.checked)}
-                sizeClassName="w-4 h-4"
-              />
+              <Checkbox checked={checkboxChecked} onChange={(e) => onCheckboxChange?.(e.target.checked)} sizeClassName="w-4 h-4" />
             </div>
           )}
 
           {showCount && props.maxLength && (
-            <div className={cn(
-              "absolute flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white shadow-sm border border-gray-100 select-none pointer-events-none transition-all duration-300",
-              isTextArea ? "bottom-4 right-4" : "right-3 top-1/2 -translate-y-1/2"
-            )}>
+            <div
+              className={cn(
+                "absolute flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white shadow-sm border border-gray-100 select-none pointer-events-none transition-all duration-300",
+                isTextArea ? "bottom-4 right-4" : "right-3 top-1/2 -translate-y-1/2",
+              )}
+            >
               <span
                 className={cn(
                   "text-[10px] font-bold tabular-nums transition-colors",
@@ -215,19 +190,14 @@ export const FormInput = React.forwardRef<
                 {(value?.toString().length || 0).toLocaleString()}
               </span>
               <span className="text-[10px] text-gray-400">/</span>
-              <span className="text-[10px] text-gray-500 font-bold">
-                {Number(props.maxLength).toLocaleString()}
-              </span>
+              <span className="text-[10px] text-gray-500 font-bold">{Number(props.maxLength).toLocaleString()}</span>
             </div>
           )}
         </div>
 
         {(externalError || emptyError || lengthError) && (
           <p className="text-[10px] font-medium text-red-500 ml-1 animate-in fade-in slide-in-from-top-1">
-            {externalError ||
-              (emptyError
-                ? "Trường này không được để trống"
-                : `Vui lòng nhập đủ ${minLengthNumber} ký tự`)}
+            {externalError || (emptyError ? "Trường này không được để trống" : `Vui lòng nhập đủ ${minLengthNumber} ký tự`)}
           </p>
         )}
       </div>

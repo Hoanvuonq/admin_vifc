@@ -138,8 +138,8 @@ export const LoginScreen = () => {
         <div className="w-full lg:w-1/2 flex items-center justify-center p-2 sm:p-12 relative">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-orange-500/5 rounded-full blur-[120px] pointer-events-none animate-pulse" />
           <div className="w-full max-w-[460px] relative z-10">
-            <div className="relative p-px rounded-[48px] bg-linear-to-b from-zinc-200 via-transparent to-transparent">
-              <div className="w-full bg-white/90 backdrop-blur-3xl px-8 py-10 rounded-[47px] shadow-custom">
+            <div className="relative p-px rounded-2xl bg-linear-to-b from-zinc-200 via-transparent to-transparent">
+              <div className="w-full bg-white/90 backdrop-blur-3xl px-8 py-10 rounded-2xl shadow-custom">
                 <div className="text-center flex flex-col items-center mb-8">
                   <div className="relative group mb-4">
                     <div className="absolute -inset-6 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-all duration-700" />

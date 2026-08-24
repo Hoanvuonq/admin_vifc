@@ -78,6 +78,20 @@ export async function GET(request: Request) {
         created_at: true,
         updated_at: true,
         deleted_at: true,
+        user_cards: {
+          select: {
+            id: true,
+            user_id: true,
+            username: true,
+            so_the: true,
+            loai_the: true,
+            created_at: true,
+            updated_at: true,
+          },
+          orderBy: {
+            created_at: "desc",
+          },
+        },
         user_subscriptions: {
           where: {
             status: "active",
@@ -109,6 +123,7 @@ export async function GET(request: Request) {
     // Transform data to conform to User interface
     const transformedUsers: User[] = users.map((user) => {
       const [activeSub] = user.user_subscriptions;
+      const [primaryCard] = user.user_cards || [];
 
       return {
         id: user.id,
@@ -124,6 +139,26 @@ export async function GET(request: Request) {
         created_at: user.created_at.toISOString(),
         updated_at: user.updated_at.toISOString(),
         deleted_at: user.deleted_at ? user.deleted_at.toISOString() : null,
+        card: primaryCard
+          ? {
+              id: primaryCard.id,
+              user_id: primaryCard.user_id,
+              username: primaryCard.username,
+              so_the: primaryCard.so_the,
+              loai_the: primaryCard.loai_the,
+              created_at: primaryCard.created_at.toISOString(),
+              updated_at: primaryCard.updated_at.toISOString(),
+            }
+          : null,
+        user_cards: user.user_cards?.map((c) => ({
+          id: c.id,
+          user_id: c.user_id,
+          username: c.username,
+          so_the: c.so_the,
+          loai_the: c.loai_the,
+          created_at: c.created_at.toISOString(),
+          updated_at: c.updated_at.toISOString(),
+        })),
         subscription: activeSub
           ? {
             id: activeSub.id,

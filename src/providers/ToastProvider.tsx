@@ -8,11 +8,16 @@ import { toast as sonnerToast, Toaster } from "sonner";
 import { toastConfig } from "@/types/toast";
 
 export const toast = {
-  success: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.success} />, { id: options?.id }),
-  error: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.error} />, { id: options?.id }),
-  warning: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.warning} />, { id: options?.id }),
-  info: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.info} />, { id: options?.id }),
-  loading: (message: any, options?: ToastOptions) => sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.loading} />, { id: options?.id }),
+  success: (message: any, options?: ToastOptions) =>
+    sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.success} />, { id: options?.id }),
+  error: (message: any, options?: ToastOptions) =>
+    sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.error} />, { id: options?.id }),
+  warning: (message: any, options?: ToastOptions) =>
+    sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.warning} />, { id: options?.id }),
+  info: (message: any, options?: ToastOptions) =>
+    sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.info} />, { id: options?.id }),
+  loading: (message: any, options?: ToastOptions) =>
+    sonnerToast.custom((t) => <ToastItem t={t} message={message} options={options} config={toastConfig.loading} />, { id: options?.id }),
   dismiss: (t: string | number) => sonnerToast.dismiss(t),
 };
 
@@ -24,13 +29,7 @@ export interface ToastItemProps {
   label?: string;
 }
 
-export const ToastItem = ({
-  t,
-  message,
-  options,
-  label = "Notification",
-  config,
-}: ToastItemProps) => {
+export const ToastItem = ({ t, message, options, label = "Notification", config }: ToastItemProps) => {
   const Icon = config.icon;
 
   const getDisplayMessage = () => {
@@ -45,12 +44,7 @@ export const ToastItem = ({
       const defaultMsg = processedMessage.message || processedMessage.response?.data?.message || processedMessage.data?.message || "An error occurred";
 
       if (errorCode) {
-        const keysToTry = [
-          `errors.${errorCode}`,
-          `error:errors.${errorCode}`,
-          `error.${errorCode}`,
-          `common.errors.${errorCode}`
-        ];
+        const keysToTry = [`errors.${errorCode}`, `error:errors.${errorCode}`, `error.${errorCode}`, `common.errors.${errorCode}`];
 
         return defaultMsg;
       }
@@ -80,10 +74,10 @@ export const ToastItem = ({
   return (
     <div
       className={cn(
-        "group relative flex w-[calc(100vw-32px)] sm:w-[380px] flex-col overflow-hidden rounded-[24px] border transition-all duration-500",
+        "group relative flex w-[calc(100vw-32px)] sm:w-[380px] flex-col overflow-hidden rounded-2xl border transition-all duration-500",
         "bg-white/80 backdrop-blur-xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.15)]",
         config.border,
-        "animate-in zoom-in-95 slide-in-from-top-4 sm:slide-in-from-right-8"
+        "animate-in zoom-in-95 slide-in-from-top-4 sm:slide-in-from-right-8",
       )}
     >
       <div className="flex items-start gap-3.5 p-4">
@@ -101,17 +95,8 @@ export const ToastItem = ({
         </div>
 
         <div className="flex-1 space-y-0.5 pt-0.5">
-          <h3
-            className={cn(
-              "text-[14px] font-bold leading-tight tracking-tight uppercase italic",
-              config.text
-            )}
-          >
-            {config.label}
-          </h3>
-          <p className="text-[14px] font-semibold text-gray-700 leading-snug italic tracking-tight">
-            {displayMessage}
-          </p>
+          <h3 className={cn("text-[14px] font-bold leading-tight tracking-tight uppercase italic", config.text)}>{config.label}</h3>
+          <p className="text-[14px] font-semibold text-gray-700 leading-snug italic tracking-tight">{displayMessage}</p>
         </div>
         <button
           onClick={() => sonnerToast.dismiss(t)}
@@ -123,21 +108,13 @@ export const ToastItem = ({
 
       {options?.description && (
         <div className="mx-4 mb-4 mt-0 px-3 py-2.5 bg-gray-50/80 rounded-xl border border-gray-100/50">
-          <p className="text-[12px] text-gray-600 font-semibold leading-relaxed tracking-tight italic">
-            {options.description}
-          </p>
+          <p className="text-[12px] text-gray-600 font-semibold leading-relaxed tracking-tight italic">{options.description}</p>
         </div>
       )}
 
       {duration !== Infinity && (
         <div className="h-[3px] w-full bg-gray-100/50">
-          <div
-            className={cn(
-              "h-full transition-none bg-linear-to-r",
-              config.accent
-            )}
-            style={{ width: `${progress}%` }}
-          />
+          <div className={cn("h-full transition-none bg-linear-to-r", config.accent)} style={{ width: `${progress}%` }} />
         </div>
       )}
     </div>
