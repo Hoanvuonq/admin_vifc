@@ -10,8 +10,8 @@ import "@blocknote/mantine/style.css";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Admin",
-    description: "VIFC Admin Portal",
+    title: "On-Chainpass Admin",
+    description: "On-Chainpass Admin Portal",
     icons: {
       icon: [
         { url: "/favicon.ico" },

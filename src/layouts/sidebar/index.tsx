@@ -70,7 +70,7 @@ export const Sidebar = ({
                   src="/icons/icon_sidebar2.png"
                   width={100}
                   height={100}
-                  alt="VIFC Web3 Logo"
+                  alt="On-Chainpass Logo"
                   className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(234,88,12,0.1)] transform group-hover/logo:scale-110 transition duration-300"
                 />
               </div>
@@ -79,7 +79,7 @@ export const Sidebar = ({
             {!collapsed && (
               <div className="flex flex-col items-start leading-none gap-1 select-none animate-in fade-in slide-in-from-left-2 duration-500">
                 <span className="text-base itim-regular font-bold! bg-linear-to-r from-orange-600 via-orange-500 to-amber-500 bg-clip-text text-transparent tracking-widest uppercase filter drop-shadow-sm">
-                  VIFC PORTAL
+                  ON-CHAINPASS PORTAL
                 </span>
               </div>
             )}

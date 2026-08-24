@@ -77,7 +77,7 @@ const AVAILABLE_COLUMNS: ColumnOption[] = [
   },
   {
     key: "card_so_the",
-    label: "Mã số thẻ VIFC-Pass",
+    label: "Mã số thẻ On-Chainpass",
     defaultChecked: true,
     getValue: (item) => (item.card?.so_the ? `#${item.card.so_the}` : "Chưa cấp thẻ"),
   },
@@ -288,7 +288,7 @@ export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({ open, onClos
       const typeSlug = selectedType !== "ALL" ? selectedType.replace(/[^a-zA-Z0-9]/g, "_") : "Tat_Ca";
       const courseSlug = selectedCourse !== "ALL" ? `_${selectedCourse.substring(0, 20).replace(/[^a-zA-Z0-9]/g, "_")}` : "";
       const dateSlug = dayjs().format("YYYYMMDD_HHmm");
-      const fileName = `Danh_Sach_Dang_Ky_VIFC_${typeSlug}${courseSlug}_${dateSlug}.xlsx`;
+      const fileName = `Danh_Sach_Dang_Ky_OnChainPass_${typeSlug}${courseSlug}_${dateSlug}.xlsx`;
 
       XLSX.writeFile(workbook, fileName);
 
@@ -442,7 +442,7 @@ export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({ open, onClos
                     <th className="p-2.5">Họ và tên</th>
                     <th className="p-2.5">Email</th>
                     <th className="p-2.5">Khóa học / Dịch vụ</th>
-                    <th className="p-2.5">Thẻ VIFC-Pass</th>
+                    <th className="p-2.5">Thẻ On-Chainpass</th>
                     <th className="p-2.5">Hạng thẻ</th>
                     <th className="p-2.5">Học phí</th>
                     <th className="p-2.5">Trạng thái</th>

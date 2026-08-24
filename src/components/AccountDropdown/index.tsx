@@ -63,8 +63,8 @@ export const AccountDropdown = () => {
   const loyaltyData: any = { totalPointsAllShops: 0 };
 
   const [userData, setUserData] = useState({
-    name: "Admin VIFC",
-    email: "admin@vifc.vn",
+    name: "Admin On-Chainpass",
+    email: "admin@onchainpass.io",
     image: "/icons/icon_sidebar2.png",
   });
   const [mounted, setMounted] = useState(false);

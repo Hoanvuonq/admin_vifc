@@ -304,7 +304,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
             {!isEditMode && (
               <div className="hidden sm:flex items-center gap-2 text-[11px] font-medium text-gray-500">
                 <ShieldCheck size={14} className="text-emerald-500" />
-                <span>Tài khoản tự động áp dụng chính sách bảo mật hệ thống VIFC</span>
+                <span>Tài khoản tự động áp dụng chính sách bảo mật hệ thống On-Chainpass</span>
               </div>
             )}
           </div>
@@ -481,7 +481,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-1.5">
                       <CreditCard size={14} className="text-orange-400" />
-                      <span className="text-[10px] font-black uppercase tracking-widest text-orange-400">VIFC-PASS</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-orange-400">ON-CHAINPASS</span>
                     </div>
                     <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-200 border border-orange-400/30">
                       {formValues.loai_the || selectedPlan?.name || "MEMBER"}
@@ -501,8 +501,8 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                 <Shield size={14} className="text-orange-600 shrink-0" />
                 <p className="text-[9.5px] text-orange-950/80 leading-snug font-medium">
                   {isEditMode
-                    ? "Thông tin được cập nhật theo chính sách phân quyền quản trị VIFC."
-                    : "Tài khoản lưu trữ an toàn và đồng bộ cơ sở dữ liệu VIFC."}
+                    ? "Thông tin được cập nhật theo chính sách phân quyền quản trị On-Chainpass."
+                    : "Tài khoản lưu trữ an toàn và đồng bộ cơ sở dữ liệu On-Chainpass."}
                 </p>
               </div>
             </div>
@@ -540,7 +540,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
 
                     <FormInput
                       label="Địa chỉ Email"
-                      placeholder="Ví dụ: an.nguyen@vifc.io"
+                      placeholder="Ví dụ: an.nguyen@onchainpass.io"
                       type="email"
                       {...register("email")}
                       error={errors.email?.message}
@@ -559,7 +559,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
 
                     <FormInput
                       label="Công ty / Doanh nghiệp"
-                      placeholder="Ví dụ: VIFC Global Lab / Tech Corp"
+                      placeholder="Ví dụ: On-Chainpass Global Lab / Tech Corp"
                       {...register("company")}
                       error={errors.company?.message}
                     />
@@ -706,7 +706,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                       </div>
                       <div>
                         <h4 className="text-[13px] font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2">
-                          Thẻ Định Danh & VIFC-Pass
+                          Thẻ Định Danh & On-Chainpass
                           <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">Member Card</span>
                         </h4>
                       </div>
@@ -716,7 +716,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                   <div className="space-y-4 pt-1">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <SelectComponent
-                        label="Trạng thái thẻ VIFC-Pass"
+                        label="Trạng thái thẻ On-Chainpass"
                         value={formValues.isVIFCPass ? "ACTIVE" : "INACTIVE"}
                         onChange={(val: string | string[]) => {
                           const isActive = val === "ACTIVE";
@@ -733,7 +733,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                             color: "text-slate-400",
                           },
                           {
-                            label: "Đã cấp thẻ VIFC-Pass (Active)",
+                            label: "Đã cấp thẻ On-Chainpass (Active)",
                             value: "ACTIVE",
                             icon: CheckCircle2,
                             color: "text-emerald-500",
@@ -755,7 +755,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-dashed border-gray-200/80 animate-in fade-in duration-300">
                         <FormInput
                           label="Mã số thẻ (Card Number / ID)"
-                          placeholder="Ví dụ: 00001 hoặc VIFC-9999"
+                          placeholder="Ví dụ: 00001 hoặc OCP-9999"
                           {...register("so_the")}
                           error={errors.so_the?.message}
                         />

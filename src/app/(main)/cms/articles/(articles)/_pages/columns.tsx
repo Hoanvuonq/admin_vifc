@@ -25,7 +25,7 @@ const ThumbnailImage = ({ src, alt }: { src: string; alt: string }) => {
         onLoad={() => setIsLoading(false)}
         onError={(e) => {
           setIsLoading(false);
-          (e.target as HTMLImageElement).src = "https://api.dicebear.com/7.x/shapes/svg?seed=vifc";
+          (e.target as HTMLImageElement).src = "https://api.dicebear.com/7.x/shapes/svg?seed=onchainpass";
         }}
       />
     </div>
@@ -46,7 +46,7 @@ export const getColumns = (
         <div className="flex items-start gap-3 py-1 max-w-full">
           <div className="relative select-none shrink-0 w-28 h-20 rounded-xl overflow-hidden border border-gray-100 bg-gray-50 shadow-sm">
             <ThumbnailImage
-              src={news.thumbnail || "https://api.dicebear.com/7.x/shapes/svg?seed=vifc"}
+              src={news.thumbnail || "https://api.dicebear.com/7.x/shapes/svg?seed=onchainpass"}
               alt={news.title}
             />
           </div>

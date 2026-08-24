@@ -106,7 +106,7 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
         <div className="flex items-center justify-between w-full gap-4">
           <div className="hidden sm:flex items-center gap-2 text-[11.5px] font-medium text-gray-500 min-w-0">
             <ShieldCheck size={16} className="text-emerald-500 shrink-0" />
-            <span className="truncate">Lưu trữ và đồng bộ an toàn trên hệ thống VIFC</span>
+            <span className="truncate">Lưu trữ và đồng bộ an toàn trên hệ thống On-Chainpass</span>
           </div>
           <div className="flex items-center gap-2.5 ml-auto shrink-0">
             <button
@@ -147,7 +147,7 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
 
             <FormInput
               label="Địa chỉ Email"
-              placeholder="Ví dụ: an.nguyen@vifc.io"
+              placeholder="Ví dụ: an.nguyen@onchainpass.io"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -160,7 +160,7 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
             <div className="md:col-span-2">
               <FormInput
                 label="Công ty / Đơn vị công tác"
-                placeholder="Ví dụ: VIFC Global Lab / Tech Corp"
+                placeholder="Ví dụ: On-Chainpass Global Lab / Tech Corp"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
               />

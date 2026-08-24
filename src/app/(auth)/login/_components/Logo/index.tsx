@@ -23,7 +23,7 @@ export const Logo: React.FC<LogoProps> = ({
     <div className={cn("inline-flex items-center gap-4 transition-transform hover:scale-[1.02] active:scale-[0.98]")}>
       <Image
         src={imgSrc}
-        alt="VIFC ADMIN PORTAL Logo"
+        alt="On-Chainpass ADMIN PORTAL Logo"
         width={imgWidth}
         height={imgHeight}
         className="object-contain drop-shadow-sm"

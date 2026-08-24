@@ -16,8 +16,8 @@ export interface LiquidityAlertData {
 
 const MOCK_LIQUIDITY_POOLS: LiquidityAlertData[] = [
   {
-    poolId: "vifc-usdt",
-    tokenASymbol: "VIFC",
+    poolId: "ocp-usdt",
+    tokenASymbol: "OCP",
     tokenBSymbol: "USDT",
     currentLiquidity: 4250,
     threshold: 25000,

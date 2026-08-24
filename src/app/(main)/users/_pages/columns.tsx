@@ -46,7 +46,7 @@ export const getColumns = (
     ),
   },
   {
-    header: "Thẻ VIFC-Pass",
+    header: "Thẻ On-Chainpass",
     accessor: "card" as keyof UserItem,
     render: (user: UserItem) => {
       if (!user.card) {

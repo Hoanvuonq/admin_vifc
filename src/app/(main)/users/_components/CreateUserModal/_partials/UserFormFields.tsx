@@ -99,7 +99,7 @@ export const UserFormFields: React.FC<UserFormFieldsProps> = ({
 
             <FormInput
               label="Địa chỉ Email"
-              placeholder="Ví dụ: an.nguyen@vifc.io"
+              placeholder="Ví dụ: an.nguyen@onchainpass.io"
               type="email"
               {...register("email")}
               error={errors.email?.message}
@@ -110,7 +110,7 @@ export const UserFormFields: React.FC<UserFormFieldsProps> = ({
 
             <FormInput
               label="Công ty / Doanh nghiệp"
-              placeholder="Ví dụ: VIFC Global Lab / Tech Corp"
+              placeholder="Ví dụ: On-Chainpass Global Lab / Tech Corp"
               {...register("company")}
               error={errors.company?.message}
             />
@@ -258,14 +258,14 @@ export const UserFormFields: React.FC<UserFormFieldsProps> = ({
           </div>
         </div>
 
-        {/* SECTION 4: VIFC-PASS MEMBER CARD */}
+        {/* SECTION 4: ON-CHAINPASS MEMBER CARD */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-lg bg-orange-500/10 text-orange-600 flex items-center justify-center font-bold text-xs">4</div>
               <div>
                 <h4 className="text-[13px] font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2">
-                  Thẻ Định Danh & VIFC-Pass
+                  Thẻ Định Danh & On-Chainpass
                   <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">Member Card</span>
                 </h4>
               </div>
@@ -275,7 +275,7 @@ export const UserFormFields: React.FC<UserFormFieldsProps> = ({
           <div className="space-y-4 pt-1">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <SelectComponent
-                label="Trạng thái thẻ VIFC-Pass"
+                label="Trạng thái thẻ On-Chainpass"
                 value={formValues.isVIFCPass || false}
                 onChange={(val: any) => {
                   const isPass = Boolean(val);
@@ -286,13 +286,13 @@ export const UserFormFields: React.FC<UserFormFieldsProps> = ({
                 }}
                 options={[
                   {
-                    label: "Chưa cấp thẻ VIFC-Pass (Inactive)",
+                    label: "Chưa cấp thẻ On-Chainpass (Inactive)",
                     value: false,
                     icon: XCircle,
                     color: "text-slate-400",
                   },
                   {
-                    label: "Đã cấp thẻ VIFC-Pass (Active)",
+                    label: "Đã cấp thẻ On-Chainpass (Active)",
                     value: true,
                     icon: CheckCircle2,
                     color: "text-emerald-500",
@@ -314,7 +314,7 @@ export const UserFormFields: React.FC<UserFormFieldsProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-dashed border-gray-200/80 animate-in fade-in duration-300">
                 <FormInput
                   label="Mã số thẻ (Card Number / ID)"
-                  placeholder="Ví dụ: 00001 hoặc VIFC-9999"
+                  placeholder="Ví dụ: 00001 hoặc OCP-9999"
                   {...register("so_the")}
                   error={errors.so_the?.message}
                 />

@@ -164,7 +164,7 @@ export const CreateUserModal: React.FC<CreateUserModalProps> = ({ open, onClose,
         <div className="flex items-center justify-between w-full">
           <div className="hidden sm:flex items-center gap-2 text-[11px] font-medium text-gray-500">
             <ShieldCheck size={14} className="text-emerald-500" />
-            <span>Tài khoản tự động áp dụng chính sách bảo mật hệ thống VIFC</span>
+            <span>Tài khoản tự động áp dụng chính sách bảo mật hệ thống On-Chainpass</span>
           </div>
           <div className="flex items-center gap-2.5 ml-auto">
             <PremiumButton type="button" label="Hủy bỏ" onClick={onClose} variant="gray" size="md" />

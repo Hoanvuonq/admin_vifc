@@ -316,7 +316,7 @@ export const ManagerUsersScreen = () => {
         )}
         {user.card && (
           <div className="col-span-2">
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Thẻ VIFC-Pass</span>
+            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Thẻ On-Chainpass</span>
             <span className="font-bold text-orange-600 mt-0.5 flex items-center gap-1.5 font-mono">
               <CreditCard size={13} /> #{user.card.so_the} ({user.card.loai_the}) — {user.card.username}
             </span>

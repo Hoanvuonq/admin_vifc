@@ -36,7 +36,7 @@ export const useCMSArticles = () => {
     category: ["WEB3"],
     tags: [],
     thumbnail: art.thumbnail || "",
-    authorName: "Admin VIFC",
+    authorName: "Admin On-Chainpass",
     authorAvatar: "/icons/icon_sidebar2.png",
     status: (art.status?.toUpperCase() as NewsItem["status"]) || "PUBLISHED",
     createdDate: formatDate(art.createdAt),

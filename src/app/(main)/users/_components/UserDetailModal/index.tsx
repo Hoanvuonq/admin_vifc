@@ -112,10 +112,10 @@ export const UserDetailModal = ({ open, userId, onClose }: UserDetailModalProps)
                 </div>
               </div>
 
-              {/* VIFC-Pass Card Section */}
+              {/* On-Chainpass Card Section */}
               <div className="p-8 rounded-2xl bg-slate-50/20 border border-slate-100/50 relative group overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl -mr-32 -mt-32 transition-opacity group-hover:opacity-100 opacity-50" />
-                <SectionHeader icon={CreditCard} title="Thẻ thành viên & VIFC-Pass" description="Membership & Digital Identity Card" />
+                <SectionHeader icon={CreditCard} title="Thẻ thành viên & On-Chainpass" description="Membership & Digital Identity Card" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
                   {user.card ? (
                     <>
@@ -124,7 +124,7 @@ export const UserDetailModal = ({ open, userId, onClose }: UserDetailModalProps)
                       <InfoCard label="Tên in trên thẻ" value={user.card.username} icon={Fingerprint} color="emerald" />
                     </>
                   ) : (
-                    <InfoCard label="Trạng thái thẻ" value="Chưa cấp thẻ thành viên VIFC-Pass" icon={CreditCard} color="slate" className="md:col-span-2" />
+                    <InfoCard label="Trạng thái thẻ" value="Chưa cấp thẻ thành viên On-Chainpass" icon={CreditCard} color="slate" className="md:col-span-2" />
                   )}
                 </div>
               </div>

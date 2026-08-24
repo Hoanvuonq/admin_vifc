@@ -4,7 +4,7 @@ export const INITIAL_USERS: UserItem[] = [
     {
         id: "USR001",
         name: "Alex Mercer",
-        email: "alex.mercer@vifc.io",
+        email: "alex.mercer@onchainpass.io",
         role: "ADMIN",
         status: "ACTIVE",
         phone: "+1 (555) 019-2834",
@@ -15,7 +15,7 @@ export const INITIAL_USERS: UserItem[] = [
     {
         id: "USR002",
         name: "Sophia Vance",
-        email: "sophia.vance@vifc.io",
+        email: "sophia.vance@onchainpass.io",
         role: "SHOP",
         status: "ACTIVE",
         phone: "+1 (555) 024-8192",
@@ -48,7 +48,7 @@ export const INITIAL_USERS: UserItem[] = [
     {
         id: "USR005",
         name: "Marcus Brody",
-        email: "marcus.brody@vifc.io",
+        email: "marcus.brody@onchainpass.io",
         role: "EMPLOYEE",
         status: "ACTIVE",
         phone: "+1 (555) 083-2941",
@@ -114,7 +114,7 @@ export const INITIAL_USERS: UserItem[] = [
     {
         id: "USR011",
         name: "Gabriel Stone",
-        email: "gabriel.stone@vifc.io",
+        email: "gabriel.stone@onchainpass.io",
         role: "ADMIN",
         status: "ACTIVE",
         phone: "+1 (555) 021-9843",
@@ -125,7 +125,7 @@ export const INITIAL_USERS: UserItem[] = [
     {
         id: "USR012",
         name: "Seraphina Frost",
-        email: "seraphina.frost@vifc.io",
+        email: "seraphina.frost@onchainpass.io",
         role: "EMPLOYEE",
         status: "ACTIVE",
         phone: "+1 (555) 088-2931",

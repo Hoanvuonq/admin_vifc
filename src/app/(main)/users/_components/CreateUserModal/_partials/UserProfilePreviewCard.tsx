@@ -162,14 +162,14 @@ export const UserProfilePreviewCard: React.FC<UserProfilePreviewCardProps> = ({
           </div>
         </div>
 
-        {/* VIFC-PASS DIGITAL CARD PREVIEW */}
+        {/* ON-CHAINPASS DIGITAL CARD PREVIEW */}
         {formValues.isVIFCPass && (
           <div className="w-full mt-3 p-4 rounded-2xl bg-linear-to-br from-slate-950 via-slate-900 to-orange-950/80 text-white shadow-xl relative overflow-hidden text-left border border-orange-500/30 group/card animate-in fade-in zoom-in-95 duration-300">
             <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/20 rounded-full blur-2xl pointer-events-none" />
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-1.5">
                 <CreditCard size={14} className="text-orange-400" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-orange-400">VIFC-PASS</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-orange-400">ON-CHAINPASS</span>
               </div>
               <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-200 border border-orange-400/30">
                 {formValues.loai_the || selectedPlan?.name || "MEMBER"}
@@ -187,7 +187,7 @@ export const UserProfilePreviewCard: React.FC<UserProfilePreviewCardProps> = ({
 
         <div className="w-full mt-3 p-2.5 rounded-2xl bg-orange-500/5 border border-orange-500/10 flex items-center gap-2 text-left">
           <Shield size={14} className="text-orange-600 shrink-0" />
-          <p className="text-[9.5px] text-orange-950/80 leading-snug font-medium">Tài khoản lưu trữ an toàn và đồng bộ cơ sở dữ liệu VIFC.</p>
+          <p className="text-[9.5px] text-orange-950/80 leading-snug font-medium">Tài khoản lưu trữ an toàn và đồng bộ cơ sở dữ liệu On-Chainpass.</p>
         </div>
       </div>
     </div>
