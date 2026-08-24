@@ -1,11 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { AdminPageHeader, ItemImage } from "@/components";
 import { DataTable } from "@/components/DataTable";
 import { useCourseRegistrations } from "@/hooks/useCourseRegistrations";
 import { toast } from "@/providers/ToastProvider";
 import { BookingRequestItem, CreateBookingPayload, ReviewBookingPayload } from "@/types/course";
-import { BookOpenCheck, Building, Calendar, CheckCircle2, Clock, Edit, GraduationCap, Mail, Phone, ShieldCheck, XCircle } from "lucide-react";
+import { BookOpen, BookOpenCheck, Building, Calendar, CheckCircle2, Clock, Edit, GraduationCap, Mail, Phone, ShieldCheck, XCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { CourseFilters, CreateRegistrationModal, RegistrationDetailModal, ExportExcelModal } from "../_components";
 import { getColumns } from "./columns";
@@ -126,54 +127,45 @@ export const CourseRegistrationsScreen = () => {
   };
 
   const handleQuickReject = async (item: BookingRequestItem) => {
-    if (confirm(`Bạn có chắc muốn từ chối yêu cầu của ${item.full_name || item.email}?`)) {
-      try {
-        await rejectBooking({ id: item.id });
-        toast.info(`Đã từ chối đơn của ${item.full_name || item.email}.`);
-      } catch (error: any) {
-        toast.warning(error?.message || "Không thể từ chối đơn.");
-      }
+    try {
+      await rejectBooking({ id: item.id });
+      toast.info(`Đã từ chối đơn của ${item.full_name || item.email}.`);
+    } catch (error: any) {
+      toast.warning(error?.message || "Không thể từ chối đơn.");
+    }
+  };
+
+  const handleReview = async (id: string, payload: ReviewBookingPayload) => {
+    try {
+      await reviewBooking({ id, payload });
+      toast.success("Cập nhật trạng thái thành công!");
+      setIsDetailModalOpen(false);
+    } catch (error: any) {
+      toast.error(error?.message || "Cập nhật thất bại.");
     }
   };
 
   const handleDelete = async (item: BookingRequestItem) => {
-    if (confirm(`Xác nhận xóa bản ghi đăng ký của ${item.full_name || item.email}?`)) {
+    if (window.confirm(`Bạn có chắc chắn muốn xóa đơn đăng ký của "${item.full_name || item.email}" không?`)) {
       try {
         await deleteRegistration(item.id);
-        toast.success("Đã xóa bản ghi thành công.");
+        toast.success("Đã xóa đơn đăng ký thành công!");
       } catch (error: any) {
-        toast.warning(error?.message || "Xóa thất bại.");
+        toast.error(error?.message || "Không thể xóa đơn đăng ký.");
       }
     }
   };
 
-  const handleReviewFromModal = async (id: string, payload: ReviewBookingPayload) => {
+  const handleCreate = async (data: Partial<CreateBookingPayload>) => {
     try {
-      await reviewBooking({ id, payload });
-      toast.success("Cập nhật trạng thái booking thành công!");
+      await createRegistration(data);
     } catch (error: any) {
-      toast.warning(error?.message || "Cập nhật thất bại.");
       throw error;
     }
   };
 
-  const handleCreateRegistration = async (payload: Partial<CreateBookingPayload>) => {
-    try {
-      await createRegistration(payload);
-      toast.success("Đã tạo đơn đăng ký thành công!");
-      setIsCreateModalOpen(false);
-      refetch();
-    } catch (error: any) {
-      toast.error(error?.message || "Không thể tạo đơn đăng ký.");
-      throw error;
-    }
-  };
-
-  const columns = useMemo(() => getColumns(handleViewDetails, handleQuickApprove, handleQuickReject, handleDelete), []);
-
-  const renderDropdown = (item: BookingRequestItem) => {
-    const orderCode = `#${item.id.slice(0, 8).toUpperCase()}`;
-    const isPending = (item.status || "").toLowerCase() === "pending";
+  const renderExpandedRow = (item: BookingRequestItem) => {
+    const orderCode = `REG-${item.id.slice(0, 8).toUpperCase()}`;
     const avatarUrl =
       item.users?.avatar_url ||
       item.avatar_url ||
@@ -202,46 +194,24 @@ export const CourseRegistrationsScreen = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3 text-xs lg:border-l border-gray-200/80 lg:pl-6 w-full lg:w-auto">
-          <div>
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Dịch vụ / Khóa học</span>
-            <span className="font-bold text-gray-800 mt-0.5 block">{item.booking_title}</span>
+        <div className="flex-1 max-w-xl bg-white/80 backdrop-blur-xs p-3.5 rounded-xl border border-gray-100 text-xs text-gray-600 space-y-1.5">
+          <div className="flex items-center justify-between border-b border-gray-100 pb-1 font-medium">
+            <span className="text-gray-500">Dịch vụ đăng ký:</span>
+            <span className="text-orange-600 font-semibold">{item.booking_title}</span>
           </div>
-
-          <div>
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Ngày gửi yêu cầu</span>
-            <span className="font-bold text-gray-700 flex items-center gap-1 mt-0.5">
-              <Calendar size={12} className="text-orange-500" />
-              {new Date(item.created_at).toLocaleDateString("vi-VN")}
-            </span>
+          <div className="flex items-center justify-between border-b border-gray-100 pb-1">
+            <span className="text-gray-500">Nguồn đăng ký:</span>
+            <span className="capitalize">{item.source}</span>
           </div>
-
-          <div>
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Nguồn đăng ký</span>
-            <span className="font-bold text-gray-700 mt-0.5 block">{item.source || "dashboard"}</span>
+          <div className="flex items-center justify-between border-b border-gray-100 pb-1">
+            <span className="text-gray-500">Ngày tạo:</span>
+            <span>{new Date(item.created_at).toLocaleString("vi-VN")}</span>
           </div>
-
-          <div className="col-span-2 sm:col-span-3">
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Ghi chú từ khách hàng</span>
-            <span className="text-gray-700 mt-0.5 block italic text-[11.5px]">{item.note ? `"${item.note}"` : "Không có ghi chú thêm từ khách hàng."}</span>
-          </div>
-        </div>
-
-        {/* Action button */}
-        <div className="flex sm:flex-col gap-2 shrink-0">
-          <button
-            onClick={() => handleViewDetails(item)}
-            className="h-9 px-4 rounded-xl bg-white border border-gray-200 hover:border-orange-300 text-gray-800 hover:text-orange-600 text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
-          >
-            <Edit size={12} /> Duyệt & Xử lý
-          </button>
-          {isPending && (
-            <button
-              onClick={() => handleQuickApprove(item)}
-              className="h-9 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
-            >
-              <CheckCircle2 size={12} /> Xác nhận ngay
-            </button>
+          {item.note && (
+            <div className="pt-1 text-gray-500">
+              <span className="font-semibold block text-[11px] text-gray-700">Ghi chú từ khách:</span>
+              <p className="italic bg-orange-50/50 p-2 rounded-lg border border-orange-100/50 mt-1">{item.note}</p>
+            </div>
           )}
         </div>
       </div>
@@ -283,16 +253,34 @@ export const CourseRegistrationsScreen = () => {
         ]}
       />
 
+      {/* Navigation Tabs */}
+      <div className="flex items-center gap-2 border-b border-gray-200 pb-1">
+        <Link
+          href="/courses/list"
+          className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition flex items-center gap-2"
+        >
+          <BookOpen size={16} />
+          <span>Danh Sách Khóa Học</span>
+        </Link>
+        <Link
+          href="/courses"
+          className="px-4 py-2 text-sm font-semibold text-orange-600 border-b-2 border-orange-600 flex items-center gap-2"
+        >
+          <GraduationCap size={16} />
+          <span>Đơn Đăng Ký Học Viên</span>
+        </Link>
+      </div>
+
       <DataTable
+        columns={getColumns(handleViewDetails, handleQuickApprove, handleQuickReject, handleDelete)}
         data={paginatedRegistrations}
-        columns={columns}
         loading={isLoading}
         rowKey="id"
-        emptyMessage="Không tìm thấy đơn booking nào phù hợp với bộ lọc"
         page={currentPage}
         size={pageSize}
         totalElements={filteredRegistrations.length}
         onPageChange={(p) => setCurrentPage(p)}
+        renderDropdown={renderExpandedRow}
         headerContent={
           <CourseFilters
             searchText={searchQuery}
@@ -301,40 +289,35 @@ export const CourseRegistrationsScreen = () => {
             setSelectedStatus={setSelectedStatus}
             selectedType={selectedType}
             setSelectedType={setSelectedType}
-            counts={computedStats}
-            onRefresh={() => refetch()}
-            isLoading={isLoading}
-            onExportExcel={() => setIsExportModalOpen(true)}
             onCreateRegistration={() => setIsCreateModalOpen(true)}
+            onExportExcel={() => setIsExportModalOpen(true)}
+            onRefresh={refetch}
+            isLoading={isLoading}
           />
         }
-        renderDropdown={renderDropdown}
       />
 
+      {/* Registration Details Modal */}
       <RegistrationDetailModal
         isOpen={isDetailModalOpen}
-        onClose={() => {
-          setIsDetailModalOpen(false);
-          setSelectedRegistration(null);
-        }}
+        onClose={() => setIsDetailModalOpen(false)}
         registration={selectedRegistration}
-        onReview={handleReviewFromModal}
-        isLoading={isLoading}
+        onReview={handleReview}
       />
 
+      {/* Manual Registration Creation Modal */}
       <CreateRegistrationModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        onCreate={handleCreateRegistration}
+        onSubmit={handleCreate}
         isLoading={isCreating}
       />
 
+      {/* Export to Excel Modal */}
       <ExportExcelModal
-        open={isExportModalOpen}
+        isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
-        registrations={registrations || []}
-        defaultType={selectedType}
-        defaultStatus={selectedStatus}
+        data={filteredRegistrations}
       />
     </div>
   );

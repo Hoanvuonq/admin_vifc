@@ -93,3 +93,34 @@ export interface ApiResponse<T> {
   };
 }
 
+
+export interface CourseItem {
+  id: string;
+  title: string;
+  booking_type: string; // 'course' | 'workshop' | 'meeting-room' | 'lounge'
+  booking_title: string;
+  description?: string | null;
+  image?: string | null;
+  fallback_image?: string | null;
+  instructor?: string | null;
+  duration?: string | null;
+  schedule?: string | null;
+  tuition_fee?: number | null;
+  status: "active" | "inactive" | "draft" | string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateCourseItemPayload {
+  title: string;
+  booking_type: string;
+  booking_title: string;
+  description?: string;
+  image?: string;
+  fallback_image?: string;
+  instructor?: string;
+  duration?: string;
+  schedule?: string;
+  tuition_fee?: number;
+  status?: string;
+}

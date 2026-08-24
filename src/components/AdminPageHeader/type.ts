@@ -14,7 +14,7 @@ export interface AdminPageHeaderProps {
   title: string;
   highlightTitle?: string;
   subtitle?: string;
-  icon: LucideIcon;
+  icon?: LucideIcon | React.ComponentType<any> | ReactNode;
   metrics?: AdminPageHeaderMetric[];
   className?: string;
   children?: ReactNode;

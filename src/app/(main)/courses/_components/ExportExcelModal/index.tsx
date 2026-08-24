@@ -9,9 +9,11 @@ import * as XLSX from "xlsx";
 import { toast } from "@/providers/ToastProvider";
 
 export interface ExportExcelModalProps {
-  open: boolean;
+  isOpen?: boolean;
+  open?: boolean;
   onClose: () => void;
-  registrations: BookingRequestItem[];
+  registrations?: BookingRequestItem[];
+  data?: BookingRequestItem[];
   defaultType?: string;
   defaultStatus?: string;
 }
@@ -141,7 +143,18 @@ const AVAILABLE_COLUMNS: ColumnOption[] = [
   },
 ];
 
-export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({ open, onClose, registrations, defaultType = "ALL", defaultStatus = "ALL" }) => {
+export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({
+  isOpen,
+  open,
+  onClose,
+  registrations,
+  data,
+  defaultType = "ALL",
+  defaultStatus = "ALL",
+}) => {
+  const isModalOpen = isOpen !== undefined ? isOpen : !!open;
+  const listItems = registrations || data || [];
+
   const [selectedType, setSelectedType] = useState<string>(defaultType);
   const [selectedCourse, setSelectedCourse] = useState<string>("ALL");
   const [selectedStatus, setSelectedStatus] = useState<string>(defaultStatus);
@@ -151,13 +164,13 @@ export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({ open, onClos
   // Extract unique course/booking titles from registrations
   const uniqueTitles = useMemo(() => {
     const titlesSet = new Set<string>();
-    (registrations || []).forEach((item) => {
+    listItems.forEach((item) => {
       if (item.booking_title && item.booking_title.trim()) {
         titlesSet.add(item.booking_title.trim());
       }
     });
     return Array.from(titlesSet).sort();
-  }, [registrations]);
+  }, [listItems]);
 
   const bookingTypeOptions = [
     { value: "ALL", label: "Tất cả loại hình (All Types)" },
@@ -190,7 +203,7 @@ export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({ open, onClos
 
   // Filter registrations according to modal selections
   const matchingRegistrations = useMemo(() => {
-    return (registrations || []).filter((item) => {
+    return listItems.filter((item) => {
       // 1. Booking Type filter
       if (selectedType && selectedType !== "ALL") {
         const itemType = (item.booking_type || "").toLowerCase().replace(/_/g, "-").trim();
@@ -224,7 +237,7 @@ export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({ open, onClos
 
       return true;
     });
-  }, [registrations, selectedType, selectedCourse, selectedStatus]);
+  }, [listItems, selectedType, selectedCourse, selectedStatus]);
 
   const toggleColumn = (colKey: string) => {
     if (selectedColumns.includes(colKey)) {
@@ -304,7 +317,7 @@ export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({ open, onClos
 
   return (
     <PortalModal
-      isOpen={open}
+      isOpen={isModalOpen}
       onClose={onClose}
       title="Xuất Dữ Liệu Đăng Ký Sang Excel"
       description="Tùy chỉnh bộ lọc loại hình, chọn khóa học cụ thể và lựa chọn đầy đủ các trường thông tin & thẻ thành viên."
@@ -407,16 +420,14 @@ export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({ open, onClos
                   key={col.key}
                   type="button"
                   onClick={() => toggleColumn(col.key)}
-                  className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-medium text-left transition-all cursor-pointer active:scale-98 select-none ${
-                    isChecked
-                      ? "bg-orange-50/70 border-orange-200 text-orange-950 font-semibold shadow-2xs"
-                      : "bg-gray-50/70 border-gray-100 text-gray-500 hover:bg-gray-100/70"
-                  }`}
+                  className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-medium text-left transition-all cursor-pointer active:scale-98 select-none ${isChecked
+                    ? "bg-orange-50/70 border-orange-200 text-orange-950 font-semibold shadow-2xs"
+                    : "bg-gray-50/70 border-gray-100 text-gray-500 hover:bg-gray-100/70"
+                    }`}
                 >
                   <div
-                    className={`w-4 h-4 rounded flex items-center justify-center transition-colors shrink-0 ${
-                      isChecked ? "bg-orange-500 text-white" : "border border-gray-300 bg-white"
-                    }`}
+                    className={`w-4 h-4 rounded flex items-center justify-center transition-colors shrink-0 ${isChecked ? "bg-orange-500 text-white" : "border border-gray-300 bg-white"
+                      }`}
                   >
                     {isChecked && <Check size={11} strokeWidth={3} />}
                   </div>

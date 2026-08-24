@@ -7,7 +7,9 @@ import {
   GraduationCap,
   Key,
   Lock,
+  Mail,
   Settings,
+  Sparkles,
   User,
   Users
 } from "lucide-react";
@@ -26,13 +28,32 @@ export const MOCK_SIDEBAR_ITEMS: MenuItemSidebar[] = [
     label: "",
   },
   {
+    key: "courses",
+    label: "Courses & Booking",
+    icon: <GraduationCap size={20} />,
+    children: [
+      { key: "courses-list", label: "Course Management", href: "/courses/list", icon: <BookOpen size={14} /> },
+      { key: "courses-registrations", label: "Course Registrations", href: "/courses", icon: <GraduationCap size={14} /> },
+    ]
+  },
+  {
+    key: "events",
+    label: "Events & Private Club",
+    icon: <Sparkles size={20} />,
+    children: [
+      { key: "events-list", label: "Event Management", href: "/events", icon: <Sparkles size={14} /> },
+      { key: "events-registrations", label: "Event Registrations", href: "/events/registrations", icon: <Users size={14} /> },
+    ]
+  },
+  {
     key: "cms",
-    label: "Articles",
+    label: "Articles & News",
     icon: <BookOpen size={20} />,
     children: [
       { key: "cms-add-article-blocknote", label: "Add Article (Blocknote)", href: "/cms/articles/create", icon: <FolderOpen size={14} /> },
       { key: "cms-add-article", label: "Add Article (Old)", href: "/cms/articles/add", icon: <FolderOpen size={14} /> },
       { key: "cms-articles", label: "List Articles", href: "/cms/articles", icon: <FileText size={14} /> },
+      { key: "newsletter-subscribers", label: "Newsletter Subscribers", href: "/newsletter/subscribers", icon: <Mail size={14} /> },
     ]
   },
   {
@@ -41,7 +62,6 @@ export const MOCK_SIDEBAR_ITEMS: MenuItemSidebar[] = [
     icon: <Users size={20} />,
     children: [
       { key: "users-list", label: "Users & Profiles", href: "/users", icon: <User size={14} /> },
-      // { key: "users-status", label: "Status Settings", href: "/users/status", icon: <Activity size={14} /> },
     ]
   },
   {
@@ -49,16 +69,7 @@ export const MOCK_SIDEBAR_ITEMS: MenuItemSidebar[] = [
     label: "Subscription Config",
     icon: <CreditCard size={20} />,
     children: [
-      // { key: "subscription-plans", label: "Plans & Pricing", href: "/subscriptions/plans", icon: <Gem size={14} /> },
       { key: "transactions-list", label: "Transactions", href: "/transactions", icon: <FileText size={14} /> },
-    ]
-  },
-  {
-    key: "courses",
-    label: "Courses & Booking",
-    icon: <GraduationCap size={20} />,
-    children: [
-      { key: "courses-registrations", label: "Course Registrations", href: "/courses", icon: <GraduationCap size={14} /> },
     ]
   },
   {

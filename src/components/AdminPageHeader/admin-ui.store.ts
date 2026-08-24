@@ -6,7 +6,7 @@ interface HeaderInfo {
   title: string;
   highlightTitle?: string;
   subtitle?: string;
-  icon?: LucideIcon;
+  icon?: LucideIcon | React.ComponentType<any> | React.ReactNode;
   metrics?: AdminPageHeaderMetric[];
   actions?: React.ReactNode;
 }

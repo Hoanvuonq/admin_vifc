@@ -10,7 +10,8 @@ export * from "./registrationSchema";
 export interface CreateRegistrationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (payload: Partial<CreateBookingPayload>) => Promise<void>;
+  onCreate?: (payload: Partial<CreateBookingPayload>) => Promise<void>;
+  onSubmit?: (payload: Partial<CreateBookingPayload>) => Promise<void>;
   isLoading?: boolean;
 }
 
@@ -22,7 +23,13 @@ const BOOKING_TYPE_OPTIONS = [
   { value: "consulting", label: "Tư vấn 1-1 (Consulting)" },
 ];
 
-export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = ({ isOpen, onClose, onCreate, isLoading = false }) => {
+export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = ({
+  isOpen,
+  onClose,
+  onCreate,
+  onSubmit,
+  isLoading = false,
+}) => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -59,19 +66,22 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
 
     setIsSubmitting(true);
     try {
-      await onCreate({
-        full_name: fullName.trim(),
-        email: email.trim().toLowerCase(),
-        phone: phone.trim(),
-        company: company.trim(),
-        booking_title: bookingTitle.trim(),
-        booking_type: bookingType,
-        tuitionFee: Number(tuitionFee.replace(/\D/g, "")) || 0,
-        deposit: Number(deposit.replace(/\D/g, "")) || 0,
-        source: "admin-manual",
-        note: note.trim(),
-        status: "pending",
-      });
+      const submitFn = onCreate || onSubmit;
+      if (submitFn) {
+        await submitFn({
+          full_name: fullName.trim(),
+          email: email.trim().toLowerCase(),
+          phone: phone.trim(),
+          company: company.trim(),
+          booking_title: bookingTitle.trim(),
+          booking_type: bookingType,
+          tuitionFee: Number(tuitionFee.replace(/\D/g, "")) || 0,
+          deposit: Number(deposit.replace(/\D/g, "")) || 0,
+          source: "admin-manual",
+          note: note.trim(),
+          status: "pending",
+        });
+      }
 
       toast.success(`Đã tạo phiếu đăng ký cho ${fullName.trim()} thành công!`);
       // Reset form

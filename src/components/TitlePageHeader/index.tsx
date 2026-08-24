@@ -1,5 +1,6 @@
 "use client";
 
+import React, { isValidElement } from "react";
 import { cn } from "@/utils/cn";
 import { TitlePageHeaderProps } from "./type";
 
@@ -25,12 +26,19 @@ export const TitlePageHeader = ({
           <div className="absolute -inset-1 bg-orange-500/20 rounded-2xl md:rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
           <div
             className={cn(
-              "relative cursor-pointer shrink-0 transition-transform group-hover:scale-105",
+              "relative cursor-pointer shrink-0 transition-transform group-hover:scale-105 flex items-center justify-center",
               "border border-orange-200 bg-linear-to-br from-orange-50 to-orange-100 text-orange-600 shadow-[0_8px_30px_rgb(234,88,12,0.12)]",
               isXs ? "p-2 rounded-2xl" : isSm ? "p-3 rounded-2xl" : "p-3.5 rounded-2xl",
             )}
           >
-            <Icon size={isXs ? 20 : isSm ? 24 : 28} strokeWidth={isXs ? 3 : isSm ? 3 : 2.5} />
+            {isValidElement(Icon)
+              ? Icon
+              : typeof Icon === "function" || (typeof Icon === "object" && Icon !== null)
+              ? React.createElement(Icon as React.ComponentType<any>, {
+                  size: isXs ? 20 : isSm ? 24 : 28,
+                  strokeWidth: isXs ? 3 : isSm ? 3 : 2.5,
+                })
+              : null}
           </div>
         </div>
       )}
