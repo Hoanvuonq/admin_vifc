@@ -1,9 +1,19 @@
 import { S3Client } from "@aws-sdk/client-s3";
 
 export const getS3Client = () => {
-  const accessKeyId = process.env.AWS_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY;
-  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || process.env.AWS_SECRET_KEY_ID || process.env.AWS_SECRET_KEY;
-  const region = process.env.AWS_REGION || "ap-southeast-2";
+  const accessKeyId =
+    process.env.APP_AWS_ACCESS_KEY ||
+    process.env.AWS_ACCESS_KEY_ID ||
+    process.env.AWS_ACCESS_KEY;
+  const secretAccessKey =
+    process.env.APP_AWS_SECRET_KEY ||
+    process.env.AWS_SECRET_ACCESS_KEY ||
+    process.env.AWS_SECRET_KEY_ID ||
+    process.env.AWS_SECRET_KEY;
+  const region =
+    process.env.APP_AWS_REGION ||
+    process.env.AWS_REGION ||
+    "ap-southeast-2";
 
   if (!accessKeyId || !secretAccessKey) {
     console.error("❌ AWS Credentials missing in environment variables!");

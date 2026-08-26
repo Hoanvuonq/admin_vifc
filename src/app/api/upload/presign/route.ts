@@ -26,9 +26,10 @@ export async function GET(req: NextRequest) {
 
     const key = `${folder}/${Date.now()}-${safeFilename}`;
 
+    const bucketName = process.env.APP_AWS_BUCKET_NAME || process.env.AWS_BUCKET_NAME || "vifc";
     const s3Client = getS3Client();
     const command = new PutObjectCommand({
-      Bucket: process.env.AWS_BUCKET_NAME!,
+      Bucket: bucketName,
       Key: key,
       ContentType: contentType,
     });
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
       expiresIn: 3600, // 1 hour
     });
 
-    const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${key}`;
+    const fileUrl = `https://${bucketName}.s3.amazonaws.com/${key}`;
 
     return NextResponse.json({ presignedUrl, fileUrl, key });
   } catch (err) {

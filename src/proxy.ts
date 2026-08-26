@@ -12,11 +12,13 @@ export const config = {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Exclude auth routes and public course registration routes from protection
+  // Exclude auth routes, presigned upload, and public course/event registration routes from protection
   if (
     pathname.startsWith('/api/auth/login') ||
     pathname.startsWith('/api/auth/refresh') ||
-    pathname.startsWith('/api/db/courses/registrations')
+    pathname.startsWith('/api/upload/presign') ||
+    pathname.startsWith('/api/db/courses/registrations') ||
+    pathname.startsWith('/api/db/events/registrations')
   ) {
     return NextResponse.next();
   }

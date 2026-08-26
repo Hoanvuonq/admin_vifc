@@ -14,12 +14,21 @@ export const useUpload = () => {
         const isPdf = file.type === "application/pdf";
         const fileTypeString = isPdf ? "pdf" : "image";
 
+        const token =
+          typeof window !== "undefined"
+            ? localStorage.getItem("access_token")
+            : null;
+        const authHeaders = token
+          ? { Authorization: `Bearer ${token}` }
+          : undefined;
+
         const resPresign = await axios.get("/api/upload/presign", {
           params: {
             filename: file.name,
             contentType: file.type,
             type: fileTypeString,
           },
+          headers: authHeaders,
         });
         const { presignedUrl, fileUrl } = resPresign.data;
 
@@ -38,6 +47,7 @@ export const useUpload = () => {
                   contentType: "image/jpeg",
                   type: "thumbnail",
                 },
+                headers: authHeaders,
               });
               thumbnailPresignedUrl = resThumbPresign.data.presignedUrl;
               thumbnailUrl = resThumbPresign.data.fileUrl;
