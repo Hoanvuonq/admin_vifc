@@ -1,9 +1,9 @@
 import { Pool } from "pg";
 
-const connectionString = process.env.POSTGRES_URL;
+const connectionString = process.env.DIRECT_URL || process.env.POSTGRES_URL;
 
 if (!connectionString) {
-  throw new Error("POSTGRES_URL is not defined in environment");
+  throw new Error("POSTGRES_URL or DIRECT_URL is not defined in environment");
 }
 
 declare global {
@@ -11,10 +11,13 @@ declare global {
   var postgresPool: Pool | undefined;
 }
 
-const pool = globalThis.postgresPool ?? new Pool({
-  connectionString,
-  max: 10,
-});
+const pool =
+  globalThis.postgresPool ??
+  new Pool({
+    connectionString,
+    max: 10,
+    ssl: { rejectUnauthorized: false },
+  });
 
 if (process.env.NODE_ENV !== "production") {
   globalThis.postgresPool = pool;
