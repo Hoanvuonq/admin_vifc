@@ -30,7 +30,7 @@ export const PremiumButton = ({
       onClick={onClick}
       disabled={disabled || isLoading}
       className={cn(
-        "group/btn relative cursor-pointer overflow-hidden rounded-xl border transition-all duration-500 flex items-center justify-center font-bold uppercase tracking-wider shadow-sm active:scale-95 disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap",
+        "group/btn relative cursor-pointer overflow-hidden rounded-xl border transition-all duration-500 flex items-center justify-center font-bold uppercase shadow-sm active:scale-95 disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap",
         block ? "w-full" : "w-fit",
         style.initialBg,
         style.border,

@@ -43,7 +43,7 @@ export const SEOSection: React.FC = () => {
 
         {/* Google Search Result Preview */}
         <div className="p-3 bg-slate-50 rounded-xl space-y-1">
-          <span className="text-[8px] font-extrabold text-gray-400 uppercase tracking-widest">Google Search Result Preview</span>
+          <span className="text-[8px] font-extrabold  text-gray-700 uppercase tracking-widest">Google Search Result Preview</span>
           <h3 className="text-blue-800 font-semibold text-xs hover:underline cursor-pointer truncate">{seoTitle || title || "Search title..."}</h3>
           <p className="text-emerald-700 text-[9px] truncate">https://vifc.vn/news/{slug || "web3-commerce-xu-huong-mua-sam"}</p>
           <p className="text-gray-600 text-[9.5px] line-clamp-2 leading-snug font-medium">

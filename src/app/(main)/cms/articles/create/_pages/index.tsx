@@ -250,7 +250,7 @@ export const ArticleEditor: React.FC<{ articleId?: string }> = ({ articleId }) =
           />
           <div>
             <h1 className="text-sm font-extrabold text-slate-900 leading-tight">{articleId ? "Edit Article (Blocknote)" : "Create New Article (Blocknote)"}</h1>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
+            <p className="text-[10px]  text-gray-700 font-bold uppercase mt-0.5">
               Article Status:{" "}
               <span
                 className={`ml-1 text-[9.5px] font-extrabold uppercase ${

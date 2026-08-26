@@ -5,19 +5,7 @@ import { AdminPageHeader, PremiumButton } from "@/components";
 import { DataTable } from "@/components/DataTable";
 import { useCoursesList } from "@/hooks/useCoursesList";
 import { CourseItem, CreateCourseItemPayload } from "@/types/course";
-import {
-  GraduationCap,
-  Plus,
-  Search,
-  BookOpen,
-  CheckCircle2,
-  ShieldAlert,
-  Clock,
-  Calendar,
-  DollarSign,
-  User,
-  Edit,
-} from "lucide-react";
+import { GraduationCap, Plus, Search, BookOpen, CheckCircle2, ShieldAlert, Clock, Calendar, DollarSign, User, Edit } from "lucide-react";
 import Link from "next/link";
 import { getCourseColumns } from "./columns";
 import { CreateEditCourseModal } from "../_components/CreateEditCourseModal";
@@ -81,8 +69,7 @@ export const CourseListScreen: React.FC = () => {
             className="w-full h-full object-cover"
             onError={(e) => {
               (e.target as HTMLImageElement).src =
-                item.fallback_image ||
-                "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=600&q=80";
+                item.fallback_image || "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=600&q=80";
             }}
           />
         </div>
@@ -102,9 +89,7 @@ export const CourseListScreen: React.FC = () => {
         <div className="flex items-center justify-between border-b border-gray-100 pb-1 font-medium">
           <span className="text-gray-500">Học phí niêm yết:</span>
           <span className="text-orange-600 font-bold font-mono">
-            {item.tuition_fee && item.tuition_fee > 0
-              ? `${item.tuition_fee.toLocaleString("vi-VN")} đ`
-              : "Đặc quyền hội viên (Miễn phí)"}
+            {item.tuition_fee && item.tuition_fee > 0 ? `${item.tuition_fee.toLocaleString("vi-VN")} đ` : "Đặc quyền hội viên (Miễn phí)"}
           </span>
         </div>
         <div className="flex items-center justify-between border-b border-gray-100 pb-1">
@@ -114,9 +99,7 @@ export const CourseListScreen: React.FC = () => {
         {item.description && (
           <div className="pt-1 text-gray-600">
             <span className="font-semibold block text-[11px] text-gray-700 mb-0.5">Mô tả chi tiết:</span>
-            <p className="italic bg-orange-50/40 p-2 rounded-lg border border-orange-100/50 leading-relaxed text-[11.5px]">
-              {item.description}
-            </p>
+            <p className="italic bg-orange-50/40 p-2 rounded-lg border border-orange-100/50 leading-relaxed text-[11.5px]">{item.description}</p>
           </div>
         )}
       </div>
@@ -124,7 +107,7 @@ export const CourseListScreen: React.FC = () => {
       <div className="flex items-center gap-2 shrink-0 self-center lg:self-start">
         <button
           onClick={() => handleOpenEdit(item)}
-          className="h-9 px-4 rounded-xl bg-white border border-gray-200 text-gray-700 hover:text-orange-600 hover:border-orange-200 text-[11px] font-bold uppercase tracking-wider transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+          className="h-9 px-4 rounded-xl bg-white border border-gray-200 text-gray-700 hover:text-orange-600 hover:border-orange-200 text-[11px] font-bold uppercase transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
         >
           <Edit size={12} /> Chỉnh sửa
         </button>
@@ -146,38 +129,13 @@ export const CourseListScreen: React.FC = () => {
           { label: "Tạm Ẩn", value: stats.inactive, icon: <ShieldAlert size={16} />, color: "orange" },
         ]}
       >
-        <PremiumButton
-          label="Thêm Khóa Học Mới"
-          icon={Plus}
-          onClick={handleOpenCreate}
-          size="md"
-          variant="orange"
-          className="shadow-lg shadow-orange-500/20"
-        />
+        <PremiumButton label="Thêm Khóa Học Mới" icon={Plus} onClick={handleOpenCreate} size="md" variant="orange" className="shadow-lg shadow-orange-500/20" />
       </AdminPageHeader>
-
-      {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-gray-200 pb-1">
-        <Link
-          href="/courses/list"
-          className="px-4 py-2.5 text-xs font-bold text-orange-600 border-b-2 border-orange-600 flex items-center gap-2 tracking-wide uppercase transition"
-        >
-          <BookOpen size={14} />
-          <span>Danh Sách Khóa Học</span>
-        </Link>
-        <Link
-          href="/courses"
-          className="px-4 py-2.5 text-xs font-bold text-gray-500 hover:text-gray-900 transition flex items-center gap-2 tracking-wide uppercase"
-        >
-          <GraduationCap size={14} />
-          <span>Đơn Đăng Ký Học Viên</span>
-        </Link>
-      </div>
 
       {/* Filters bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-gray-100 shadow-xs">
         <div className="relative w-full sm:w-80">
-          <Search size={16} className="absolute left-3.5 top-3 text-gray-400" />
+          <Search size={16} className="absolute left-3.5 top-3  text-gray-700" />
           <input
             type="text"
             value={searchQuery}
@@ -222,12 +180,7 @@ export const CourseListScreen: React.FC = () => {
       />
 
       {/* Create / Edit Modal */}
-      <CreateEditCourseModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSubmitModal}
-        initialData={editingCourse}
-      />
+      <CreateEditCourseModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleSubmitModal} initialData={editingCourse} />
     </div>
   );
 };

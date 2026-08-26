@@ -103,11 +103,7 @@ export const RoleBadge: React.FC<{
   const Icon = config.icon;
 
   return (
-    <div
-      className="relative inline-block select-none"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="relative inline-block select-none" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
       <AnimatePresence>
         {isHovered && (
           <motion.div
@@ -133,7 +129,7 @@ export const RoleBadge: React.FC<{
         className={cn(
           "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-extrabold transition-all duration-300 relative overflow-hidden group cursor-help",
           config.className,
-          className
+          className,
         )}
       >
         {/* Soft, beautiful shimmer sweep inside the badge on hover */}
@@ -159,9 +155,7 @@ export const RoleBadge: React.FC<{
           <Icon size={9} strokeWidth={3} className={config.iconColor} />
         </motion.span>
 
-        <span className="leading-none relative z-20 font-extrabold uppercase tracking-wider text-[9px]">
-          {config.symbol}
-        </span>
+        <span className="leading-none relative z-20 font-extrabold uppercase text-[9px]">{config.symbol}</span>
       </motion.div>
     </div>
   );

@@ -80,7 +80,7 @@ export const MarketSentimentAnalysis = ({ data = MOCK_SENTIMENT, onRefresh, load
           </div>
 
           <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-100 flex items-center justify-end pr-2">
-            <div className="relative w-full h-[140px] animate-in fade-in zoom-in duration-1000">
+            <div className="relative w-full h-35 animate-in fade-in zoom-in duration-1000">
               <Image
                 src="/icons/icon-reviews.png"
                 fill
@@ -93,7 +93,6 @@ export const MarketSentimentAnalysis = ({ data = MOCK_SENTIMENT, onRefresh, load
           </div>
         </div>
 
-        {/* Sentiment card breakdown grid */}
         <div className="grid grid-cols-3 gap-3">
           {[
             {

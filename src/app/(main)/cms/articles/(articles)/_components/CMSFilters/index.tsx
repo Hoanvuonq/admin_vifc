@@ -106,7 +106,7 @@ export const CMSFilters: React.FC<CMSFiltersProps> = ({ counts }) => {
           <div className="flex-1">
             <DateTimeInput label="" value={startDate} onChange={setStartDate} isDate={true} placeholder="From Date" />
           </div>
-          <span className="text-gray-400 text-xs font-bold shrink-0">to</span>
+          <span className=" text-gray-700 text-xs font-bold shrink-0">to</span>
           <div className="flex-1">
             <DateTimeInput label="" value={endDate} onChange={setEndDate} isDate={true} placeholder="To Date" />
           </div>

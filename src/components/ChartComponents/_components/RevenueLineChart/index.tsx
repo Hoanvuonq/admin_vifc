@@ -179,7 +179,7 @@ export const RevenueLineChart = ({
                     <div className="bg-white/95 backdrop-blur-md border border-gray-100 p-5 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 min-w-56">
                       <div className="text-[10px] font-bold uppercase text-gray-600 mb-3 border-b border-gray-100 pb-2 flex items-center justify-between">
                         <span>{dataPoint.isHourly ? "Time" : "Date"}</span>
-                        <span className="italic text-gray-400">{dataPoint.label}</span>
+                        <span className="italic  text-gray-700">{dataPoint.label}</span>
                       </div>
                       <div className="space-y-3">
                         <div className="flex flex-col">
@@ -192,7 +192,7 @@ export const RevenueLineChart = ({
                         </div>
                         {hasComparison && (
                           <div className="flex flex-col pt-2 border-t border-gray-50">
-                            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter mb-1">{secondaryLabel || "Previous Period"}</span>
+                            <span className="text-[9px] font-bold  text-gray-700 uppercase tracking-tighter mb-1">{secondaryLabel || "Previous Period"}</span>
                             <span className="text-base font-bold text-gray-500 italic tracking-tighter">
                               {metric === "revenue"
                                 ? formatPrice(dataPoint.secondary || 0)

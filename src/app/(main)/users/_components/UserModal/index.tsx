@@ -370,9 +370,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                         <div className="w-10 h-10 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center mb-1 shadow-lg group-hover:scale-110 group-active:scale-95 transition-transform">
                           <Plus size={22} strokeWidth={3} className="text-white" />
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-white drop-shadow-sm">
-                          {formValues.avatarUrl ? "Đổi ảnh" : "Thêm ảnh"}
-                        </span>
+                        <span className="text-[10px] font-bold uppercase text-white drop-shadow-sm">{formValues.avatarUrl ? "Đổi ảnh" : "Thêm ảnh"}</span>
                       </div>
                     )}
 
@@ -417,7 +415,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                 <div className="flex items-center justify-between gap-3 text-gray-600">
                   <div className="flex items-center gap-2 min-w-0">
                     <Mail size={14} className="text-orange-500 shrink-0" />
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Email</span>
+                    <span className="text-[10px] font-bold uppercase text-gray-500">Email</span>
                   </div>
                   <span className="text-[11px] font-semibold text-gray-800 truncate max-w-32.5" title={formValues.email}>
                     {formValues.email || "Chưa nhập..."}
@@ -429,7 +427,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                 <div className="flex items-center justify-between gap-3 text-gray-600">
                   <div className="flex items-center gap-2 min-w-0">
                     <Phone size={14} className="text-orange-500 shrink-0" />
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Điện thoại</span>
+                    <span className="text-[10px] font-bold uppercase text-gray-500">Điện thoại</span>
                   </div>
                   <span className="text-[11px] font-semibold text-gray-800 truncate">{formValues.phone || "—"}</span>
                 </div>
@@ -439,7 +437,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                 <div className="flex items-center justify-between gap-3 text-gray-600">
                   <div className="flex items-center gap-2 min-w-0">
                     <Building2 size={14} className="text-orange-500 shrink-0" />
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Công ty</span>
+                    <span className="text-[10px] font-bold uppercase text-gray-500">Công ty</span>
                   </div>
                   <span className="text-[11px] font-semibold text-gray-800 truncate max-w-32.5" title={formValues.company}>
                     {formValues.company || "—"}
@@ -452,7 +450,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                     <div className="flex items-center justify-between gap-3 text-gray-600">
                       <div className="flex items-center gap-2 min-w-0">
                         <KeyRound size={14} className="text-orange-500 shrink-0" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Mật khẩu</span>
+                        <span className="text-[10px] font-bold uppercase text-gray-500">Mật khẩu</span>
                       </div>
                       <span className="text-[10px] font-bold italic text-emerald-600 flex items-center gap-1">
                         {formValues.password ? <Check size={12} strokeWidth={3} /> : null}
@@ -466,8 +464,8 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
 
                 <div className="flex items-center justify-between gap-3 text-gray-600">
                   <div className="flex items-center gap-2 min-w-0">
-                    <Clock size={14} className="text-gray-400 shrink-0" />
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">{isEditMode ? "Ngày tham gia" : "Ngày tạo"}</span>
+                    <Clock size={14} className=" text-gray-700 shrink-0" />
+                    <span className="text-[10px] font-bold uppercase text-gray-500">{isEditMode ? "Ngày tham gia" : "Ngày tạo"}</span>
                   </div>
                   <span className="text-[10.5px] font-bold text-gray-700">
                     {isEditMode ? userToEdit?.joinedDate || dayjs().format("DD.MM.YYYY") : dayjs().format("DD.MM.YYYY")}
@@ -488,7 +486,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                     </span>
                   </div>
                   <div className="font-mono text-base font-black tracking-widest text-white mb-2 text-shadow-sm">#{formValues.so_the || "00001"}</div>
-                  <div className="flex items-center justify-between text-[11px] text-gray-400 pt-2 border-t border-white/10">
+                  <div className="flex items-center justify-between text-[11px]  text-gray-700 pt-2 border-t border-white/10">
                     <span className="font-bold text-gray-200 uppercase truncate max-w-32.5">{formValues.cardUsername || formValues.name || "CARDHOLDER"}</span>
                     <span className="text-[9px] text-emerald-400 font-bold flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> ACTIVE
@@ -575,7 +573,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                         <div className="w-6 h-6 rounded-lg bg-orange-500/10 text-orange-600 flex items-center justify-center font-bold text-xs">2</div>
                         <div>
                           <h4 className="text-[13px] font-bold text-gray-800 uppercase tracking-tight">Mật khẩu khởi tạo</h4>
-                          <p className="text-[11px] text-gray-400">Mật khẩu đăng nhập ban đầu cho tài khoản</p>
+                          <p className="text-[11px]  text-gray-700">Mật khẩu đăng nhập ban đầu cho tài khoản</p>
                         </div>
                       </div>
 
@@ -598,7 +596,7 @@ export const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, userToEdi
                           {...register("password")}
                           error={errors.password?.message}
                         />
-                        <div className="absolute right-3 top-[34px] flex items-center gap-1 text-gray-400">
+                        <div className="absolute right-3 top-[34px] flex items-center gap-1  text-gray-700">
                           {formValues.password && (
                             <button
                               type="button"

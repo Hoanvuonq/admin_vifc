@@ -22,17 +22,30 @@ export const PDFSection: React.FC = () => {
 
       <div className="space-y-4 pt-1 bg-white">
         <div className="space-y-2">
-          <label className="text-[9px] uppercase text-gray-500 tracking-wider font-semibold">Upload PDF File</label>
+          <label className="text-[9px] uppercase text-gray-500 font-semibold">Upload PDF File</label>
           <div className="flex justify-center p-3 bg-slate-50/60 rounded-xl border border-slate-100">
             <MediaUploadField
-              value={pdfBlock.content ? [{ uid: pdfBlock.id, url: pdfBlock.content, status: "done", name: pdfBlock.caption, thumbnailUrl: pdfBlock.thumbnailUrl, originFileObj: pdfBlock.file || undefined }] : []}
+              value={
+                pdfBlock.content
+                  ? [
+                      {
+                        uid: pdfBlock.id,
+                        url: pdfBlock.content,
+                        status: "done",
+                        name: pdfBlock.caption,
+                        thumbnailUrl: pdfBlock.thumbnailUrl,
+                        originFileObj: pdfBlock.file || undefined,
+                      },
+                    ]
+                  : []
+              }
               onChange={(files) => {
                 if (files.length > 0) {
                   handleBlockChange(pdfBlock.id, {
                     content: files[0].url || "",
                     thumbnailUrl: files[0].thumbnailUrl || pdfBlock.thumbnailUrl,
                     caption: files[0].name || pdfBlock.caption,
-                    file: files[0].originFileObj
+                    file: files[0].originFileObj,
                   });
                 } else {
                   handleBlockChange(pdfBlock.id, { content: "", thumbnailUrl: "", caption: "", file: undefined });
@@ -76,13 +89,12 @@ export const PDFSection: React.FC = () => {
                 { label: "Free (All users can view)", value: "free", icon: User, color: "text-slate-500" },
                 { label: "Base (Base tier and above)", value: "base", icon: Shield, color: "text-blue-500" },
                 { label: "Standard (Standard tier and above)", value: "standard", icon: Star, color: "text-sky-500" },
-                { label: "Premium (Only Premium users)", value: "premium", icon: Crown, color: "text-amber-500" }
+                { label: "Premium (Only Premium users)", value: "premium", icon: Crown, color: "text-amber-500" },
               ]}
             />
-
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 };

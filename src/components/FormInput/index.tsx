@@ -189,7 +189,7 @@ export const FormInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
               >
                 {(value?.toString().length || 0).toLocaleString()}
               </span>
-              <span className="text-[10px] text-gray-400">/</span>
+              <span className="text-[10px]  text-gray-700">/</span>
               <span className="text-[10px] text-gray-500 font-bold">{Number(props.maxLength).toLocaleString()}</span>
             </div>
           )}

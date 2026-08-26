@@ -176,7 +176,7 @@ export const EmptyState = ({
             <Lightbulb size={20} className="animate-pulse" />
           </div>
           <div className="flex-1">
-            <h4 className="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-0.5">Gợi ý cho bạn</h4>
+            <h4 className="text-[11px] font-bold text-gray-800 uppercase mb-0.5">Gợi ý cho bạn</h4>
             <p className="text-[10px] text-gray-500 leading-tight">Thử thay đổi bộ lọc hoặc thêm mới dữ liệu.</p>
           </div>
           <button className="text-gray-300 hover:text-gray-500 transition-colors p-1">

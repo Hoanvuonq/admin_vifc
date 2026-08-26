@@ -202,7 +202,7 @@ export const Header = ({
                                     </div>
                                     <div className="flex flex-col items-start">
                                       <span className="text-sm font-bold text-gray-700 group-hover:text-orange-600">{item.label}</span>
-                                      {item.parent && <span className="text-[10px] font-bold text-gray-400 uppercase">{item.parent}</span>}
+                                      {item.parent && <span className="text-[10px] font-bold  text-gray-700 uppercase">{item.parent}</span>}
                                     </div>
                                   </div>
                                   <ChevronRight
@@ -218,7 +218,7 @@ export const Header = ({
                                 <SearchIcon size={24} className="text-gray-300" />
                               </div>
                               <p className="text-sm font-bold text-gray-500">Không tìm thấy chức năng nào</p>
-                              <p className="text-xs text-gray-400 mt-1">Vui lòng thử từ khóa khác (ví dụ: "Sản phẩm", "Ví", "Flash sale")</p>
+                              <p className="text-xs  text-gray-700 mt-1">Vui lòng thử từ khóa khác (ví dụ: "Sản phẩm", "Ví", "Flash sale")</p>
                             </div>
                           )
                         ) : (
@@ -234,7 +234,7 @@ export const Header = ({
                                   onClick={() => handleSelect(item.href || item.children?.[0]?.href || "")}
                                   className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-2xl group transition-all"
                                 >
-                                  <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-white group-hover:text-orange-600 group-hover:shadow-sm transition-all">
+                                  <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center  text-gray-700 group-hover:bg-white group-hover:text-orange-600 group-hover:shadow-sm transition-all">
                                     {item.icon}
                                   </div>
                                   <span className="text-xs font-bold text-gray-600 group-hover:text-gray-900">{item.label}</span>

@@ -5,10 +5,7 @@ import { NewsletterSubscriberItem } from "@/types/newsletter";
 import { Calendar, Globe, Power, Trash2 } from "lucide-react";
 import dayjs from "dayjs";
 
-export const getNewsletterColumns = (
-  onToggleStatus: (id: string) => void,
-  onDelete: (id: string) => void
-): Column<NewsletterSubscriberItem>[] => [
+export const getNewsletterColumns = (onToggleStatus: (id: string) => void, onDelete: (id: string) => void): Column<NewsletterSubscriberItem>[] => [
   {
     header: "Người nhận & Email",
     accessor: "email" as keyof NewsletterSubscriberItem,
@@ -23,9 +20,7 @@ export const getNewsletterColumns = (
           <span className="font-bold text-gray-900 text-[13px] tracking-tight group-hover:text-orange-600 transition-colors truncate max-w-[200px]">
             {item.full_name || item.email.split("@")[0]}
           </span>
-          <span className="text-xs text-gray-500 font-normal truncate max-w-[220px] select-text">
-            {item.email}
-          </span>
+          <span className="text-xs text-gray-500 font-normal truncate max-w-[220px] select-text">{item.email}</span>
         </div>
       </div>
     ),
@@ -44,12 +39,10 @@ export const getNewsletterColumns = (
     header: "Ngày Đăng Ký",
     accessor: "created_at" as keyof NewsletterSubscriberItem,
     render: (item: NewsletterSubscriberItem) => {
-      const formatted = dayjs(item.created_at).isValid()
-        ? dayjs(item.created_at).format("DD/MM/YYYY HH:mm")
-        : item.created_at;
+      const formatted = dayjs(item.created_at).isValid() ? dayjs(item.created_at).format("DD/MM/YYYY HH:mm") : item.created_at;
       return (
         <div className="flex items-center gap-1.5 text-gray-500 text-xs font-mono">
-          <Calendar size={12} className="text-gray-400 shrink-0" />
+          <Calendar size={12} className=" text-gray-700 shrink-0" />
           <span>{formatted}</span>
         </div>
       );
@@ -74,16 +67,11 @@ export const getNewsletterColumns = (
       <div className="flex items-center justify-center gap-1.5" onClick={(e) => e.stopPropagation()}>
         <ActionTooltipBtn
           onClick={() => onToggleStatus(item.id)}
-          icon={<Power size={14} className={item.status === "subscribed" ? "text-emerald-600" : "text-gray-400"} />}
+          icon={<Power size={14} className={item.status === "subscribed" ? "text-emerald-600" : " text-gray-700"} />}
           color={item.status === "subscribed" ? "emerald" : "gray"}
           tooltip={item.status === "subscribed" ? "Tạm hủy nhận tin" : "Kích hoạt nhận tin lại"}
         />
-        <ActionTooltipBtn
-          onClick={() => onDelete(item.id)}
-          icon={<Trash2 size={14} className="text-rose-500" />}
-          color="rose"
-          tooltip="Xóa email này"
-        />
+        <ActionTooltipBtn onClick={() => onDelete(item.id)} icon={<Trash2 size={14} className="text-rose-500" />} color="rose" tooltip="Xóa email này" />
       </div>
     ),
   },

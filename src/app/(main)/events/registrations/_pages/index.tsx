@@ -5,19 +5,7 @@ import { AdminPageHeader, StatusBadge } from "@/components";
 import { DataTable } from "@/components/DataTable";
 import { useEventRegistrations } from "@/hooks/useEventRegistrations";
 import { EventRegistrationItem } from "@/types/event";
-import {
-  Sparkles,
-  Users,
-  Search,
-  Clock,
-  CheckCircle2,
-  Calendar,
-  Mail,
-  Phone,
-  MapPin,
-  FileText,
-  UserCheck,
-} from "lucide-react";
+import { Sparkles, Users, Search, Clock, CheckCircle2, Calendar, Mail, Phone, MapPin, FileText, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { getEventRegistrationColumns } from "./columns";
 
@@ -58,10 +46,10 @@ export const EventRegistrationsScreen: React.FC = () => {
           </span>
         </h4>
         <p className="text-xs text-gray-600 flex items-center gap-1.5">
-          <Mail size={12} className="text-gray-400 shrink-0" /> {item.email}
+          <Mail size={12} className=" text-gray-700 shrink-0" /> {item.email}
         </p>
         <p className="text-xs text-gray-600 flex items-center gap-1.5 font-mono">
-          <Phone size={12} className="text-gray-400 shrink-0" /> {item.phone || "Chưa có số điện thoại"}
+          <Phone size={12} className=" text-gray-700 shrink-0" /> {item.phone || "Chưa có số điện thoại"}
         </p>
       </div>
 
@@ -72,7 +60,9 @@ export const EventRegistrationsScreen: React.FC = () => {
         </div>
         <div className="flex items-center justify-between border-b border-gray-100 pb-1">
           <span className="text-gray-500">Địa điểm & Thời gian:</span>
-          <span>{item.location || "TBD"} • {item.event_date || "Chưa ấn định"}</span>
+          <span>
+            {item.location || "TBD"} • {item.event_date || "Chưa ấn định"}
+          </span>
         </div>
         <div className="flex items-center justify-between border-b border-gray-100 pb-1">
           <span className="text-gray-500">Ngày gửi đơn:</span>
@@ -81,9 +71,7 @@ export const EventRegistrationsScreen: React.FC = () => {
         {item.notes && (
           <div className="pt-1 text-gray-600">
             <span className="font-semibold block text-[11px] text-gray-700">Ghi chú từ khách mời:</span>
-            <p className="italic bg-orange-50/50 p-2 rounded-lg border border-orange-100/50 mt-1 text-[11.5px]">
-              {item.notes}
-            </p>
+            <p className="italic bg-orange-50/50 p-2 rounded-lg border border-orange-100/50 mt-1 text-[11.5px]">{item.notes}</p>
           </div>
         )}
       </div>
@@ -137,7 +125,7 @@ export const EventRegistrationsScreen: React.FC = () => {
       {/* Filters bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-gray-100 shadow-xs">
         <div className="relative w-full sm:w-80">
-          <Search size={16} className="absolute left-3.5 top-3 text-gray-400" />
+          <Search size={16} className="absolute left-3.5 top-3  text-gray-700" />
           <input
             type="text"
             value={searchQuery}

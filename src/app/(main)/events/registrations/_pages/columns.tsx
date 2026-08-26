@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 
 export const getEventRegistrationColumns = (
   onUpdateStatus: (id: string, status: EventRegistrationItem["status"]) => void,
-  onDelete: (id: string) => void
+  onDelete: (id: string) => void,
 ): Column<EventRegistrationItem>[] => [
   {
     header: "Khách mời & Email",
@@ -23,9 +23,7 @@ export const getEventRegistrationColumns = (
           <span className="font-bold text-gray-900 text-[13px] tracking-tight group-hover:text-orange-600 transition-colors truncate max-w-[180px]">
             {item.full_name || "Khách mời"}
           </span>
-          <span className="text-xs text-gray-500 font-normal truncate max-w-[200px] select-text">
-            {item.email}
-          </span>
+          <span className="text-xs text-gray-500 font-normal truncate max-w-[200px] select-text">{item.email}</span>
         </div>
       </div>
     ),
@@ -35,9 +33,7 @@ export const getEventRegistrationColumns = (
     accessor: "event_title" as keyof EventRegistrationItem,
     render: (item: EventRegistrationItem) => (
       <div className="flex flex-col gap-1 max-w-sm">
-        <span className="font-bold text-gray-900 text-[12.5px] line-clamp-1">
-          {item.event_title}
-        </span>
+        <span className="font-bold text-gray-900 text-[12.5px] line-clamp-1">{item.event_title}</span>
         <div className="flex items-center gap-2 text-xs text-gray-500">
           {item.location && (
             <span className="flex items-center gap-1">
@@ -45,9 +41,7 @@ export const getEventRegistrationColumns = (
               <span className="truncate max-w-[140px]">{item.location}</span>
             </span>
           )}
-          {item.event_date && (
-            <span className="text-gray-400 font-mono text-[11px]">• {item.event_date}</span>
-          )}
+          {item.event_date && <span className=" text-gray-700 font-mono text-[11px]">• {item.event_date}</span>}
         </div>
       </div>
     ),
@@ -57,7 +51,7 @@ export const getEventRegistrationColumns = (
     accessor: "phone" as keyof EventRegistrationItem,
     render: (item: EventRegistrationItem) => (
       <div className="flex items-center gap-1.5 text-gray-600 text-xs font-mono">
-        <Phone size={12} className="text-gray-400 shrink-0" />
+        <Phone size={12} className=" text-gray-700 shrink-0" />
         <span>{item.phone || "—"}</span>
       </div>
     ),
@@ -66,12 +60,10 @@ export const getEventRegistrationColumns = (
     header: "Ngày Đăng Ký",
     accessor: "created_at" as keyof EventRegistrationItem,
     render: (item: EventRegistrationItem) => {
-      const formatted = dayjs(item.created_at).isValid()
-        ? dayjs(item.created_at).format("DD/MM/YYYY HH:mm")
-        : item.created_at;
+      const formatted = dayjs(item.created_at).isValid() ? dayjs(item.created_at).format("DD/MM/YYYY HH:mm") : item.created_at;
       return (
         <div className="flex items-center gap-1.5 text-gray-500 text-xs font-mono">
-          <Calendar size={12} className="text-gray-400 shrink-0" />
+          <Calendar size={12} className=" text-gray-700 shrink-0" />
           <span>{formatted}</span>
         </div>
       );
@@ -83,24 +75,8 @@ export const getEventRegistrationColumns = (
     align: "center",
     render: (item: EventRegistrationItem) => (
       <StatusBadge
-        status={
-          item.status === "confirmed"
-            ? "ACTIVE"
-            : item.status === "pending"
-            ? "PENDING"
-            : item.status === "attended"
-            ? "COMPLETED"
-            : "BANNED"
-        }
-        label={
-          item.status === "confirmed"
-            ? "ĐÃ XÁC NHẬN"
-            : item.status === "pending"
-            ? "CHỜ DUYỆT"
-            : item.status === "attended"
-            ? "ĐÃ THAM GIA"
-            : "ĐÃ HỦY"
-        }
+        status={item.status === "confirmed" ? "ACTIVE" : item.status === "pending" ? "PENDING" : item.status === "attended" ? "COMPLETED" : "BANNED"}
+        label={item.status === "confirmed" ? "ĐÃ XÁC NHẬN" : item.status === "pending" ? "CHỜ DUYỆT" : item.status === "attended" ? "ĐÃ THAM GIA" : "ĐÃ HỦY"}
         variant="premium"
       />
     ),
@@ -126,12 +102,7 @@ export const getEventRegistrationColumns = (
             tooltip="Từ chối / Hủy đơn"
           />
         )}
-        <ActionTooltipBtn
-          onClick={() => onDelete(item.id)}
-          icon={<Trash2 size={14} className="text-rose-500" />}
-          color="rose"
-          tooltip="Xóa đơn đăng ký"
-        />
+        <ActionTooltipBtn onClick={() => onDelete(item.id)} icon={<Trash2 size={14} className="text-rose-500" />} color="rose" tooltip="Xóa đơn đăng ký" />
       </div>
     ),
   },

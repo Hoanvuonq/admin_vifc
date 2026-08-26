@@ -107,7 +107,7 @@ export const TopTokensList = ({ tokens = MOCK_TOKENS, onRefresh, loading }: TopT
                   badgeStyle,
                 )}
               >
-                <span className="text-xs tracking-wider font-extrabold italic leading-none mb-0.5">{item.symbol}</span>
+                <span className="text-xs font-extrabold italic leading-none mb-0.5">{item.symbol}</span>
                 <Coins size={14} className="opacity-70" />
               </div>
 

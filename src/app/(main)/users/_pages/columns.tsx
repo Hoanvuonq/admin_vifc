@@ -50,15 +50,13 @@ export const getColumns = (
     accessor: "card" as keyof UserItem,
     render: (user: UserItem) => {
       if (!user.card) {
-        return <span className="text-xs text-gray-400 font-medium italic">Chưa cấp thẻ</span>;
+        return <span className="text-xs  text-gray-700 font-medium italic">Chưa cấp thẻ</span>;
       }
       return (
         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-50/80 border border-orange-200/70 text-orange-800 shadow-2xs">
           <CreditCard size={12} className="text-orange-600 shrink-0" />
           <span className="font-mono font-bold text-xs text-orange-950 tracking-wide">#{user.card.so_the}</span>
-          <span className="text-[9.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-orange-200/50 text-orange-800">
-            {user.card.loai_the || "DEFAULT"}
-          </span>
+          <span className="text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded bg-orange-200/50 text-orange-800">{user.card.loai_the || "DEFAULT"}</span>
         </div>
       );
     },
@@ -73,7 +71,7 @@ export const getColumns = (
     accessor: "company" as keyof UserItem,
     render: (user: UserItem) => (
       <div className="flex items-center gap-1.5 text-gray-700">
-        <Building2 size={13} className="text-gray-400 shrink-0" />
+        <Building2 size={13} className=" text-gray-700 shrink-0" />
         <span className="text-xs font-semibold truncate max-w-[130px]" title={user.company || "Cá nhân"}>
           {user.company || "Cá nhân"}
         </span>
@@ -89,7 +87,7 @@ export const getColumns = (
 
       return (
         <div className="flex items-center gap-1.5 text-gray-500">
-          <Calendar size={12} className="text-gray-400 shrink-0" />
+          <Calendar size={12} className=" text-gray-700 shrink-0" />
           <span className="text-xs font-medium font-mono text-gray-600">{formattedDate}</span>
         </div>
       );

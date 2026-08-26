@@ -8,7 +8,6 @@ import { LeftPanel, NewsPreview, RightPanel } from "../_components";
 import { useArticleEditorSync } from "../_hooks/useArticleEditorSync";
 import { useArticleEditorStore } from "../_store/useArticleEditorStore";
 
-
 export const ArticleEditor: React.FC<{ articleId?: string }> = ({ articleId }) => {
   const router = useRouter();
   const { status } = useArticleEditorStore();
@@ -29,24 +28,15 @@ export const ArticleEditor: React.FC<{ articleId?: string }> = ({ articleId }) =
             className="rounded-xl w-10! h-10! font-bold px-4 py-2 text-xs"
           />
           <div>
-            <h1 className="text-sm font-extrabold text-slate-900 leading-tight">
-              {articleId ? "Edit Article" : "Create New Article"}
-            </h1>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
+            <h1 className="text-sm font-extrabold text-slate-900 leading-tight">{articleId ? "Edit Article" : "Create New Article"}</h1>
+            <p className="text-[10px]  text-gray-700 font-bold uppercase mt-0.5">
               Article Status:{" "}
               <span
-                className={`ml-1 text-[9.5px] font-extrabold uppercase ${status === "PUBLISHED"
-                  ? "text-emerald-500"
-                  : status === "PENDING_REVIEW"
-                    ? "text-amber-500"
-                    : "text-blue-500"
-                  }`}
+                className={`ml-1 text-[9.5px] font-extrabold uppercase ${
+                  status === "PUBLISHED" ? "text-emerald-500" : status === "PENDING_REVIEW" ? "text-amber-500" : "text-blue-500"
+                }`}
               >
-                {status === "PUBLISHED"
-                  ? "Published"
-                  : status === "PENDING_REVIEW"
-                    ? "Pending Review"
-                    : "Draft"}
+                {status === "PUBLISHED" ? "Published" : status === "PENDING_REVIEW" ? "Pending Review" : "Draft"}
               </span>
             </p>
           </div>
@@ -82,4 +72,3 @@ export const ArticleEditor: React.FC<{ articleId?: string }> = ({ articleId }) =
     </div>
   );
 };
-

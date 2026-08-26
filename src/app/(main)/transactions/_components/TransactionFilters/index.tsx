@@ -42,7 +42,7 @@ export const TransactionFilters: React.FC<TransactionFiltersProps> = ({ searchTe
               setSearchText("");
               setSelectedStatus("ALL");
             }}
-            className="h-10 px-4 rounded-2xl bg-white border border-gray-200 text-gray-600 hover:text-orange-500 hover:border-orange-200 text-[11px] font-bold uppercase tracking-wider transition-all shadow-xs flex items-center gap-1.5"
+            className="h-10 px-4 rounded-2xl bg-white border border-gray-200 text-gray-600 hover:text-orange-500 hover:border-orange-200 text-[11px] font-bold uppercase transition-all shadow-xs flex items-center gap-1.5"
             title="Clear Filters"
           >
             <Filter size={12} /> Clear

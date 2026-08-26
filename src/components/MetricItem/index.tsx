@@ -10,7 +10,6 @@ export const MetricItem = ({
   isMoney = false,
   suffix = "",
   compact = false,
-  trend = { value: 12.5, isUp: true },
 }: {
   label: string;
   value: number | string;
@@ -19,7 +18,6 @@ export const MetricItem = ({
   isMoney?: boolean;
   suffix?: string;
   compact?: boolean;
-  trend?: { value: number; isUp: boolean };
 }) => {
   const colorMap = {
     orange: "text-orange-500 bg-orange-500/10 border-orange-500/20 shadow-orange-500/5",
@@ -30,34 +28,7 @@ export const MetricItem = ({
     rose: "text-rose-500 bg-rose-500/10 border-rose-500/20 shadow-rose-500/5",
   };
 
-  const trendColors = trend.isUp ? "text-emerald-600 bg-emerald-500/10 border-emerald-500/20" : "text-rose-600 bg-rose-500/10 border-rose-500/20";
-
   const displayValue = typeof value === "number" ? (isMoney ? value : formatNumber(value)) : value;
-
-  const Sparkline = () => {
-    const trendId = `trend-${color}-${trend.isUp}`;
-    const gradientColor = trend.isUp ? "#10b981" : "#f43f5e";
-    const pathData = trend.isUp ? "M1 10C5 8 8 2 12 5C16 8 20 10 24 6C28 2 32 4 39 1" : "M1 1C5 3 8 10 12 7C16 4 20 2 24 6C28 10 32 8 39 11";
-
-    return (
-      <svg
-        width="28"
-        height="10"
-        viewBox="0 0 40 12"
-        fill="none"
-        className="ml-1.5 shrink-0 opacity-40 group-hover/metric:opacity-100 transition-opacity duration-500"
-      >
-        <defs>
-          <linearGradient id={trendId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={gradientColor} stopOpacity="0.3" />
-            <stop offset="100%" stopColor={gradientColor} stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <path d={`${pathData} L39 12 L1 12 Z`} fill={`url(#${trendId})`} />
-        <path d={pathData} stroke={gradientColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
-  };
 
   return (
     <div
@@ -65,7 +36,7 @@ export const MetricItem = ({
         "itim-regular relative group/metric flex items-center transition-all duration-500 cursor-pointer overflow-hidden",
         "bg-white/40 backdrop-blur-md border border-white/60",
         "hover:bg-white/70 hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:-translate-y-1",
-        compact ? "gap-3 px-3 py-2.5 rounded-2xl" : "gap-2 px-2 py-2 rounded-[28px]",
+        compact ? "gap-3 px-3 py-2 rounded-2xl" : "gap-2 px-2 py-2 rounded-2xl",
       )}
     >
       <div
@@ -98,14 +69,6 @@ export const MetricItem = ({
             {displayValue}
             {suffix && <span className="text-xs font-bold opacity-40 ml-0.5">{suffix}</span>}
           </span>
-
-          {trend && (
-            <div
-              className={cn("flex items-center px-1.5 py-0.5 rounded-full border text-[9px] font-bold tracking-tight transition-all duration-500", trendColors)}
-            >
-              {trend.isUp ? "↑" : "↓"} {trend.value}%{!compact && <Sparkline />}
-            </div>
-          )}
         </div>
 
         <span

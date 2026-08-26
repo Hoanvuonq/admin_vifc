@@ -5,19 +5,7 @@ import { AdminPageHeader, PremiumButton, StatusBadge } from "@/components";
 import { DataTable } from "@/components/DataTable";
 import { useEvents } from "@/hooks/useEvents";
 import { EventItem, CreateEventPayload } from "@/types/event";
-import {
-  Sparkles,
-  Plus,
-  Search,
-  Calendar,
-  CheckCircle2,
-  ExternalLink,
-  Users,
-  MapPin,
-  Edit,
-  Tag,
-  Info,
-} from "lucide-react";
+import { Sparkles, Plus, Search, Calendar, CheckCircle2, ExternalLink, Users, MapPin, Edit, Tag, Info } from "lucide-react";
 import Link from "next/link";
 import { getEventColumns } from "./columns";
 import { CreateEditEventModal } from "../_components/CreateEditEventModal";
@@ -78,25 +66,20 @@ export const EventListScreen: React.FC = () => {
             alt={item.title}
             className="w-full h-full object-cover"
             onError={(e) => {
-              (e.target as HTMLImageElement).src =
-                "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=600&q=80";
+              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=600&q=80";
             }}
           />
         </div>
         <div className="space-y-1.5 max-w-md">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-bold text-gray-900">{item.title}</span>
-            {item.badge && (
-              <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">
-                {item.badge}
-              </span>
-            )}
+            {item.badge && <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">{item.badge}</span>}
           </div>
           <p className="text-xs text-gray-500 flex items-center gap-1.5">
             <MapPin size={12} className="text-orange-500 shrink-0" /> {item.location}
           </p>
           <p className="text-xs text-gray-500 flex items-center gap-1.5 font-mono">
-            <Calendar size={12} className="text-gray-400 shrink-0" /> {item.date}
+            <Calendar size={12} className=" text-gray-700 shrink-0" /> {item.date}
           </p>
         </div>
       </div>
@@ -105,25 +88,18 @@ export const EventListScreen: React.FC = () => {
         <div className="flex items-center justify-between border-b border-gray-100 pb-1 font-medium">
           <span className="text-gray-500">Cổng Đăng Ký Lu.ma:</span>
           {item.luma_url ? (
-            <a
-              href={item.luma_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-orange-600 font-semibold hover:underline flex items-center gap-1"
-            >
+            <a href={item.luma_url} target="_blank" rel="noopener noreferrer" className="text-orange-600 font-semibold hover:underline flex items-center gap-1">
               <span>{item.luma_url}</span>
               <ExternalLink size={11} />
             </a>
           ) : (
-            <span className="italic text-gray-400">Chưa thiết lập</span>
+            <span className="italic  text-gray-700">Chưa thiết lập</span>
           )}
         </div>
         {item.description && (
           <div className="pt-1 text-gray-600">
             <span className="font-semibold block text-[11px] text-gray-700 mb-0.5">Giới thiệu sự kiện:</span>
-            <p className="italic bg-orange-50/40 p-2 rounded-lg border border-orange-100/50 leading-relaxed text-[11.5px]">
-              {item.description}
-            </p>
+            <p className="italic bg-orange-50/40 p-2 rounded-lg border border-orange-100/50 leading-relaxed text-[11.5px]">{item.description}</p>
           </div>
         )}
       </div>
@@ -131,7 +107,7 @@ export const EventListScreen: React.FC = () => {
       <div className="flex items-center gap-2 shrink-0 self-center lg:self-start">
         <button
           onClick={() => handleOpenEdit(item)}
-          className="h-9 px-4 rounded-xl bg-white border border-gray-200 text-gray-700 hover:text-orange-600 hover:border-orange-200 text-[11px] font-bold uppercase tracking-wider transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+          className="h-9 px-4 rounded-xl bg-white border border-gray-200 text-gray-700 hover:text-orange-600 hover:border-orange-200 text-[11px] font-bold uppercase transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
         >
           <Edit size={12} /> Chỉnh sửa
         </button>
@@ -153,14 +129,7 @@ export const EventListScreen: React.FC = () => {
           { label: "Có Link Luma", value: stats.hasLuma, icon: <ExternalLink size={16} />, color: "orange" },
         ]}
       >
-        <PremiumButton
-          label="Thêm Sự Kiện Mới"
-          icon={Plus}
-          onClick={handleOpenCreate}
-          size="md"
-          variant="orange"
-          className="shadow-lg shadow-orange-500/20"
-        />
+        <PremiumButton label="Thêm Sự Kiện Mới" icon={Plus} onClick={handleOpenCreate} size="md" variant="orange" className="shadow-lg shadow-orange-500/20" />
       </AdminPageHeader>
 
       {/* Navigation Tabs */}
@@ -184,7 +153,7 @@ export const EventListScreen: React.FC = () => {
       {/* Filter bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-gray-100 shadow-xs">
         <div className="relative w-full sm:w-80">
-          <Search size={16} className="absolute left-3.5 top-3 text-gray-400" />
+          <Search size={16} className="absolute left-3.5 top-3  text-gray-700" />
           <input
             type="text"
             value={searchQuery}
@@ -219,12 +188,7 @@ export const EventListScreen: React.FC = () => {
       />
 
       {/* Create / Edit Modal */}
-      <CreateEditEventModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSubmitModal}
-        initialData={editingEvent}
-      />
+      <CreateEditEventModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleSubmitModal} initialData={editingEvent} />
     </div>
   );
 };

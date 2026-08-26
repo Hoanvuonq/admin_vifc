@@ -2,17 +2,7 @@
 
 import { cn } from "@/utils/cn";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  BookOpen,
-  Briefcase,
-  Building2,
-  Coffee,
-  Crown,
-  GraduationCap,
-  Layers,
-  Sparkles,
-  Users,
-} from "lucide-react";
+import { BookOpen, Briefcase, Building2, Coffee, Crown, GraduationCap, Layers, Sparkles, Users } from "lucide-react";
 import React from "react";
 
 export type BookingType = "course" | "workshop" | "meeting-room" | "lounge" | "consulting" | string;
@@ -95,11 +85,7 @@ export const BookingTypeBadge: React.FC<{
   const Icon = config.icon;
 
   return (
-    <div
-      className="relative inline-block select-none"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="relative inline-block select-none" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
       <AnimatePresence>
         {isHovered && (
           <motion.div
@@ -125,7 +111,7 @@ export const BookingTypeBadge: React.FC<{
         className={cn(
           "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-extrabold transition-all duration-300 relative overflow-hidden group cursor-help",
           config.className,
-          className
+          className,
         )}
       >
         {/* Soft shimmer sweep inside the badge on hover */}
@@ -146,17 +132,12 @@ export const BookingTypeBadge: React.FC<{
         <motion.span
           animate={isHovered ? { rotate: 360 } : {}}
           transition={{ duration: 0.7, ease: "easeInOut" }}
-          className={cn(
-            "shrink-0 relative z-20 flex items-center justify-center p-0.5 rounded-full border shadow-xs",
-            config.iconBg
-          )}
+          className={cn("shrink-0 relative z-20 flex items-center justify-center p-0.5 rounded-full border shadow-xs", config.iconBg)}
         >
           <Icon size={9} strokeWidth={2.8} className={config.iconColor} />
         </motion.span>
 
-        <span className="leading-none relative z-20 font-extrabold uppercase tracking-wider text-[9px]">
-          {config.symbol}
-        </span>
+        <span className="leading-none relative z-20 font-extrabold uppercase text-[9px]">{config.symbol}</span>
       </motion.div>
     </div>
   );

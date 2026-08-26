@@ -128,7 +128,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
         <div className={cn("relative z-20 space-y-1.5 sm:space-y-2.5 itim-regular", isTall ? "w-full pt-2" : "flex-1")}>
           <motion.h3
             className={cn(
-              "font-bold text-white uppercase tracking-wider drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]",
+              "font-bold text-white uppercase drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]",
               isTall ? "text-lg sm:text-xl" : "text-base sm:text-lg leading-[1.1]",
             )}
             whileHover={{ scale: 1.02 }}

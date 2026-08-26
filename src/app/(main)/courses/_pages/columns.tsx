@@ -10,7 +10,7 @@ export const getColumns = (
   handleDelete: (item: BookingRequestItem) => void,
 ) => [
   {
-    header: "User & Contact",
+    header: "Học Viên & Liên Hệ",
     accessor: "full_name" as keyof BookingRequestItem,
     render: (item: BookingRequestItem) => {
       const orderCode = `#${item.id.slice(0, 8).toUpperCase()}`;
@@ -42,14 +42,14 @@ export const getColumns = (
                 {orderCode}
               </span>
             </span>
-            <span className="text-xs text-gray-400 font-medium select-text">{item.email}</span>
+            <span className="text-xs  text-gray-700 font-medium select-text">{item.email}</span>
           </div>
         </div>
       );
     },
   },
   {
-    header: "Course & Service",
+    header: "Khóa Học & Dịch Vụ",
     accessor: "booking_title" as keyof BookingRequestItem,
     render: (item: BookingRequestItem) => (
       <div className="flex flex-col py-1">
@@ -60,8 +60,8 @@ export const getColumns = (
           {item.booking_title || "Yêu cầu đặt chỗ"}
         </span>
         {item.company && (
-          <span className="text-[11px] text-gray-400 font-medium truncate mt-0.5 flex items-center gap-1">
-            <Building size={10} className="text-gray-400 shrink-0" />
+          <span className="text-[11px]  text-gray-700 font-medium truncate mt-0.5 flex items-center gap-1">
+            <Building size={10} className=" text-gray-700 shrink-0" />
             {item.company}
           </span>
         )}
@@ -69,12 +69,12 @@ export const getColumns = (
     ),
   },
   {
-    header: "Phone Number",
+    header: "Số Điện Thoại",
     accessor: "phone" as keyof BookingRequestItem,
     render: (item: BookingRequestItem) => <span className="text-gray-600 font-bold font-mono tracking-tight select-text">{item.phone || "--"}</span>,
   },
   {
-    header: "Registration Date",
+    header: "Ngày Đăng Ký",
     accessor: "created_at" as keyof BookingRequestItem,
     render: (item: BookingRequestItem) => {
       const createdDate = new Date(item.created_at);
@@ -82,7 +82,7 @@ export const getColumns = (
 
       return (
         <div className="flex items-center gap-1.5 text-gray-500">
-          <Clock size={12} className="text-gray-400" />
+          <Clock size={12} className=" text-gray-700" />
           <span className="text-xs font-semibold">
             {isValid
               ? createdDate.toLocaleDateString("vi-VN", {
@@ -97,12 +97,12 @@ export const getColumns = (
     },
   },
   {
-    header: "Status",
+    header: "Trạng Thái",
     accessor: "status" as keyof BookingRequestItem,
     render: (item: BookingRequestItem) => <StatusBadge status={item.status} variant="premium" />,
   },
   {
-    header: "Actions",
+    header: "Thao Tác",
     align: "center" as const,
     render: (item: BookingRequestItem) => {
       const isPending = (item.status || "").toLowerCase() === "pending";

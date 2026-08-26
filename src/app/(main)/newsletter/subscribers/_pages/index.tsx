@@ -5,17 +5,7 @@ import { AdminPageHeader, PremiumButton } from "@/components";
 import { DataTable } from "@/components/DataTable";
 import { useNewsletterSubscribers } from "@/hooks/useNewsletterSubscribers";
 import { NewsletterSubscriberItem } from "@/types/newsletter";
-import {
-  Mail,
-  Plus,
-  Search,
-  CheckCircle2,
-  UserX,
-  FileText,
-  Globe,
-  Calendar,
-  Power,
-} from "lucide-react";
+import { Mail, Plus, Search, CheckCircle2, UserX, FileText, Globe, Calendar, Power } from "lucide-react";
 import Link from "next/link";
 import { getNewsletterColumns } from "./columns";
 import { AddSubscriberModal } from "../_components/AddSubscriberModal";
@@ -52,9 +42,7 @@ export const NewsletterSubscribersScreen: React.FC = () => {
       <div className="space-y-1">
         <h4 className="text-xs font-bold text-gray-900 flex items-center gap-2">
           {item.full_name || "Chưa đặt tên"}
-          <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-mono font-bold">
-            ID: {item.id}
-          </span>
+          <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-mono font-bold">ID: {item.id}</span>
         </h4>
         <p className="text-xs text-gray-600 flex items-center gap-1.5 select-all font-mono">
           <Mail size={12} className="text-orange-500 shrink-0" /> {item.email}
@@ -64,10 +52,12 @@ export const NewsletterSubscribersScreen: React.FC = () => {
       <div className="flex items-center gap-6 text-xs text-gray-600">
         <div className="flex items-center gap-1.5">
           <Globe size={13} className="text-orange-500 shrink-0" />
-          <span>Nguồn: <strong>{item.source || "Landing Page"}</strong></span>
+          <span>
+            Nguồn: <strong>{item.source || "Landing Page"}</strong>
+          </span>
         </div>
         <div className="flex items-center gap-1.5 font-mono text-[11px] text-gray-500">
-          <Calendar size={12} className="text-gray-400 shrink-0" />
+          <Calendar size={12} className=" text-gray-700 shrink-0" />
           <span>Đăng ký lúc: {new Date(item.created_at).toLocaleString("vi-VN")}</span>
         </div>
       </div>
@@ -133,7 +123,7 @@ export const NewsletterSubscribersScreen: React.FC = () => {
       {/* Filters bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-gray-100 shadow-xs">
         <div className="relative w-full sm:w-80">
-          <Search size={16} className="absolute left-3.5 top-3 text-gray-400" />
+          <Search size={16} className="absolute left-3.5 top-3  text-gray-700" />
           <input
             type="text"
             value={searchQuery}

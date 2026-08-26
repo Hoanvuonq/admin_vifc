@@ -23,13 +23,7 @@ const BOOKING_TYPE_OPTIONS = [
   { value: "consulting", label: "Tư vấn 1-1 (Consulting)" },
 ];
 
-export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = ({
-  isOpen,
-  onClose,
-  onCreate,
-  onSubmit,
-  isLoading = false,
-}) => {
+export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = ({ isOpen, onClose, onCreate, onSubmit, isLoading = false }) => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -123,7 +117,7 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
               type="button"
               onClick={onClose}
               disabled={isSubmitting || isLoading}
-              className="px-5 h-11 rounded-2xl border border-gray-200 text-gray-700 hover:bg-gray-100 font-bold text-[12px] uppercase tracking-wider transition-colors cursor-pointer disabled:opacity-50 whitespace-nowrap shrink-0"
+              className="px-5 h-11 rounded-2xl border border-gray-200 text-gray-700 hover:bg-gray-100 font-bold text-[12px] uppercase transition-colors cursor-pointer disabled:opacity-50 whitespace-nowrap shrink-0"
             >
               Hủy bỏ
             </button>
@@ -133,7 +127,7 @@ export const CreateRegistrationModal: React.FC<CreateRegistrationModalProps> = (
               variant="orange"
               onClick={handleSubmit}
               isLoading={isSubmitting || isLoading}
-              className="px-6 h-11 rounded-2xl font-bold text-[12px] uppercase tracking-wider shadow-lg shadow-orange-500/20 whitespace-nowrap shrink-0"
+              className="px-6 h-11 rounded-2xl font-bold text-[12px] uppercase shadow-lg shadow-orange-500/20 whitespace-nowrap shrink-0"
             />
           </div>
         </div>

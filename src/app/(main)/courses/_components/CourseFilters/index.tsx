@@ -95,7 +95,7 @@ export const CourseFilters: React.FC<CourseFiltersProps> = ({
               type="button"
               onClick={onExportExcel}
               title="Xuất danh sách sang Excel"
-              className="h-11 px-4 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 hover:bg-emerald-100/80 font-bold text-[11.5px] uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer shadow-2xs active:scale-95 whitespace-nowrap"
+              className="h-11 px-4 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 hover:bg-emerald-100/80 font-bold text-[11.5px] uppercase flex items-center gap-2 transition-all cursor-pointer shadow-2xs active:scale-95 whitespace-nowrap"
             >
               <FileSpreadsheet size={16} className="text-emerald-600" />
               <span>Xuất Excel</span>

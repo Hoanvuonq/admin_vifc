@@ -264,10 +264,10 @@ export const ManagerUsersScreen = () => {
             <span className="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded-md text-gray-500 uppercase tracking-widest font-mono select-all">{user.id}</span>
           </h4>
           <p className="text-xs text-gray-500 flex items-center gap-1.5 select-all">
-            <Mail size={12} className="text-gray-400 shrink-0" /> {user.email}
+            <Mail size={12} className=" text-gray-700 shrink-0" /> {user.email}
           </p>
           <p className="text-xs text-gray-500 flex items-center gap-1.5 select-all">
-            <Phone size={12} className="text-gray-400 shrink-0" /> {user.phone}
+            <Phone size={12} className=" text-gray-700 shrink-0" /> {user.phone}
           </p>
         </div>
       </div>
@@ -275,27 +275,27 @@ export const ManagerUsersScreen = () => {
       {/* Metadata grid */}
       <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-xs lg:border-l border-gray-200/80 lg:pl-6 w-full lg:w-auto">
         <div>
-          <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Joined Date</span>
+          <span className=" text-gray-700 block uppercase tracking-widest text-[9px] font-bold">Joined Date</span>
           <span className="font-bold text-gray-700 flex items-center gap-1 mt-0.5">
-            <Calendar size={12} className="text-gray-400" />
+            <Calendar size={12} className=" text-gray-700" />
             {user.joinedDate}
           </span>
         </div>
         <div>
-          <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Last Active</span>
+          <span className=" text-gray-700 block uppercase tracking-widest text-[9px] font-bold">Last Active</span>
           <span className="font-bold text-gray-700 flex items-center gap-1 mt-0.5">
-            <Clock size={12} className="text-gray-400" />
+            <Clock size={12} className=" text-gray-700" />
             {user.lastActive}
           </span>
         </div>
         <div>
-          <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">System Role</span>
+          <span className=" text-gray-700 block uppercase tracking-widest text-[9px] font-bold">System Role</span>
           <span className="font-bold text-gray-700 mt-0.5 block">
             {user.role === "ADMIN" ? "Full administrator access" : user.role === "STAFF" ? "Staff operation access" : "General customer access"}
           </span>
         </div>
         <div>
-          <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Access Status</span>
+          <span className=" text-gray-700 block uppercase tracking-widest text-[9px] font-bold">Access Status</span>
           <span
             className={`font-bold mt-0.5 block ${user.status === "ACTIVE" ? "text-emerald-600" : user.status === "BANNED" ? "text-rose-600" : "text-amber-600"}`}
           >
@@ -304,19 +304,19 @@ export const ManagerUsersScreen = () => {
         </div>
         {user.company && (
           <div>
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Company</span>
+            <span className=" text-gray-700 block uppercase tracking-widest text-[9px] font-bold">Company</span>
             <span className="font-bold text-gray-700 mt-0.5 block">{user.company}</span>
           </div>
         )}
         {user.country && (
           <div>
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Country</span>
+            <span className=" text-gray-700 block uppercase tracking-widest text-[9px] font-bold">Country</span>
             <span className="font-bold text-gray-700 mt-0.5 block">{user.country}</span>
           </div>
         )}
         {user.card && (
           <div className="col-span-2">
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Thẻ On-Chainpass</span>
+            <span className=" text-gray-700 block uppercase tracking-widest text-[9px] font-bold">Thẻ On-Chainpass</span>
             <span className="font-bold text-orange-600 mt-0.5 flex items-center gap-1.5 font-mono">
               <CreditCard size={13} /> #{user.card.so_the} ({user.card.loai_the}) — {user.card.username}
             </span>
@@ -324,7 +324,7 @@ export const ManagerUsersScreen = () => {
         )}
         {user.subscription && (
           <div className="col-span-2">
-            <span className="text-gray-400 block uppercase tracking-widest text-[9px] font-bold">Subscription</span>
+            <span className=" text-gray-700 block uppercase tracking-widest text-[9px] font-bold">Subscription</span>
             <span className="font-bold text-emerald-600 mt-0.5 block">
               {user.subscription.plan?.name ?? "Active"} — expires {user.subscription.end_date?.split("T")[0] ?? "N/A"}
             </span>
@@ -339,7 +339,7 @@ export const ManagerUsersScreen = () => {
             setSelectedUserToEdit(user);
             setIsAddUserModalOpen(true);
           }}
-          className="h-10 px-4 rounded-2xl bg-white border border-gray-200 text-gray-700 hover:text-orange-500 hover:border-orange-200 text-[10.5px] font-bold uppercase tracking-wider transition-all shadow-xs flex items-center gap-1.5"
+          className="h-10 px-4 rounded-2xl bg-white border border-gray-200 text-gray-700 hover:text-orange-500 hover:border-orange-200 text-[10.5px] font-bold uppercase transition-all shadow-xs flex items-center gap-1.5"
         >
           <Edit size={12} /> Edit Profile
         </button>

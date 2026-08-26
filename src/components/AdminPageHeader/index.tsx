@@ -36,11 +36,11 @@ export const AdminPageHeader = ({
   return (
     <div
       className={cn(
-        "flex flex-col xl:flex-row xl:items-center justify-between gap-8 bg-white/80 backdrop-blur-2xl p-4 rounded-2xl border border-white/60 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.05)] relative overflow-hidden group/header transition-all duration-500 shadow-custom",
+        "flex flex-col xl:flex-row xl:items-center justify-between gap-8 bg-white/80 backdrop-blur-2xl p-2 rounded-2xl border border-white/60 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.05)] relative overflow-hidden group/header transition-all duration-500 shadow-custom",
         className,
       )}
     >
-      <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-orange-500/5 rounded-full blur-[80px] -ml-20 -mb-20 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-75 h-75 bg-orange-500/5 rounded-full blur-[80px] -ml-20 -mb-20 pointer-events-none" />
 
       <TitlePageHeader title={title} highlightTitle={highlightTitle} subtitle={subtitle} icon={icon} size="sm" className="shrink-0 relative z-10" />
 

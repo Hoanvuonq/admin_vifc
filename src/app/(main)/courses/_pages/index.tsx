@@ -1,14 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { AdminPageHeader, ItemImage } from "@/components";
 import { DataTable } from "@/components/DataTable";
 import { useCourseRegistrations } from "@/hooks/useCourseRegistrations";
 import { toast } from "@/providers/ToastProvider";
 import { BookingRequestItem, CreateBookingPayload, ReviewBookingPayload } from "@/types/course";
-import { BookOpen, BookOpenCheck, Building, Calendar, CheckCircle2, Clock, Edit, GraduationCap, Mail, Phone, ShieldCheck, XCircle } from "lucide-react";
+import { BookOpen, BookOpenCheck, Building, Clock, GraduationCap, Mail, Phone, ShieldCheck, XCircle } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { CourseFilters, CreateRegistrationModal, RegistrationDetailModal, ExportExcelModal } from "../_components";
+import { CourseFilters, CreateRegistrationModal, ExportExcelModal, RegistrationDetailModal } from "../_components";
 import { getColumns } from "./columns";
 
 export const CourseRegistrationsScreen = () => {
@@ -30,19 +30,16 @@ export const CourseRegistrationsScreen = () => {
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  // Reset page to 0 when filter changes
   useEffect(() => {
     setCurrentPage(0);
   }, [debouncedSearch, selectedStatus, selectedType]);
 
-  // Fetch full records from API (high limit) so FE can filter accurately
   const { registrations, stats, isLoading, refetch, confirmBooking, rejectBooking, reviewBooking, deleteRegistration, createRegistration, isCreating } =
     useCourseRegistrations({
       page: 1,
       limit: 500,
     });
 
-  // FRONTEND FILTERING: status, booking_type (lounge, course, etc.), and search query
   const filteredRegistrations = useMemo(() => {
     return (registrations || []).filter((item) => {
       // 1. Status Filter
@@ -181,14 +178,14 @@ export const CourseRegistrationsScreen = () => {
               <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-mono font-bold">{orderCode}</span>
             </h4>
             <p className="text-xs text-gray-600 flex items-center gap-1.5 select-all">
-              <Mail size={12} className="text-gray-400 shrink-0" /> {item.email}
+              <Mail size={12} className=" text-gray-700 shrink-0" /> {item.email}
             </p>
             <p className="text-xs text-gray-600 flex items-center gap-1.5 select-all">
-              <Phone size={12} className="text-gray-400 shrink-0" /> {item.phone || "Chưa có SĐT"}
+              <Phone size={12} className=" text-gray-700 shrink-0" /> {item.phone || "Chưa có SĐT"}
             </p>
             {item.company && (
               <p className="text-xs text-gray-500 flex items-center gap-1.5">
-                <Building size={12} className="text-gray-400 shrink-0" /> {item.company}
+                <Building size={12} className=" text-gray-700 shrink-0" /> {item.company}
               </p>
             )}
           </div>
@@ -227,49 +224,31 @@ export const CourseRegistrationsScreen = () => {
         subtitle="Quản lý danh sách học viên đăng ký khóa học, đặt phòng meeting và phê duyệt tư vấn"
         metrics={[
           {
-            label: "Tổng lượt yêu cầu",
+            label: "Đăng ký",
             value: computedStats.total || stats.total,
             icon: <BookOpenCheck size={14} />,
             color: "blue",
           },
           {
-            label: "Chờ duyệt (Pending)",
+            label: "Chờ duyệt",
             value: computedStats.pending,
             icon: <Clock size={14} />,
             color: "orange",
           },
           {
-            label: "Đã xác nhận (Confirmed)",
+            label: "Đã xác nhận",
             value: computedStats.approved,
             icon: <ShieldCheck size={14} />,
             color: "emerald",
           },
           {
-            label: "Từ chối / Hủy",
+            label: "Từ chối",
             value: computedStats.rejected,
             icon: <XCircle size={14} />,
             color: "rose",
           },
         ]}
       />
-
-      {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-gray-200 pb-1">
-        <Link
-          href="/courses/list"
-          className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition flex items-center gap-2"
-        >
-          <BookOpen size={16} />
-          <span>Danh Sách Khóa Học</span>
-        </Link>
-        <Link
-          href="/courses"
-          className="px-4 py-2 text-sm font-semibold text-orange-600 border-b-2 border-orange-600 flex items-center gap-2"
-        >
-          <GraduationCap size={16} />
-          <span>Đơn Đăng Ký Học Viên</span>
-        </Link>
-      </div>
 
       <DataTable
         columns={getColumns(handleViewDetails, handleQuickApprove, handleQuickReject, handleDelete)}
@@ -306,19 +285,10 @@ export const CourseRegistrationsScreen = () => {
       />
 
       {/* Manual Registration Creation Modal */}
-      <CreateRegistrationModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSubmit={handleCreate}
-        isLoading={isCreating}
-      />
+      <CreateRegistrationModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} onSubmit={handleCreate} isLoading={isCreating} />
 
       {/* Export to Excel Modal */}
-      <ExportExcelModal
-        isOpen={isExportModalOpen}
-        onClose={() => setIsExportModalOpen(false)}
-        data={filteredRegistrations}
-      />
+      <ExportExcelModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} data={filteredRegistrations} />
     </div>
   );
 };

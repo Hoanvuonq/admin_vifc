@@ -7,7 +7,7 @@ import { Calendar, ExternalLink, MapPin, Pencil, Power, Sparkles, Trash2 } from 
 export const getEventColumns = (
   onEdit: (event: EventItem) => void,
   onDelete: (id: string) => void,
-  onToggleStatus: (id: string) => void
+  onToggleStatus: (id: string) => void,
 ): Column<EventItem>[] => [
   {
     header: "Sự Kiện & Private Club",
@@ -20,8 +20,7 @@ export const getEventColumns = (
             alt={item.title}
             className="w-full h-full object-cover"
             onError={(e) => {
-              (e.target as HTMLImageElement).src =
-                "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=600&q=80";
+              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=600&q=80";
             }}
           />
           {item.badge && (
@@ -31,12 +30,8 @@ export const getEventColumns = (
           )}
         </div>
         <div className="flex flex-col min-w-0">
-          <span className="font-bold text-gray-900 text-[13px] tracking-tight group-hover:text-orange-600 transition-colors line-clamp-1">
-            {item.title}
-          </span>
-          <span className="text-[11.5px] text-gray-500 font-medium line-clamp-1">
-            {item.subtitle || "Sự kiện kết nối đối tác chiến lược"}
-          </span>
+          <span className="font-bold text-gray-900 text-[13px] tracking-tight group-hover:text-orange-600 transition-colors line-clamp-1">{item.title}</span>
+          <span className="text-[11.5px] text-gray-500 font-medium line-clamp-1">{item.subtitle || "Sự kiện kết nối đối tác chiến lược"}</span>
         </div>
       </div>
     ),
@@ -51,7 +46,7 @@ export const getEventColumns = (
           <span className="truncate max-w-[170px]">{item.location || "Online / TBD"}</span>
         </div>
         <div className="flex items-center gap-1.5 text-gray-500 font-mono text-[11px]">
-          <Calendar size={12} className="text-gray-400 shrink-0" />
+          <Calendar size={12} className=" text-gray-700 shrink-0" />
           <span>{item.date || "Chưa ấn định"}</span>
         </div>
       </div>
@@ -62,7 +57,7 @@ export const getEventColumns = (
     accessor: "luma_url" as keyof EventItem,
     render: (item: EventItem) => {
       if (!item.luma_url) {
-        return <span className="text-xs text-gray-400 font-medium italic">Chưa gắn link</span>;
+        return <span className="text-xs  text-gray-700 font-medium italic">Chưa gắn link</span>;
       }
       return (
         <a
@@ -96,24 +91,14 @@ export const getEventColumns = (
     align: "center",
     render: (item: EventItem) => (
       <div className="flex items-center justify-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-        <ActionTooltipBtn
-          onClick={() => onEdit(item)}
-          icon={<Pencil size={14} />}
-          color="gray"
-          tooltip="Chỉnh sửa sự kiện"
-        />
+        <ActionTooltipBtn onClick={() => onEdit(item)} icon={<Pencil size={14} />} color="gray" tooltip="Chỉnh sửa sự kiện" />
         <ActionTooltipBtn
           onClick={() => onToggleStatus(item.id)}
-          icon={<Power size={14} className={item.status === "active" ? "text-emerald-600" : "text-gray-400"} />}
+          icon={<Power size={14} className={item.status === "active" ? "text-emerald-600" : " text-gray-700"} />}
           color={item.status === "active" ? "emerald" : "gray"}
           tooltip={item.status === "active" ? "Tạm ẩn sự kiện" : "Kích hoạt mở sự kiện"}
         />
-        <ActionTooltipBtn
-          onClick={() => onDelete(item.id)}
-          icon={<Trash2 size={14} className="text-rose-500" />}
-          color="rose"
-          tooltip="Xóa sự kiện"
-        />
+        <ActionTooltipBtn onClick={() => onDelete(item.id)} icon={<Trash2 size={14} className="text-rose-500" />} color="rose" tooltip="Xóa sự kiện" />
       </div>
     ),
   },

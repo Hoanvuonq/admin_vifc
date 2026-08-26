@@ -388,7 +388,7 @@ export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({
             <div className="flex items-center gap-2 text-xs font-bold text-gray-800 uppercase tracking-tight">
               <Layers size={14} className="text-orange-500" />
               <span>2. Chọn Các Cột Dữ Liệu Xuất</span>
-              <span className="text-[10px] text-gray-400 font-normal">
+              <span className="text-[10px]  text-gray-700 font-normal">
                 ({selectedColumns.length}/{AVAILABLE_COLUMNS.length} cột được chọn)
               </span>
             </div>
@@ -420,14 +420,16 @@ export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({
                   key={col.key}
                   type="button"
                   onClick={() => toggleColumn(col.key)}
-                  className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-medium text-left transition-all cursor-pointer active:scale-98 select-none ${isChecked
-                    ? "bg-orange-50/70 border-orange-200 text-orange-950 font-semibold shadow-2xs"
-                    : "bg-gray-50/70 border-gray-100 text-gray-500 hover:bg-gray-100/70"
-                    }`}
+                  className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-medium text-left transition-all cursor-pointer active:scale-98 select-none ${
+                    isChecked
+                      ? "bg-orange-50/70 border-orange-200 text-orange-950 font-semibold shadow-2xs"
+                      : "bg-gray-50/70 border-gray-100 text-gray-500 hover:bg-gray-100/70"
+                  }`}
                 >
                   <div
-                    className={`w-4 h-4 rounded flex items-center justify-center transition-colors shrink-0 ${isChecked ? "bg-orange-500 text-white" : "border border-gray-300 bg-white"
-                      }`}
+                    className={`w-4 h-4 rounded flex items-center justify-center transition-colors shrink-0 ${
+                      isChecked ? "bg-orange-500 text-white" : "border border-gray-300 bg-white"
+                    }`}
                   >
                     {isChecked && <Check size={11} strokeWidth={3} />}
                   </div>
@@ -443,7 +445,7 @@ export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({
           <div className="bg-gray-50/60 rounded-2xl border border-gray-200/80 p-4 space-y-3">
             <div className="flex items-center justify-between text-[11.5px]">
               <span className="font-bold text-gray-700 uppercase tracking-tight">Xem trước dữ liệu mẫu (3 bản ghi đầu):</span>
-              <span className="text-gray-400">Tổng số: {matchingRegistrations.length} bản ghi</span>
+              <span className=" text-gray-700">Tổng số: {matchingRegistrations.length} bản ghi</span>
             </div>
 
             <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
@@ -471,7 +473,7 @@ export const ExportExcelModal: React.FC<ExportExcelModalProps> = ({
                         {item.card?.so_the ? (
                           <span className="font-bold text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-200">#{item.card.so_the}</span>
                         ) : (
-                          <span className="text-gray-400 italic">Chưa cấp thẻ</span>
+                          <span className=" text-gray-700 italic">Chưa cấp thẻ</span>
                         )}
                       </td>
                       <td className="p-2.5 font-bold text-gray-700">{item.card?.loai_the || "—"}</td>
