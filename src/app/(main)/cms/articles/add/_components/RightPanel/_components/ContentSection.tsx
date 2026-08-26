@@ -1,7 +1,7 @@
-import React from "react";
-import { FormInput, MediaUploadField } from "@/components";
-import { AlignCenter, AlignLeft, AlignRight, ArrowDown, ArrowUp, Compass, Trash2 } from "lucide-react";
+import { FormInput, MediaUploadField, SelectComponent } from "@/components";
 import { useUpload } from "@/hooks/useUpload";
+import { ArrowDown, ArrowUp, Compass, Trash2 } from "lucide-react";
+import React from "react";
 import { useArticleEditorStore } from "../../../_store/useArticleEditorStore";
 
 export const ContentSection: React.FC<{
@@ -25,31 +25,23 @@ export const ContentSection: React.FC<{
             sectionContentCompleted ? "bg-emerald-50 text-emerald-600" : "bg-red-50/50 text-red-500"
           }`}
         >
-          {sectionContentCompleted ? "Completed" : "Incomplete"}
+          {sectionContentCompleted ? "COMPLETED" : "REQUIRED 100 CHARS"}
         </span>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {blocks.map((block, index) => {
           const isBlockActive = activeInput === block.id;
           return (
             <div
               key={block.id}
               id={`form-${block.id}`}
-              className={`p-3 rounded-xl space-y-2 transition-all ${isBlockActive ? "bg-orange-50/20" : "bg-slate-50/50"}`}
+              className={`p-3.5 rounded-2xl space-y-2 transition-all border border-gray-150 ${isBlockActive ? "bg-orange-50/20" : "bg-slate-50/30"}`}
               onFocusCapture={() => setActiveInput(block.id)}
             >
-              {/* Local Block controls */}
-              <div className="flex justify-between items-center border-b border-slate-100/50 pb-1.5 select-none">
-                <span className="text-[8.5px] font-extrabold uppercase text-gray-500 tracking-widest">
-                  #{index + 1}{" "}
-                  {block.type === "heading"
-                    ? `Heading ${block.level || "H2"}`
-                    : block.type === "image"
-                      ? "Image"
-                      : block.type === "pdf"
-                        ? "PDF Attachment"
-                        : "Paragraph"}
+              <div className="flex justify-between items-center pb-1.5 select-none">
+                <span className="text-[9.5px] font-extrabold uppercase text-gray-700 bg-white px-2 py-0.5 rounded border border-gray-200">
+                  #{index + 1} {block.type}
                 </span>
 
                 <div className="flex items-center gap-1">
@@ -57,7 +49,7 @@ export const ContentSection: React.FC<{
                     type="button"
                     onClick={() => handleMoveBlock(index, "up")}
                     disabled={index === 0}
-                    className="p-0.5 rounded bg-white border border-gray-205 text-gray-500 disabled:opacity-20"
+                    className="p-0.5 rounded bg-white border border-gray-200 text-gray-500 disabled:opacity-30"
                   >
                     <ArrowUp size={9} />
                   </button>
@@ -65,7 +57,7 @@ export const ContentSection: React.FC<{
                     type="button"
                     onClick={() => handleMoveBlock(index, "down")}
                     disabled={index === blocks.length - 1}
-                    className="p-0.5 rounded bg-white border border-gray-205 text-gray-500 disabled:opacity-20"
+                    className="p-0.5 rounded bg-white border border-gray-200 text-gray-500 disabled:opacity-30"
                   >
                     <ArrowDown size={9} />
                   </button>
@@ -77,17 +69,18 @@ export const ContentSection: React.FC<{
                 </div>
               </div>
 
-              {/* Block editors */}
               {block.type === "heading" && (
                 <div className="flex gap-2 items-center">
-                  <select
-                    value={block.level || "h2"}
-                    onChange={(e) => handleBlockChange(block.id, { level: e.target.value as "h2" | "h3" })}
-                    className="h-10 px-2 bg-slate-50/50 border border-gray-202 rounded-2xl text-xs font-bold text-gray-700 focus:outline-none"
-                  >
-                    <option value="h2">H2</option>
-                    <option value="h3">H3</option>
-                  </select>
+                  <div className="w-24 shrink-0">
+                    <SelectComponent
+                      value={block.level || "h2"}
+                      onChange={(val) => handleBlockChange(block.id, { level: val as "h2" | "h3" })}
+                      options={[
+                        { value: "h2", label: "H2" },
+                        { value: "h3", label: "H3" },
+                      ]}
+                    />
+                  </div>
                   <FormInput
                     value={block.content}
                     onChange={(e) => handleBlockChange(block.id, { content: e.target.value })}
@@ -110,7 +103,6 @@ export const ContentSection: React.FC<{
 
               {block.type === "image" && (
                 <div className="space-y-3">
-                  {/* Image Upload / URL & Caption */}
                   <div className="space-y-2 pt-1.5 border-t border-slate-100/60">
                     <label className="text-[9px] uppercase text-gray-500 font-semibold">Image File</label>
                     <div className="flex justify-center p-3 bg-slate-50/60 rounded-xl">

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { AdminPageHeader, PremiumButton } from "@/components";
+import { AdminPageHeader, PremiumButton, SelectComponent } from "@/components";
 import { DataTable } from "@/components/DataTable";
 import { useCoursesList } from "@/hooks/useCoursesList";
 import { CourseItem, CreateCourseItemPayload } from "@/types/course";
@@ -9,6 +9,20 @@ import { GraduationCap, Plus, Search, BookOpen, CheckCircle2, ShieldAlert, Clock
 import Link from "next/link";
 import { getCourseColumns } from "./columns";
 import { CreateEditCourseModal } from "../_components/CreateEditCourseModal";
+
+const TYPE_FILTER_OPTIONS = [
+  { value: "ALL", label: "Tất cả loại hình" },
+  { value: "course", label: "Khóa học (Course)" },
+  { value: "lounge", label: "VIP Lounge" },
+  { value: "meeting-room", label: "Phòng họp" },
+  { value: "workshop", label: "Workshop" },
+];
+
+const STATUS_FILTER_OPTIONS = [
+  { value: "ALL", label: "Tất cả trạng thái" },
+  { value: "active", label: "Đang mở (Active)", color: "text-emerald-500" },
+  { value: "inactive", label: "Tạm ẩn", color: "text-rose-500" },
+];
 
 export const CourseListScreen: React.FC = () => {
   const { courses, isLoading, createCourse, updateCourse, deleteCourse, toggleCourseStatus, stats } = useCoursesList();
@@ -120,8 +134,8 @@ export const CourseListScreen: React.FC = () => {
       {/* Header */}
       <AdminPageHeader
         title="Quản Lý"
-        highlightTitle="Khóa Học & Đào Tạo"
-        subtitle="Quản lý danh sách các khóa học chuyên sâu, VIP lounge và dịch vụ đào tạo"
+        highlightTitle="Khóa Học"
+        subtitle="Quản lý danh sách các khóa học, cấu hình link đăng ký Lu.ma và thông tin đào tạo"
         icon={GraduationCap}
         metrics={[
           { label: "Tổng Khóa Học", value: stats.total, icon: <BookOpen size={16} />, color: "blue" },
@@ -145,28 +159,14 @@ export const CourseListScreen: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="px-3.5 py-2 rounded-xl border border-gray-200 text-xs font-semibold bg-white text-gray-700 outline-none focus:border-orange-500 cursor-pointer"
-          >
-            <option value="ALL">Tất cả loại hình</option>
-            <option value="course">Khóa học (Course)</option>
-            <option value="lounge">VIP Lounge</option>
-            <option value="meeting-room">Phòng họp</option>
-            <option value="workshop">Workshop</option>
-          </select>
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <div className="w-full sm:w-48">
+            <SelectComponent value={selectedType} onChange={(val) => setSelectedType(val as string)} options={TYPE_FILTER_OPTIONS} />
+          </div>
 
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3.5 py-2 rounded-xl border border-gray-200 text-xs font-semibold bg-white text-gray-700 outline-none focus:border-orange-500 cursor-pointer"
-          >
-            <option value="ALL">Tất cả trạng thái</option>
-            <option value="active">Đang mở (Active)</option>
-            <option value="inactive">Tạm ẩn</option>
-          </select>
+          <div className="w-full sm:w-44">
+            <SelectComponent value={selectedStatus} onChange={(val) => setSelectedStatus(val as string)} options={STATUS_FILTER_OPTIONS} />
+          </div>
         </div>
       </div>
 

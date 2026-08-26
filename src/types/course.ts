@@ -106,6 +106,8 @@ export interface CourseItem {
   duration?: string | null;
   schedule?: string | null;
   tuition_fee?: number | null;
+  luma_url?: string | null;
+  badge?: string | null;
   status: "active" | "inactive" | "draft" | string;
   created_at: string;
   updated_at: string;
@@ -122,5 +124,8 @@ export interface CreateCourseItemPayload {
   duration?: string;
   schedule?: string;
   tuition_fee?: number;
+  luma_url?: string;
+  badge?: string;
   status?: string;
 }
+

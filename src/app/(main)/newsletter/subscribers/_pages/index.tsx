@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { AdminPageHeader, PremiumButton } from "@/components";
+import { AdminPageHeader, PremiumButton, SelectComponent } from "@/components";
 import { DataTable } from "@/components/DataTable";
 import { useNewsletterSubscribers } from "@/hooks/useNewsletterSubscribers";
 import { NewsletterSubscriberItem } from "@/types/newsletter";
@@ -9,6 +9,12 @@ import { Mail, Plus, Search, CheckCircle2, UserX, FileText, Globe, Calendar, Pow
 import Link from "next/link";
 import { getNewsletterColumns } from "./columns";
 import { AddSubscriberModal } from "../_components/AddSubscriberModal";
+
+const SUBSCRIBER_STATUS_OPTIONS = [
+  { value: "ALL", label: "Tất cả trạng thái" },
+  { value: "subscribed", label: "Đang nhận tin (Subscribed)", color: "text-emerald-500" },
+  { value: "unsubscribed", label: "Đã hủy nhận tin", color: "text-rose-500" },
+];
 
 export const NewsletterSubscribersScreen: React.FC = () => {
   const { subscribers, isLoading, toggleSubscriberStatus, deleteSubscriber, addSubscriber, stats } = useNewsletterSubscribers();
@@ -133,16 +139,8 @@ export const NewsletterSubscribersScreen: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3.5 py-2 rounded-xl border border-gray-200 text-xs font-semibold bg-white text-gray-700 outline-none focus:border-orange-500 cursor-pointer"
-          >
-            <option value="ALL">Tất cả trạng thái</option>
-            <option value="subscribed">Đang nhận tin (Subscribed)</option>
-            <option value="unsubscribed">Đã hủy nhận tin</option>
-          </select>
+        <div className="w-full sm:w-60">
+          <SelectComponent value={selectedStatus} onChange={(val) => setSelectedStatus(val as string)} options={SUBSCRIBER_STATUS_OPTIONS} />
         </div>
       </div>
 

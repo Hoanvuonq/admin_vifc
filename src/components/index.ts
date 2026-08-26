@@ -25,3 +25,4 @@ export * from "./Tooltip";
 export * from "./ActionTooltipBtn";
 export * from "./StatusBadge";
 export * from "./DateTimeInput";
+export * from "./UnifiedRegistrationModal";

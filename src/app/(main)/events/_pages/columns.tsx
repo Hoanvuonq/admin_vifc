@@ -2,19 +2,20 @@
 
 import { ActionTooltipBtn, Column, StatusBadge } from "@/components";
 import { EventItem } from "@/types/event";
-import { Calendar, ExternalLink, MapPin, Pencil, Power, Sparkles, Trash2 } from "lucide-react";
+import { Calendar, ExternalLink, Eye, MapPin, Pencil, Power, Sparkles, Trash2 } from "lucide-react";
 
 export const getEventColumns = (
   onEdit: (event: EventItem) => void,
   onDelete: (id: string) => void,
   onToggleStatus: (id: string) => void,
+  onPreview?: (event: EventItem) => void,
 ): Column<EventItem>[] => [
   {
     header: "Sự Kiện & Private Club",
     accessor: "title" as keyof EventItem,
     render: (item: EventItem) => (
-      <div className="flex items-center gap-3.5 py-1 min-w-[280px]">
-        <div className="relative w-16 h-12 rounded-xl overflow-hidden bg-stone-900 border border-orange-100/80 shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+      <div className="flex items-center gap-3 py-3 max-w-sm">
+        <div className="relative w-14 h-11 rounded-xl overflow-hidden bg-stone-900 border border-orange-100/80 shrink-0 shadow-sm group-hover:scale-105 transition-transform">
           <img
             src={item.image || "/admin/card-event-01.png"}
             alt={item.title}
@@ -29,35 +30,23 @@ export const getEventColumns = (
             </span>
           )}
         </div>
-        <div className="flex flex-col min-w-0">
-          <span className="font-bold text-gray-900 text-[13px] tracking-tight group-hover:text-orange-600 transition-colors line-clamp-1">{item.title}</span>
-          <span className="text-[11.5px] text-gray-500 font-medium line-clamp-1">{item.subtitle || "Sự kiện kết nối đối tác chiến lược"}</span>
+        <div className="flex flex-col min-w-0 max-w-[220px] sm:max-w-[280px]">
+          <span className="font-bold text-gray-900 text-[13px] tracking-tight group-hover:text-orange-600 transition-colors truncate" title={item.title}>
+            {item.title}
+          </span>
+          <span className="text-[11.5px] text-gray-500 font-medium truncate" title={item.description || item.subtitle || ""}>
+            {item.description || item.subtitle || "Sự kiện kết nối đối tác chiến lược"}
+          </span>
         </div>
       </div>
     ),
   },
   {
-    header: "Địa điểm & Thời gian",
-    accessor: "location" as keyof EventItem,
-    render: (item: EventItem) => (
-      <div className="flex flex-col gap-1 text-xs">
-        <div className="flex items-center gap-1.5 font-semibold text-gray-800">
-          <MapPin size={13} className="text-orange-500 shrink-0" />
-          <span className="truncate max-w-[170px]">{item.location || "Online / TBD"}</span>
-        </div>
-        <div className="flex items-center gap-1.5 text-gray-500 font-mono text-[11px]">
-          <Calendar size={12} className=" text-gray-700 shrink-0" />
-          <span>{item.date || "Chưa ấn định"}</span>
-        </div>
-      </div>
-    ),
-  },
-  {
-    header: "Cổng Đăng Ký Luma",
+    header: "Cổng Đăng Ký Lu.ma",
     accessor: "luma_url" as keyof EventItem,
     render: (item: EventItem) => {
       if (!item.luma_url) {
-        return <span className="text-xs  text-gray-700 font-medium italic">Chưa gắn link</span>;
+        return <span className="text-xs text-gray-400 font-medium italic">Chưa gắn link</span>;
       }
       return (
         <a
@@ -91,10 +80,18 @@ export const getEventColumns = (
     align: "center",
     render: (item: EventItem) => (
       <div className="flex items-center justify-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+        {onPreview && (
+          <ActionTooltipBtn
+            onClick={() => onPreview(item)}
+            icon={<Eye size={14} className="text-orange-600" />}
+            color="orange"
+            tooltip="Xem trước popup Lu.ma"
+          />
+        )}
         <ActionTooltipBtn onClick={() => onEdit(item)} icon={<Pencil size={14} />} color="gray" tooltip="Chỉnh sửa sự kiện" />
         <ActionTooltipBtn
           onClick={() => onToggleStatus(item.id)}
-          icon={<Power size={14} className={item.status === "active" ? "text-emerald-600" : " text-gray-700"} />}
+          icon={<Power size={14} className={item.status === "active" ? "text-emerald-600" : "text-gray-400"} />}
           color={item.status === "active" ? "emerald" : "gray"}
           tooltip={item.status === "active" ? "Tạm ẩn sự kiện" : "Kích hoạt mở sự kiện"}
         />

@@ -2,7 +2,7 @@
 
 import { ActionTooltipBtn, Column, StatusBadge } from "@/components";
 import { CourseItem } from "@/types/course";
-import { Calendar, Clock, DollarSign, Edit3, Pencil, Power, Sparkles, Trash2, User } from "lucide-react";
+import { Calendar, Clock, DollarSign, Eye, Pencil, Power, Trash2, User } from "lucide-react";
 
 export const getCourseColumns = (
   onEdit: (course: CourseItem) => void,
@@ -13,8 +13,8 @@ export const getCourseColumns = (
     header: "Khóa Học / Dịch Vụ",
     accessor: "title" as keyof CourseItem,
     render: (item: CourseItem) => (
-      <div className="flex items-center gap-3 py-3 min-w-65">
-        <div className="relative w-16 h-12 rounded-xl overflow-hidden bg-gray-100 border border-orange-100/80 shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+      <div className="flex items-center gap-3 py-2 max-w-sm">
+        <div className="relative w-14 h-11 rounded-xl overflow-hidden bg-gray-100 border border-orange-100/80 shrink-0 shadow-sm group-hover:scale-105 transition-transform">
           <img
             src={item.image || "/admin/card-banner-01.png"}
             alt={item.title}
@@ -25,9 +25,13 @@ export const getCourseColumns = (
             }}
           />
         </div>
-        <div className="flex flex-col min-w-0">
-          <span className="font-bold text-gray-900 text-[13px] tracking-tight group-hover:text-orange-600 transition-colors line-clamp-1">{item.title}</span>
-          <span className="text-xs text-gray-500 font-medium line-clamp-1">{item.booking_title || item.title}</span>
+        <div className="flex flex-col min-w-0 max-w-[220px] sm:max-w-[280px]">
+          <span className="font-bold text-gray-900 text-[13px] tracking-tight group-hover:text-orange-600 transition-colors truncate" title={item.title}>
+            {item.title}
+          </span>
+          <span className="text-xs text-gray-500 font-medium truncate" title={item.booking_title || item.title}>
+            {item.booking_title || item.title}
+          </span>
         </div>
       </div>
     ),
@@ -52,51 +56,40 @@ export const getCourseColumns = (
     },
   },
   {
-    header: "Giảng viên / Phụ trách",
+    header: "Giảng viên & Học Phí",
     accessor: "instructor" as keyof CourseItem,
     render: (item: CourseItem) => (
-      <div className="flex items-center gap-1.5 text-xs text-gray-700 font-semibold">
-        <User size={13} className="text-orange-500 shrink-0" />
-        <span className="truncate max-w-[150px]">{item.instructor || "Chuyên gia On-Chainpass"}</span>
+      <div className="flex flex-col gap-1 text-xs">
+        <div className="flex items-center gap-1.5 text-gray-700 font-semibold">
+          <User size={12} className="text-orange-500 shrink-0" />
+          <span className="truncate max-w-[140px]">{item.instructor || "Chuyên gia On-Chainpass"}</span>
+        </div>
+        {item.tuition_fee && item.tuition_fee > 0 ? (
+          <div className="flex items-center gap-1 font-bold text-orange-600 font-mono text-[11.5px]">
+            <DollarSign size={11} className="shrink-0" />
+            <span>{item.tuition_fee.toLocaleString("vi-VN")} đ</span>
+          </div>
+        ) : (
+          <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/50 w-fit">
+            Đặc quyền hội viên
+          </span>
+        )}
       </div>
     ),
   },
   {
-    header: "Học Phí (VNĐ)",
-    accessor: "tuition_fee" as keyof CourseItem,
-    render: (item: CourseItem) => {
-      if (item.tuition_fee && item.tuition_fee > 0) {
-        return (
-          <div className="flex items-center gap-1 font-bold text-gray-900 text-xs font-mono">
-            <DollarSign size={12} className="text-orange-600 shrink-0" />
-            <span>{item.tuition_fee.toLocaleString("vi-VN")} đ</span>
-          </div>
-        );
-      }
-      return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[10.5px] font-bold border border-emerald-200/60">
-          Đặc Quyền Hội Viên
-        </span>
-      );
-    },
-  },
-  {
-    header: "Thời lượng & Lịch học",
-    accessor: "schedule" as keyof CourseItem,
+    header: "Thời Lượng & Lịch Học",
+    accessor: "duration" as keyof CourseItem,
     render: (item: CourseItem) => (
-      <div className="flex flex-col gap-0.5 text-xs">
-        {item.duration && (
-          <div className="flex items-center gap-1 text-gray-700 font-medium">
-            <Clock size={11} className="text-orange-500 shrink-0" />
-            <span>{item.duration}</span>
-          </div>
-        )}
-        {item.schedule && (
-          <div className="flex items-center gap-1 text-gray-500 text-[11px]">
-            <Calendar size={11} className=" text-gray-700 shrink-0" />
-            <span className="truncate max-w-[150px]">{item.schedule}</span>
-          </div>
-        )}
+      <div className="flex flex-col gap-1 text-xs text-gray-600">
+        <div className="flex items-center gap-1.5 font-medium">
+          <Clock size={12} className="text-orange-500 shrink-0" />
+          <span className="truncate max-w-[140px]">{item.duration || "Chưa ấn định"}</span>
+        </div>
+        <div className="flex items-center gap-1.5 text-[11px] text-gray-500 font-mono">
+          <Calendar size={11} className="text-gray-400 shrink-0" />
+          <span className="truncate max-w-[140px]">{item.schedule || "Lịch học linh hoạt"}</span>
+        </div>
       </div>
     ),
   },
@@ -117,14 +110,14 @@ export const getCourseColumns = (
     align: "center",
     render: (item: CourseItem) => (
       <div className="flex items-center justify-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-        <ActionTooltipBtn onClick={() => onEdit(item)} icon={<Pencil size={14} />} color="gray" tooltip="Chỉnh sửa khóa học" />
+        <ActionTooltipBtn onClick={() => onEdit(item)} icon={<Pencil size={14} />} color="blue" tooltip="Chỉnh sửa khóa học" />
         <ActionTooltipBtn
           onClick={() => onToggleStatus(item.id)}
-          icon={<Power size={14} className={item.status === "active" ? "text-emerald-600" : " text-gray-700"} />}
-          color={item.status === "active" ? "emerald" : "gray"}
+          icon={<Power size={14} className={item.status === "active" ? "text-amber-500" : "text-emerald-500"} />}
+          color="orange"
           tooltip={item.status === "active" ? "Tạm ẩn khóa học" : "Kích hoạt mở khóa học"}
         />
-        <ActionTooltipBtn onClick={() => onDelete(item.id)} icon={<Trash2 size={14} className="text-rose-500" />} color="rose" tooltip="Xóa khóa học" />
+        <ActionTooltipBtn onClick={() => onDelete(item.id)} icon={<Trash2 size={14} />} color="rose" tooltip="Xóa khóa học" />
       </div>
     ),
   },

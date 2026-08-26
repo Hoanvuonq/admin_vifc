@@ -61,13 +61,13 @@ export async function POST(request: Request) {
       order_index = 0,
     } = body;
 
-    if (!title || !location) {
+    if (!title) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: "VALIDATION_ERROR",
-            message: "Missing required fields: title and location",
+            message: "Missing required field: title",
           },
         },
         { status: 400 }
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
     const params = [
       title.trim(),
       subtitle?.trim() || null,
-      location.trim(),
+      location?.trim() || "Online / Lu.ma",
       date?.trim() || null,
       image?.trim() || null,
       badge?.trim() || "Private Club Exclusive",
@@ -92,6 +92,7 @@ export async function POST(request: Request) {
       status || "active",
       Number(order_index) || 0,
     ];
+
 
     const result = await query(sql, params);
     const newEvent = result.rows[0];

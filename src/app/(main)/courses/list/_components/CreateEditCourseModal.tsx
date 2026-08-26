@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { PortalModal, PremiumButton, SectionHeader, FormInput, SelectComponent, StatusBadge } from "@/components";
 import { GraduationCap, Sparkles, User, Clock, Calendar, Save, Plus, ShieldCheck, Camera, X } from "lucide-react";
 import { CourseItem, CreateCourseItemPayload } from "@/types/course";
@@ -17,9 +17,17 @@ interface CreateEditCourseModalProps {
 const BOOKING_TYPE_OPTIONS = [
   { value: "course", label: "Khóa học (Course)", color: "text-orange-500" },
   { value: "workshop", label: "Hội thảo (Workshop)", color: "text-purple-500" },
-  { value: "meeting-room", label: "Phòng họp (Meeting Room)", color: "text-blue-500" },
+  {
+    value: "meeting-room",
+    label: "Phòng họp (Meeting Room)",
+    color: "text-blue-500",
+  },
   { value: "lounge", label: "VIP Lounge", color: "text-amber-500" },
-  { value: "consulting", label: "Tư vấn 1-1 (Consulting)", color: "text-emerald-500" },
+  {
+    value: "consulting",
+    label: "Tư vấn 1-1 (Consulting)",
+    color: "text-emerald-500",
+  },
 ];
 
 const STATUS_OPTIONS = [
@@ -41,13 +49,61 @@ export const CreateEditCourseModal: React.FC<CreateEditCourseModalProps> = ({ is
   const [instructor, setInstructor] = useState("");
   const [duration, setDuration] = useState("");
   const [schedule, setSchedule] = useState("");
-  const [tuitionFee, setTuitionFee] = useState("");
+  const [tuitionFee, setTuitionFee] = useState("0");
   const [status, setStatus] = useState("active");
 
   const [errors, setErrors] = useState<{ title?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isEditMode = Boolean(initialData);
+
+  // Validation & Dirty check
+  const isFormValid = title.trim().length > 0;
+
+  const isSaveEnabled = useMemo(() => {
+    if (!isFormValid) return false;
+    if (!isEditMode) return true; // Khi tạo mới: Có title là active
+    if (!initialData) return false;
+
+    const hasTitleChanged = title.trim() !== (initialData.title || "").trim();
+    const hasBookingTypeChanged = bookingType !== (initialData.booking_type || "course");
+    const hasBookingTitleChanged = bookingTitle.trim() !== (initialData.booking_title || initialData.title || "").trim();
+    const hasDescChanged = description.trim() !== (initialData.description || "").trim();
+    const hasImageChanged = Boolean(imageFile) || (image !== (initialData.image || "/admin/card-banner-01.png") && image !== "/admin/card-banner-01.png");
+    const hasInstructorChanged = instructor.trim() !== (initialData.instructor || "").trim();
+    const hasDurationChanged = duration.trim() !== (initialData.duration || "").trim();
+    const hasScheduleChanged = schedule.trim() !== (initialData.schedule || "").trim();
+    const hasFeeChanged = (Number(tuitionFee.replace(/\D/g, "")) || 0) !== (initialData.tuition_fee || 0);
+    const hasStatusChanged = status !== (initialData.status || "active");
+
+    return (
+      hasTitleChanged ||
+      hasBookingTypeChanged ||
+      hasBookingTitleChanged ||
+      hasDescChanged ||
+      hasImageChanged ||
+      hasInstructorChanged ||
+      hasDurationChanged ||
+      hasScheduleChanged ||
+      hasFeeChanged ||
+      hasStatusChanged
+    );
+  }, [
+    isFormValid,
+    isEditMode,
+    initialData,
+    title,
+    bookingType,
+    bookingTitle,
+    description,
+    image,
+    imageFile,
+    instructor,
+    duration,
+    schedule,
+    tuitionFee,
+    status,
+  ]);
 
   useEffect(() => {
     if (isOpen) {
@@ -115,7 +171,7 @@ export const CreateEditCourseModal: React.FC<CreateEditCourseModalProps> = ({ is
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!validate()) return;
+    if (!validate() || !isSaveEnabled) return;
 
     setIsSubmitting(true);
     try {
@@ -182,6 +238,8 @@ export const CreateEditCourseModal: React.FC<CreateEditCourseModalProps> = ({ is
               onClick={handleSubmit}
               size="md"
               isLoading={isSubmitting}
+              disabled={!isSaveEnabled || isSubmitting}
+              variant="orange"
             />
           </div>
         </div>
@@ -189,6 +247,7 @@ export const CreateEditCourseModal: React.FC<CreateEditCourseModalProps> = ({ is
     >
       <form onSubmit={handleSubmit} className="h-full flex flex-col">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full items-start">
+          {/* Left Column: Sticky Live Preview */}
           <div className="lg:col-span-4 lg:sticky lg:top-0 h-full flex flex-col">
             <div className="bg-linear-to-b from-white via-orange-50/20 to-white rounded-2xl p-4 border border-gray-100/90 shadow-custom flex flex-col justify-between h-full relative overflow-hidden text-left">
               <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full blur-2xl pointer-events-none" />
@@ -207,6 +266,7 @@ export const CreateEditCourseModal: React.FC<CreateEditCourseModalProps> = ({ is
                   />
                 </div>
 
+                {/* Banner preview card */}
                 <div
                   onClick={handleImageClick}
                   className="relative rounded-2xl overflow-hidden border-2 border-orange-200/60 shadow-md bg-slate-950 aspect-video group cursor-pointer flex items-center justify-center transition-all duration-300 isolate hover:ring-4 hover:ring-orange-500/20"
@@ -264,6 +324,7 @@ export const CreateEditCourseModal: React.FC<CreateEditCourseModalProps> = ({ is
                   </div>
                 </div>
 
+                {/* Details summary */}
                 <div className="space-y-2 p-3 rounded-xl bg-white/80 border border-gray-100 text-xs text-gray-600">
                   <div className="flex items-center justify-between border-b border-gray-100 pb-1.5">
                     <span className="text-gray-500 font-medium">Học phí niêm yết:</span>
@@ -297,22 +358,22 @@ export const CreateEditCourseModal: React.FC<CreateEditCourseModalProps> = ({ is
             </div>
           </div>
 
-          {/* Right Column: Scrollable Form Inputs */}
+          {/* Right Column: Form Inputs with Custom Scrollbar */}
           <div className="lg:col-span-8 flex flex-col justify-between h-full overflow-y-auto max-h-[calc(92vh-150px)] pr-2 custom-scrollbar space-y-6">
             {/* Section 1: Thông tin cơ bản */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               <SectionHeader
-                icon={GraduationCap}
-                title="Thông tin khóa học & Loại hình"
-                description="Tên khóa học, tên dịch vụ hiển thị và phân loại booking"
+                icon={Sparkles}
+                title="Thông tin định danh & Phân loại"
+                description="Tên chương trình đào tạo, phân loại hình thức và trạng thái hiển thị"
                 size="sm"
               />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 <div className="md:col-span-2">
                   <FormInput
-                    label="Tên khóa học / Dịch vụ"
-                    placeholder="Ví dụ: Chương Trình Đào Tạo Chiến Lược & Đầu Tư On-Chain"
+                    label="Tên khóa học / Tiêu đề dịch vụ"
+                    placeholder="Ví dụ: KHÓA HỌC CHUYÊN SÂU — NGÀNH HÀNG HÓA"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     error={errors.title}
@@ -320,20 +381,20 @@ export const CreateEditCourseModal: React.FC<CreateEditCourseModalProps> = ({ is
                   />
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-[12px] font-bold text-gray-700 ml-1 flex items-center gap-1">Loại hình dịch vụ (Booking Type)</label>
+                <div>
+                  <label className="text-[12px] font-bold text-gray-700 ml-1 mb-1 block">Hình thức phân loại</label>
                   <SelectComponent value={bookingType} onChange={(val) => setBookingType(val as string)} options={BOOKING_TYPE_OPTIONS} />
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-[12px] font-bold text-gray-700 ml-1 flex items-center gap-1">Trạng thái hoạt động</label>
+                <div>
+                  <label className="text-[12px] font-bold text-gray-700 ml-1 mb-1 block">Trạng thái hiển thị</label>
                   <SelectComponent value={status} onChange={(val) => setStatus(val as string)} options={STATUS_OPTIONS} />
                 </div>
 
                 <div className="md:col-span-2">
                   <FormInput
-                    label="Tên ngắn gọn hiển thị (Short Title / Tagline)"
-                    placeholder="Ví dụ: Khóa Học Chuyên Sâu On-Chainpass"
+                    label="Tiêu đề rút gọn (Booking Title)"
+                    placeholder="Ví dụ: Khóa học chuyên sâu — Ngành hàng hóa"
                     value={bookingTitle}
                     onChange={(e) => setBookingTitle(e.target.value)}
                   />

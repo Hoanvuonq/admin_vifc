@@ -1,13 +1,21 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { AdminPageHeader, StatusBadge } from "@/components";
+import { AdminPageHeader, StatusBadge, SelectComponent } from "@/components";
 import { DataTable } from "@/components/DataTable";
 import { useEventRegistrations } from "@/hooks/useEventRegistrations";
 import { EventRegistrationItem } from "@/types/event";
 import { Sparkles, Users, Search, Clock, CheckCircle2, Calendar, Mail, Phone, MapPin, FileText, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { getEventRegistrationColumns } from "./columns";
+
+const EVENT_REG_STATUS_OPTIONS = [
+  { value: "ALL", label: "Tất cả trạng thái" },
+  { value: "pending", label: "Chờ xác nhận (Pending)", color: "text-amber-500" },
+  { value: "confirmed", label: "Đã xác nhận (Confirmed)", color: "text-emerald-500" },
+  { value: "attended", label: "Đã tham gia (Attended)", color: "text-blue-500" },
+  { value: "cancelled", label: "Đã hủy (Cancelled)", color: "text-rose-500" },
+];
 
 export const EventRegistrationsScreen: React.FC = () => {
   const { registrations, isLoading, updateRegistrationStatus, deleteRegistration, stats } = useEventRegistrations();
@@ -38,7 +46,7 @@ export const EventRegistrationsScreen: React.FC = () => {
 
   const renderExpandedRow = (item: EventRegistrationItem) => (
     <div className="px-8 py-5 bg-linear-to-r from-orange-50/40 via-slate-50/60 to-white rounded-2xl border border-orange-100/80 m-2 flex flex-col lg:flex-row gap-6 items-start justify-between shadow-inner animate-in fade-in duration-300">
-      <div className="space-y-1.5 min-w-[240px]">
+      <div className="space-y-1.5 min-w-60">
         <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
           {item.full_name || "Khách mời"}
           <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-mono font-bold">
@@ -104,7 +112,6 @@ export const EventRegistrationsScreen: React.FC = () => {
         ]}
       />
 
-      {/* Filters bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-gray-100 shadow-xs">
         <div className="relative w-full sm:w-80">
           <Search size={16} className="absolute left-3.5 top-3  text-gray-700" />
@@ -117,18 +124,8 @@ export const EventRegistrationsScreen: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3.5 py-2 rounded-xl border border-gray-200 text-xs font-semibold bg-white text-gray-700 outline-none focus:border-orange-500 cursor-pointer"
-          >
-            <option value="ALL">Tất cả trạng thái</option>
-            <option value="pending">Chờ xác nhận (Pending)</option>
-            <option value="confirmed">Đã xác nhận (Confirmed)</option>
-            <option value="attended">Đã tham gia (Attended)</option>
-            <option value="cancelled">Đã hủy (Cancelled)</option>
-          </select>
+        <div className="w-full sm:w-60">
+          <SelectComponent value={selectedStatus} onChange={(val) => setSelectedStatus(val as string)} options={EVENT_REG_STATUS_OPTIONS} />
         </div>
       </div>
 
