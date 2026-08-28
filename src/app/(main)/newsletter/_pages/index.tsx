@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import { AdminPageHeader, PremiumButton, DataTable, SelectComponent } from "@/components";
 import { useNewsletters } from "@/hooks/useNewsletters";
 import { NewsletterItem, CreateNewsletterPayload } from "@/types/newsletter";
-import { Mail, Plus, Search, CheckCircle2, BookOpen, Calendar, Users, MapPin } from "lucide-react";
+import { Mail, Plus, Search, CheckCircle2, BookOpen, Calendar, Users, MapPin, Newspaper } from "lucide-react";
 import Link from "next/link";
 import { getNewsletterColumns } from "./columns";
 import { CreateEditNewsletterModal } from "../_components/CreateEditNewsletterModal";
@@ -67,15 +67,8 @@ export const NewsletterListScreen: React.FC = () => {
   const renderExpandedRow = (item: NewsletterItem) => (
     <div className="px-8 py-5 bg-linear-to-r from-amber-50/40 via-stone-50/60 to-white rounded-2xl border border-amber-100/80 m-2 flex flex-col lg:flex-row gap-6 items-start justify-between shadow-inner animate-in fade-in duration-300">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-        <div className="w-28 h-20 rounded-2xl overflow-hidden border-2 border-white shadow-sm shrink-0 bg-stone-950">
-          <img
-            src={item.banner || item.image || "/admin/card-event-01.png"}
-            alt={item.title}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=600&q=80";
-            }}
-          />
+        <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-amber-500/10 to-orange-500/15 border border-amber-200/80 flex items-center justify-center text-amber-600 shrink-0 shadow-xs">
+          <Newspaper size={22} className="text-amber-600" />
         </div>
         <div className="space-y-1.5 max-w-md">
           <h4 className="text-xs font-bold text-gray-900">{item.title}</h4>

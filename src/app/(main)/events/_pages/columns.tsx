@@ -30,7 +30,7 @@ export const getEventColumns = (
             </span>
           )}
         </div>
-        <div className="flex flex-col min-w-0 max-w-[220px] sm:max-w-[280px]">
+        <div className="flex flex-col min-w-0 max-w-55 sm:max-w-70">
           <span className="font-bold text-gray-900 text-[13px] tracking-tight group-hover:text-orange-600 transition-colors truncate" title={item.title}>
             {item.title}
           </span>

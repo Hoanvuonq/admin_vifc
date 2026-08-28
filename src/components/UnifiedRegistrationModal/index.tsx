@@ -96,7 +96,7 @@ export const UnifiedRegistrationModal: React.FC<UnifiedRegistrationModalProps> =
   const modalContent = (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-5 font-sans">
+        <div className="fixed inset-0 z-99999 flex items-center justify-center p-3 sm:p-5 font-sans">
           {/* Backdrop Overlay */}
           <motion.div
             initial={{ opacity: 0 }}

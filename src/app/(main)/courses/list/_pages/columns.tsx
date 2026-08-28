@@ -25,7 +25,7 @@ export const getCourseColumns = (
             }}
           />
         </div>
-        <div className="flex flex-col min-w-0 max-w-[220px] sm:max-w-[280px]">
+        <div className="flex flex-col min-w-0 max-w-55 sm:max-w-70">
           <span className="font-bold text-gray-900 text-[13px] tracking-tight group-hover:text-orange-600 transition-colors truncate" title={item.title}>
             {item.title}
           </span>
@@ -62,7 +62,7 @@ export const getCourseColumns = (
       <div className="flex flex-col gap-1 text-xs">
         <div className="flex items-center gap-1.5 text-gray-700 font-semibold">
           <User size={12} className="text-orange-500 shrink-0" />
-          <span className="truncate max-w-[140px]">{item.instructor || "Chuyên gia On-Chainpass"}</span>
+          <span className="truncate max-w-35">{item.instructor || "Chuyên gia On-Chainpass"}</span>
         </div>
         {item.tuition_fee && item.tuition_fee > 0 ? (
           <div className="flex items-center gap-1 font-bold text-orange-600 font-mono text-[11.5px]">
@@ -84,11 +84,11 @@ export const getCourseColumns = (
       <div className="flex flex-col gap-1 text-xs text-gray-600">
         <div className="flex items-center gap-1.5 font-medium">
           <Clock size={12} className="text-orange-500 shrink-0" />
-          <span className="truncate max-w-[140px]">{item.duration || "Chưa ấn định"}</span>
+          <span className="truncate max-w-35">{item.duration || "Chưa ấn định"}</span>
         </div>
         <div className="flex items-center gap-1.5 text-[11px] text-gray-500 font-mono">
           <Calendar size={11} className="text-gray-400 shrink-0" />
-          <span className="truncate max-w-[140px]">{item.schedule || "Lịch học linh hoạt"}</span>
+          <span className="truncate max-w-35">{item.schedule || "Lịch học linh hoạt"}</span>
         </div>
       </div>
     ),

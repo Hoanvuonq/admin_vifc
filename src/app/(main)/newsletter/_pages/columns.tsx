@@ -3,7 +3,7 @@
 import React from "react";
 import { ActionTooltipBtn, Column, StatusBadge } from "@/components";
 import { NewsletterItem } from "@/types/newsletter";
-import { Calendar, MapPin, Pencil, Power, Trash2 } from "lucide-react";
+import { Calendar, MapPin, Newspaper, Pencil, Power, Trash2 } from "lucide-react";
 import dayjs from "dayjs";
 
 export const getNewsletterColumns = (
@@ -16,22 +16,15 @@ export const getNewsletterColumns = (
     accessor: "title" as keyof NewsletterItem,
     render: (item: NewsletterItem) => (
       <div className="flex items-center gap-3 py-1 max-w-sm">
-        <div className="relative w-14 h-11 rounded-xl overflow-hidden bg-stone-900 border border-amber-100/80 shrink-0 shadow-sm group-hover:scale-105 transition-transform">
-          <img
-            src={item.banner || item.image || "/admin/card-event-01.png"}
-            alt={item.title}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=600&q=80";
-            }}
-          />
+        <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-500/10 to-orange-500/10 border border-amber-200/80 flex items-center justify-center text-amber-600 shrink-0 shadow-xs group-hover:scale-105 group-hover:bg-amber-500/20 transition-all">
+          <Newspaper size={18} className="text-amber-600" />
         </div>
-        <div className="flex flex-col min-w-0 max-w-[220px] sm:max-w-[280px]">
+        <div className="flex flex-col min-w-0 max-w-[240px] sm:max-w-[300px]">
           <span className="font-bold text-gray-900 text-[13px] tracking-tight group-hover:text-amber-700 transition-colors truncate" title={item.title}>
             {item.title}
           </span>
-          <span className="text-[11.5px] text-gray-500 font-medium truncate" title={item.description || item.subtitle || ""}>
-            {item.description || item.subtitle || "Chưa có mô tả"}
+          <span className="text-[11.5px] text-gray-500 font-medium truncate" title={item.description || ""}>
+            {item.description || "Chưa có mô tả"}
           </span>
         </div>
       </div>

@@ -108,25 +108,6 @@ export const NewsletterSubscribersScreen: React.FC = () => {
         />
       </AdminPageHeader>
 
-      {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-gray-200 pb-1">
-        <Link
-          href="/cms/articles"
-          className="px-4 py-2.5 text-xs font-bold text-gray-500 hover:text-gray-900 transition flex items-center gap-2 tracking-wide uppercase"
-        >
-          <FileText size={14} />
-          <span>Bài Viết & Báo Cáo</span>
-        </Link>
-        <Link
-          href="/newsletter/subscribers"
-          className="px-4 py-2.5 text-xs font-bold text-orange-600 border-b-2 border-orange-600 flex items-center gap-2 tracking-wide uppercase transition"
-        >
-          <Mail size={14} />
-          <span>Đăng Ký Nhận Tin (Newsletter)</span>
-        </Link>
-      </div>
-
-      {/* Filters bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-gray-100 shadow-xs">
         <div className="relative w-full sm:w-80">
           <Search size={16} className="absolute left-3.5 top-3  text-gray-700" />
